@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.PathBrowseController">
+   <children>
+      <AnchorPane prefHeight="72.0" prefWidth="600.0">
+         <children>
+            <Label alignment="CENTER" layoutX="165.0" layoutY="17.0" prefHeight="41.0" prefWidth="251.0" text="Path for Report" underline="true">
+               <font>
+                  <Font name="Bell MT" size="29.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutY="92.0" prefHeight="115.0" prefWidth="600.0">
+         <children>
+            <TextField fx:id="dirPathTF" layoutX="26.0" layoutY="45.0" prefHeight="25.0" prefWidth="214.0" promptText="Choose download destenation" />
+            <Button fx:id="browseBtn" layoutX="240.0" layoutY="45.0" mnemonicParsing="false" onAction="#browseHandler" text="Browse" />
+            <Button fx:id="viewBtn" layoutX="369.0" layoutY="45.0" mnemonicParsing="false" onAction="#viewHandler" text="View Report" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="cancelBtn" layoutX="513.0" layoutY="216.0" mnemonicParsing="false" onAction="#cancelHandler" text="Cancel" />
+   </children>
+</AnchorPane>

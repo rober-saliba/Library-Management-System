@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OCSF"/>
+	<classpathentry kind="lib" path="src/jarFiles/activation.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/javax.mail-1.4.4.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/mail.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/javax.mail.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/itextpdf-5.5.13.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/jcommon-1.0.23.jar"/>
+	<classpathentry kind="lib" path="src/jarFiles/jfreechart-1.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/User/Desktop/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Javafx">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-23">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/User/Desktop/bcprov-jdk18on-1.80.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

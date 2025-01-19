@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="490.0" prefWidth="797.0" style="-fx-background-color: #d7dbdd;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.UserPageController">
+   <children>
+      <Pane prefHeight="154.0" prefWidth="1250.0" style="-fx-background-color: #2ecc71;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Button fx:id="logoutBtn" alignment="BOTTOM_CENTER" layoutX="722.0" layoutY="12.0" minHeight="41.0" minWidth="52.0" mnemonicParsing="false" onAction="#logoutHandler" prefHeight="41.0" prefWidth="61.0" text="logout" textAlignment="CENTER" textOverrun="CLIP">
+               <padding>
+                  <Insets right="5.0" top="5.0" />
+               </padding>
+            </Button>
+            <ComboBox fx:id="searchTypeComboBox" layoutX="222.0" layoutY="94.0" prefHeight="25.0" prefWidth="171.0" promptText="Search type" />
+            <TextField fx:id="searchTF" layoutX="393.0" layoutY="94.0" prefHeight="25.0" prefWidth="271.0" promptText="Enter keyword" />
+            <Button fx:id="searchBtn" layoutX="664.0" layoutY="94.0" mnemonicParsing="false" onAction="#searchHandler" prefHeight="25.0" prefWidth="35.0" />
+            <ImageView fx:id="userImg" fitHeight="85.0" fitWidth="135.0" layoutX="30.0" layoutY="12.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="usernameLabel" alignment="CENTER" layoutX="35.0" layoutY="97.0" prefHeight="19.0" prefWidth="125.0" text="User name" textOverrun="CLIP">
+               <font>
+                  <Font name="System Bold Italic" size="13.0" />
+               </font>
+            </Label>
+            <Text fill="WHITE" fontSmoothingType="LCD" layoutX="370.0" layoutY="45.0" stroke="#cc6f6f" strokeType="OUTSIDE" strokeWidth="0.0" text="BLib" wrappingWidth="74.13671875">
+               <font>
+                  <Font name="System Bold Italic" size="31.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+      <Button fx:id="myBorrowsBtn" alignment="CENTER" layoutX="165.0" layoutY="238.0" minHeight="41.0" mnemonicParsing="false" onAction="#showBorrowsHandler" prefHeight="41.0" prefWidth="264.0" style="-fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-width: 2px; -fx-border-color: black; -fx-background-color: white;" text="My borrows" textOverrun="CLIP">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="settingsBtn" alignment="CENTER" layoutX="455.0" layoutY="322.0" minHeight="41.0" mnemonicParsing="false" onAction="#showSettingsHandler" prefHeight="41.0" prefWidth="264.0" style="-fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-width: 2px; -fx-border-color: black; -fx-background-color: white;" text="Settings" textOverrun="CLIP">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="reservesBtn" layoutX="455.0" layoutY="238.0" minHeight="41.0" mnemonicParsing="false" onAction="#showReservesHandler" prefHeight="41.0" prefWidth="264.0" style="-fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-width: 2px; -fx-border-color: black; -fx-background-color: white;" text="My reserves" textOverrun="CLIP">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="historyBtn" alignment="CENTER" layoutX="165.0" layoutY="322.0" minHeight="41.0" mnemonicParsing="false" onAction="#showHistoryHandler" prefHeight="41.0" prefWidth="264.0" style="-fx-background-radius: 20px; -fx-border-radius: 20px; -fx-border-width: 2px; -fx-border-color: black; -fx-background-color: white;" text="History" textOverrun="CLIP">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <ImageView fx:id="myreservesImg" fitHeight="33.0" fitWidth="35.0" layoutX="505.0" layoutY="242.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="myborrowsImg" fitHeight="33.0" fitWidth="35.0" layoutX="220.0" layoutY="242.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="historyImg" fitHeight="33.0" fitWidth="35.0" layoutX="220.0" layoutY="326.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="settingsImg" fitHeight="33.0" fitWidth="35.0" layoutX="505.0" layoutY="326.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>
