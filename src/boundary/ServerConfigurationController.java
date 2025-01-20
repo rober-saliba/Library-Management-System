@@ -39,9 +39,6 @@ public class ServerConfigurationController {
 
     @FXML
     private Button connectButton;
-    
-    @FXML
-    private Button externalButton;
 
     /**
      * Called when the server operator clicks on "connect" button, it opens a server connection so it's ready to listen for clients,
@@ -54,7 +51,6 @@ public class ServerConfigurationController {
     	{
     		successMessage.setText("connection success");
     		successMessage.setTextFill(Color.GREEN);
-    		externalButton.setVisible(true);
     	}
     	else {
     		successMessage.setText("connection failed");
@@ -63,17 +59,5 @@ public class ServerConfigurationController {
     	
     }
     
-    
-    @FXML
-    void ExternalSystemHandler(ActionEvent event) throws IOException {
-    	Stage primaryStage = new Stage();
-		primaryStage.setAlwaysOnTop(true);
-		primaryStage.initModality(Modality.APPLICATION_MODAL);
-		FXMLLoader loader = new FXMLLoader();
-		Parent root = loader.load(getClass().getResource("/boundary/ExternalSystemGUI.fxml").openStream());
-		primaryStage.setScene(new Scene(root));
-		primaryStage.setTitle("System");
-		primaryStage.show();
-    }
     
 }
