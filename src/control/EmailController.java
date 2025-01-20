@@ -1,72 +1,33 @@
 package control;
 
-import java.util.Date;
-import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
-
-
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.SimpleEmail;
 
 public class EmailController {
-	
-	private static EmailController singleton = null;
 
-	private EmailController() {	}
-	
-	public synchronized static EmailController getInstance() {
-		if(singleton == null)
-			singleton = new EmailController();
-		return singleton;
-	}
-	
-	
-	public void sendVerficationMail(String userEmail, String emailSubject, String emailMsg) {
-		try {
+    public static void sendEmail(String recipient, String subject, String body) {
+        try {
+            SimpleEmail email = new SimpleEmail();
+            email.setHostName("smtp.zoho.com"); // Zoho SMTP server
+            email.setSmtpPort(587); // TLS port
+            email.setAuthentication("blibsys@zohomail.com", "Blib2358"); // Replace with your credentials
+            email.setStartTLSRequired(true); // Enable TLS
+            email.setFrom("blibsys@zohomail.com", "Blib"); // Sender details
+            email.addTo(recipient); // Recipient email
+            email.setSubject(subject); // Email subject
+            email.setMsg(body); // Email body
 
-			String host = "imap.gmail.com";
-			String user = "g26.obl@gmail.com";
-			String pass = "G26Aa123456";
-			String to = userEmail;
-			String from = "g26.obl@gmail.com";
-			String subject = emailSubject;
-			String messageText = emailMsg;
-			boolean sessionDebug = false;
+            System.out.println("Starting email send...");
+            email.send();
+            System.out.println("Email sent successfully to " + recipient);
+        } catch (EmailException e) {
+            System.err.println("Failed to send email: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
-			Properties props = System.getProperties();
-
-			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.host", host);
-			props.put("mail.smtp.port", "587");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.starttls.required", "true");
-
-			Security.addProvider(new BouncyCastleProvider());
-			Session mailSession = Session.getDefaultInstance(props, null);
-			mailSession.setDebug(sessionDebug);
-			Message msg = new MimeMessage(mailSession);
-			msg.setFrom(new InternetAddress(from));
-			InternetAddress[] address = { new InternetAddress(to) };
-			msg.setRecipients(Message.RecipientType.TO, address);
-			msg.setSubject(subject);
-			msg.setSentDate(new Date());
-			msg.setText(messageText);
-
-			Transport transport = mailSession.getTransport("smtp");
-			transport.connect(host, user, pass);
-			transport.sendMessage(msg, msg.getAllRecipients());
-			transport.close();
-			//System.out.println("message send successfully");
-		} catch (Exception ex) {
-			System.out.println(ex);
-		}
-		 
-	}
+    public static void main(String[] args) {
+        // Test the email sending
+        sendEmail("test@example.com", "Test Email", "This is a test email sent using Zoho Mail SMTP.");
+    }
 }

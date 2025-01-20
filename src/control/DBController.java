@@ -78,7 +78,6 @@ import entity.Reservations;
 import entity.User;
 import enums.Result;
 import enums.ExistStatus;
-import enums.FaultDesc;
 import enums.LogInStatus;
 import enums.UserPermissions;
 import control.EmailController;
@@ -588,10 +587,13 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 						mailRs = stmtEmail.executeQuery();
 						if (mailRs.next()) {
 							String toSendMail = mailRs.getString(1);
-							EmailController emailController = EmailController.getInstance();
-							emailController.sendVerficationMail(toSendMail, "book arrived",
-									"your book has arrived you have 2 days to borrow it ID: "
-											+ earlierDateReserve.getUserID() + " barcode: " + barcode);
+						    EmailController.sendEmail(
+						            toSendMail,
+						            "Book Arrived",
+						            "Your book has arrived. You have 2 days to borrow it. ID: "
+						            + earlierDateReserve.getUserID()
+						            + ", Barcode: " + barcode
+						        );
 						}
 
 					} catch (SQLException e) {
@@ -640,51 +642,49 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 	/**
 	 * sends a return notice to all users who borrowed a book.
 	 */
-	public void checkDayBeforeReturnAndSendMessage() {
-		PreparedStatement stmt;
-		ResultSet rs;
-		String getActiveBorrows = "select B.* from borrows B where B.status= 'Active' ";
-		LocalDate currentDate1 = LocalDate.now();
-		LocalDate borrowDate, borrowDateMinusOneDay;
-		String ID, barcode;
+public void checkDayBeforeReturnAndSendMessage() {
+    PreparedStatement stmt;
+    ResultSet rs;
+    String getActiveBorrows = "SELECT B.* FROM borrows B WHERE B.status = 'Active'";
+    LocalDate currentDate1 = LocalDate.now();
+    LocalDate borrowDate, borrowDateMinusOneDay;
+    String ID, barcode;
 
-		try {
+    try {
+        stmt = conn.prepareStatement(getActiveBorrows);
+        rs = stmt.executeQuery();
+        while (rs.next()) {
+            borrowDate = rs.getDate(5).toLocalDate();
+            borrowDateMinusOneDay = borrowDate.minusDays(1);
+            if (borrowDateMinusOneDay.isEqual(currentDate1)) {
+                ID = rs.getString(1);
+                barcode = rs.getString(2);
+                System.out.println("user id: " + ID + " you have one day to return book barcode number: " + barcode);
 
-			stmt = conn.prepareStatement(getActiveBorrows);
-			rs = stmt.executeQuery();
-			while (rs.next()) {
-				borrowDate = rs.getDate(5).toLocalDate();
-				borrowDateMinusOneDay = borrowDate.minusDays(1);
-				if (borrowDateMinusOneDay.isEqual(currentDate1)) {
-					ID = rs.getString(1);
-					barcode = rs.getString(2);
-					System.out
-							.println("user id: " + ID + " you have one day to return book barcode number: " + barcode);
-					PreparedStatement stmtEmail;
-					ResultSet mailRs = null;
-					String getEmailQuery = "SELECT U.email FROM users U WHERE U.userID = ?";
-					try {
-						stmtEmail = conn.prepareStatement(getEmailQuery);
-						stmtEmail.setString(1, ID);
-						mailRs = stmtEmail.executeQuery();
-						if (mailRs.next()) {
-							String toSendMail = mailRs.getString(1);
-							EmailController emailController = EmailController.getInstance();
-							emailController.sendVerficationMail(toSendMail, "Warning message!",
-									"user id: " + ID + " you have one day to return book barcode number: " + barcode);
-						}
-
-					} catch (SQLException e) {
-					}
-
-				}
-
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+                PreparedStatement stmtEmail;
+                ResultSet mailRs = null;
+                String getEmailQuery = "SELECT U.email FROM users U WHERE U.userID = ?";
+                try {
+                    stmtEmail = conn.prepareStatement(getEmailQuery);
+                    stmtEmail.setString(1, ID);
+                    mailRs = stmtEmail.executeQuery();
+                    if (mailRs.next()) {
+                        String toSendMail = mailRs.getString(1);
+                        EmailController.sendEmail(
+                            toSendMail,
+                            "Warning Message!",
+                            "User ID: " + ID + " you have one day to return the book. Barcode number: " + barcode
+                        );
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
 
 	/**
 	 * checks if any user has late returns and freezes the account

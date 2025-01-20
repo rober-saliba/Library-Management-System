@@ -5,6 +5,9 @@ import java.text.ParseException;
 
 public class ManualTest {
     public static void main(String[] args) {
+    	
+    	System.setProperty("mail.debug", "true");
+
         // Database connection details
         String username = "root";
         String password = "Aa123456";
@@ -21,12 +24,26 @@ public class ManualTest {
 		    System.out.println("Connected to the database successfully.");
 
 		    // Call the method to check late returns and freeze/unfreeze logic
-		    dbController.checkLateReturn();
-		    dbController.checkPenalty();
+		    //dbController.checkLateReturn();
+		  //  dbController.checkPenalty();
+	        testEmailSending();
+
 
 		    System.out.println("checkLateReturnAndFreeze executed successfully. Check the database for updates.");
 		} else {
 		    System.out.println("Failed to connect to the database. Exiting...");
 		}
     }
+    
+    private static void testEmailSending() {
+        String recipient = "waelswaid@gmail.com"; // Replace with the recipient email
+        String subject = "Test Email";
+        String body = "This is a test email sent from the Blib system.";
+
+        System.out.println("Testing email functionality...");
+        EmailController.sendEmail(recipient, subject, body);
+        System.out.println("Email test completed. Check the recipient inbox.");
+    }
+    
+    
 }
