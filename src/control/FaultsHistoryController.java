@@ -82,11 +82,11 @@ public class FaultsHistoryController implements IClient{
 		return result;
    }
 	
-	public boolean addFault(enums.FaultDesc faultDesc, String userID) throws InterruptedException{
+	public boolean addFault(String faultDes, String userID) throws InterruptedException{
 		MsgParser<FaultsHistory> msg = new MsgParser<>();
 		FaultsHistory fh = new FaultsHistory();
 		fh.setUserID(userID);
-		fh.setFaultDesc(faultDesc);
+		fh.setFaultDesc(faultDes);
 		msg.addToCommPipe(fh);
 		msg.setTask(ConstantsAndGlobalVars.addFaultTask);
 

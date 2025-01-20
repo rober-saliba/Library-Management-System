@@ -693,7 +693,6 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 public void checkLateReturn() {
     PreparedStatement stmtLateBorrows, stmtFreezeUser, stmtAddFault, stmtUpdateBorrow;
     ResultSet rsLateBorrows;
-    LocalDate currentDate = LocalDate.now();
 
     try {
         // 1. Query for late borrows past the 7-day grace period
@@ -706,7 +705,6 @@ public void checkLateReturn() {
         while (rsLateBorrows.next()) {
             String userID = rsLateBorrows.getString("userID");
             String barcode = rsLateBorrows.getString("barcode");
-            LocalDate returnDate = rsLateBorrows.getDate("returnDate").toLocalDate();
 
             // Freeze the user and log a fault
             // 2. Update the user status to 'Frozen'
@@ -716,7 +714,7 @@ public void checkLateReturn() {
             stmtFreezeUser.executeUpdate();
 
             // 3. Log the fault in faultshistory table
-            String addFaultQuery = "INSERT INTO faultshistory (userID, faultDesc, Date) VALUES (?, 'Frozen', NOW())";
+            String addFaultQuery = "INSERT INTO faultshistory (userID, faultDesc, Date) VALUES (?, 'Not Resolved', NOW())";
             stmtAddFault = conn.prepareStatement(addFaultQuery);
             stmtAddFault.setString(1, userID);
             stmtAddFault.executeUpdate();
@@ -736,7 +734,7 @@ public void checkLateReturn() {
 
 
 public void checkPenalty() {
-    PreparedStatement stmtFrozenUsers, stmtFaultDate, stmtUnfreeze, stmtCheckLateBorrows;
+    PreparedStatement stmtFrozenUsers, stmtFaultDate, stmtUnfreeze, stmtCheckLateBorrows, stmtUpdateFaultDate;
     ResultSet rsFrozenUsers, rsFaultDate, rsLateBorrows;
 
     try {
@@ -754,7 +752,7 @@ public void checkPenalty() {
             stmtFaultDate.setString(1, userID);
             rsFaultDate = stmtFaultDate.executeQuery();
 
-            if (rsFaultDate.next()) {
+            if (rsFaultDate.next() && rsFaultDate.getDate("latestFaultDate") != null) {
                 LocalDate latestFaultDate = rsFaultDate.getDate("latestFaultDate").toLocalDate();
                 LocalDate currentDate = LocalDate.now();
 
@@ -768,20 +766,40 @@ public void checkPenalty() {
                     stmtCheckLateBorrows.setString(1, userID);
                     rsLateBorrows = stmtCheckLateBorrows.executeQuery();
 
-                    if (rsLateBorrows.next() && rsLateBorrows.getInt("lateCount") == 0) {
-                        // No overdue books, unfreeze the user
-                        String queryUnfreeze = "UPDATE users SET status = 'Active' WHERE userID = ?";
-                        stmtUnfreeze = conn.prepareStatement(queryUnfreeze);
-                        stmtUnfreeze.setString(1, userID);
-                        stmtUnfreeze.executeUpdate();
+                    if (rsLateBorrows.next()) {
+                        int lateCount = rsLateBorrows.getInt("lateCount");
 
-                        System.out.println("User " + userID + " has been unfrozen after serving their penalty.");
-                    } else {
-                        System.out.println("User " + userID + " is still frozen due to overdue books.");
+                        if (lateCount == 0) {
+                            // No overdue books, unfreeze the user
+                            String queryUnfreeze = "UPDATE users SET status = 'Active' WHERE userID = ?";
+                            stmtUnfreeze = conn.prepareStatement(queryUnfreeze);
+                            stmtUnfreeze.setString(1, userID);
+                            stmtUnfreeze.executeUpdate();
+
+                            // Update the fault description to 'Resolved' for the latest fault
+                            String queryUpdateFaultDesc = "UPDATE faultshistory SET faultDesc = 'Resolved' WHERE userID = ? AND Date = ?";
+                            stmtUpdateFaultDate = conn.prepareStatement(queryUpdateFaultDesc);
+                            stmtUpdateFaultDate.setString(1, userID);
+                            stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
+                            stmtUpdateFaultDate.executeUpdate();
+
+                            System.out.println("User " + userID + " has been unfrozen after serving their penalty.");
+                        } else {
+                            // User still has overdue books; extend the penalty period
+                            String queryExtendPenalty = "UPDATE faultshistory SET Date = NOW() WHERE userID = ? AND Date = ?";
+                            stmtUpdateFaultDate = conn.prepareStatement(queryExtendPenalty);
+                            stmtUpdateFaultDate.setString(1, userID);
+                            stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
+                            stmtUpdateFaultDate.executeUpdate();
+
+                            System.out.println("Penalty period extended for user " + userID + " due to overdue books.");
+                        }
                     }
                 } else {
                     System.out.println("User " + userID + " is still within the penalty period.");
                 }
+            } else {
+                System.out.println("No fault history found for user: " + userID);
             }
         }
     } catch (SQLException e) {
@@ -1557,7 +1575,7 @@ public void checkPenalty() {
 			while (rs.next()) {
 				tmpFaultsHistory = new FaultsHistory();
 				tmpFaultsHistory.setUserID(rs.getString(1));
-				tmpFaultsHistory.setFaultDesc(enums.FaultDesc.valueOf(rs.getString(2)));
+				tmpFaultsHistory.setFaultDesc(rs.getString(2));
 				tmpFaultsHistory.setFaultDate(rs.getDate(3));
 				msg.addToCommPipe(tmpFaultsHistory);
 			}
@@ -2453,7 +2471,7 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 			String query = "INSERT INTO faultshistory VALUES (?,?,NOW())";
 			stmt = conn.prepareStatement(query);
 			stmt.setString(1, faultHistory.getUserID());
-			stmt.setString(2, faultHistory.getFault().name());
+			stmt.setString(2, faultHistory.getFault());
 			stmt.executeUpdate();
 			msg.clearCommPipe();
 			msg.addToCommPipe(true);

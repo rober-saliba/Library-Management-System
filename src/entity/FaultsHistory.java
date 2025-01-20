@@ -11,7 +11,7 @@ public class FaultsHistory implements Serializable{
 	 * 
 	 */
 	private String userID;
-	private enums.FaultDesc fault;
+	private String fault;
 	private java.sql.Date faultDate;
 	/**
 	 * empty constructor
@@ -22,7 +22,7 @@ public class FaultsHistory implements Serializable{
 	 * @param userID
 	 * @param fault
 	 */
-	public FaultsHistory(String userID,enums.FaultDesc fault) {
+	public FaultsHistory(String userID,String fault) {
 		
 		this.userID=userID;
 		this.fault=fault;
@@ -45,15 +45,15 @@ public class FaultsHistory implements Serializable{
 	 * 
 	 * @return
 	 */
-	public enums.FaultDesc getFault() {
+	public String getFault() {
 		return fault;
 	}
 	/**
 	 * 
-	 * @param fault
+	 * @param faultDesc
 	 */
-	public void setFaultDesc(enums.FaultDesc fault) {
-		this.fault = fault;
+	public void setFaultDesc(String faultDesc) {
+		this.fault = faultDesc;
 	}
 	/**
 	 * 

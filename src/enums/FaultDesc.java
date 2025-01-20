@@ -3,8 +3,7 @@ package enums;
 public enum FaultDesc {
 
 	LateReturn,
-	Lost,
-	Active,
-	Locked,
+	Not_Resolved,
+	Resolved,
 	Frozen
 }

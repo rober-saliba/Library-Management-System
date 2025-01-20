@@ -113,7 +113,7 @@ public class CreateMemberController {
 			faultsHistoryController = FaultsHistoryController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);
 			try {
 				if(librarianController.addNewUser(newUser)) {
-					isOk = faultsHistoryController.addFault(enums.FaultDesc.Active, userIDTF.getText());
+					isOk = faultsHistoryController.addFault("Resolved", userIDTF.getText());
 					((Stage) createBtn.getScene().getWindow()).close();
 					Alert alert = new Alert(AlertType.INFORMATION);
 					//alert.initOwner(verifyBtn.getScene().getWindow());
