@@ -147,7 +147,7 @@ public class BookController implements IClient{
 	}
 	/**
 	 * sends a request to the server to delete an existing book.
-	 * @param newReservePermission - the catalog number of the book to delete
+	 * @param catalognumber - the catalog number of the book to delete
 	 * @return true if deletion succeeded, false otherwise.
 	 */
 	public boolean removeBook(String catalognumber) {
@@ -202,7 +202,6 @@ public class BookController implements IClient{
 	 * @param catalogNumber - the catalog number of the book to reserve
 	 * @param userID - the user ID of the reserver.
 	 * @return -1 for SQL Exception, 0 for success, 1 for duplicate reservation (i.e. already reserved),
-	 * 2 couldn't add the tuple, 3 no sufficient permissions.
 	 */
 	public int addReserve(String catalogNumber,String userID) {
 		MsgParser<String> mp = new MsgParser<>();

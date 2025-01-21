@@ -21,7 +21,6 @@ import javafx.stage.Stage;
  * {@inheritDoc}
  * This class is responsible for controlling the librarian page GUI.
  * It opens different windows responsible for different operation the librarian can do.
- * All GUI elements are {@code protected} because {@link boundary.ManagerPageController} inherits them.
  */
 public class LibrarianPageController extends UserPageController {
 	/**

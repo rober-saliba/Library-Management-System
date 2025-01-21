@@ -89,12 +89,8 @@ public class TableQueries {
 			+ "  `fileName` blob NOT NULL,\r\n" + "  `startDate` date NOT NULL,\r\n" + "  `endDate` date NOT NULL,\r\n"
 			+ "  PRIMARY KEY (`startDate`,`endDate`)\r\n"
 			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";
-	private static final String permissionsQuery = "CREATE TABLE `permissions` (\r\n"
-			+ "  `userID` varchar(10) NOT NULL,\r\n" + "  `permission` enum('CanReserve','CanBorrow') NOT NULL,\r\n"
-			+ "  PRIMARY KEY (`userID`,`permission`),\r\n"
-			+ "  CONSTRAINT `userPermissionID` FOREIGN KEY (`userID`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE\r\n"
-			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";
+
 	public static final String[] orderOfBuild = { usersQuery, librariansQuery, managersQuery, booksQuery,
 			bookcopiesQuery, categoriesQuery, borrowsQuery, reservationsQuery, faultHistoryQuery, manualDelaysQuery,
-			messagesQuery, periodicalReportsQuery, permissionsQuery };
+			messagesQuery, periodicalReportsQuery};
 }

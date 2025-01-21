@@ -7,8 +7,8 @@ import java.util.concurrent.Semaphore;
 import entity.ConstantsAndGlobalVars;
 import entity.IClient;
 import entity.MsgParser;
-import entity.Permissions;
 import entity.User;
+import enums.UserStatus;
 /**
  * This class controls the functionality of the {@link entity.Librarian} entity.
  * {@code implements} {@link entity.IClient} as it needs to receive responses from the server.
@@ -40,10 +40,7 @@ public class LibrarianController implements IClient{
 	 * stores a return results from the server.
 	 */
 	private User resultUser = null;
-	/**
-	 * stores a return results from the server.
-	 */
-	private Permissions permissions = null;
+
 	/**
 	 * a private constructor that connects the client to the server and initializes some instance variables
 	 * including the semaphore which is initialized to 0.
@@ -155,21 +152,20 @@ public class LibrarianController implements IClient{
 		return retVal;
 	}
 	/**
-	 * sends a request to the server to get all permissions for the user.
+	 * sends a request to the server to get user status
 	 * @param userID - the ID of the user.
-	 * @return an object containing the permissions of the user.
+	 * @return an object containing the status of the user.
 	 * @throws InterruptedException - thrown should acquiring the semaphore encounter any problems.
 	 */
-	public Permissions getMemberPermissions(String userID) throws InterruptedException {
-		MsgParser<Permissions> msg = new MsgParser<>();
-		Permissions pr = new Permissions(userID, false, false);
-		msg.setTask(ConstantsAndGlobalVars.getMemberPermissionsTask);
-		msg.addToCommPipe(pr);
-		
-		client.sendMessageToServer(msg);
-		sem.acquire();
-		
-		return permissions;
+	public UserStatus getUserStatus(String userID) throws InterruptedException {
+	    MsgParser<String> msg = new MsgParser<>();
+	    msg.setTask(ConstantsAndGlobalVars.getUserStatusTask); // Task updated to fetch user status
+	    msg.addToCommPipe(userID);
+
+	    client.sendMessageToServer(msg);
+	    sem.acquire();
+
+	    return UserStatus.valueOf((String) msg.getCommPipe().get(0)); // Parse status from response
 	}
 
 	/**
@@ -191,50 +187,7 @@ public class LibrarianController implements IClient{
 		
 		return retVal;
 	}
-	/**
-	 * sends a request to the server to change the borrow permission of a user.
-	 * @param userID - the ID of the user
-	 * @param newBorrowPermission - the new permission (yes or no).
-	 * @return true if changes applied, false otherwise.
-	 * @throws InterruptedException - thrown should acquiring the semaphore encounter any problems.
-	 */
-	public boolean changeBorrowPermission(String userID, String newBorrowPermission) throws InterruptedException {
-		MsgParser<Permissions> msg = new MsgParser<>();
-		Permissions per = new Permissions(userID);
-		
-		if(newBorrowPermission.equals("NO")) per.setCanBorrow(false);
-		else per.setCanBorrow(true);
-		
-		msg.setTask(ConstantsAndGlobalVars.changeBorrowPermissionTask);
-		msg.addToCommPipe(per);
-		
-		client.sendMessageToServer(msg);
-		sem.acquire();
-		
-		return retVal;
-	}
-	/**
-	 * sends a request to the server to change the reserve permission of a user.
-	 * @param userID - the ID of the user
-	 * @param newReservePermission - the new permission (yes or no).
-	 * @return true if changes applied, false otherwise.
-	 * @throws InterruptedException - thrown should acquiring the semaphore encounter any problems.
-	 */
-	public boolean changeReservePermission(String userID, String newReservePermission) throws InterruptedException {
-		MsgParser<Permissions> msg = new MsgParser<>();
-		Permissions per = new Permissions(userID);
-		
-		if(newReservePermission.equals("NO")) per.setCanReserve(false);
-		else per.setCanReserve(true);
-		
-		msg.setTask(ConstantsAndGlobalVars.changeReservePermissionTask);
-		msg.addToCommPipe(per);
-		
-		client.sendMessageToServer(msg);
-		sem.acquire();
-		
-		return retVal;
-	}
+
 
 
 
@@ -265,9 +218,6 @@ public class LibrarianController implements IClient{
 			retVal = ((boolean)msg.getCommPipe().get(0));
 		}
 		
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getMemberPermissionsTask)) {
-			permissions = (Permissions)msg.getCommPipe().get(0);
-		}
 		
 		
 		sem.release();

@@ -34,7 +34,6 @@ import entity.Message;
 import entity.ManualDelays;
 import entity.MsgParser;
 import entity.MyFile;
-import entity.Permissions;
 import entity.Report;
 import entity.History;
 import entity.Reservations;
@@ -79,7 +78,6 @@ import entity.User;
 import enums.Result;
 import enums.ExistStatus;
 import enums.LogInStatus;
-import enums.UserPermissions;
 import control.EmailController;
 /**
  * The class responsible for connection and executing queries and updates to the schema.
@@ -295,6 +293,30 @@ public boolean connectToDB(String username, String password, String host, String
 		return msg;
 
 	}
+	
+	
+	public MsgParser getUserStatus(MsgParser msg) {
+	    String userID = (String) msg.getCommPipe().get(0); // Extract the userID from the message
+	    String query = "SELECT status FROM users WHERE userID = ?";
+	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+	        stmt.setString(1, userID);
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            String status = rs.getString("status");
+	            msg.clearCommPipe();
+	            msg.addToCommPipe(status); // Add the retrieved status to the message
+	        } else {
+	            msg.clearCommPipe();
+	            msg.addToCommPipe("User not found"); // Handle case where userID does not exist
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return msg;
+	}
+
+	
+	
 
 	/**
 	 * gets the messages for a librarian or a manager.
@@ -1032,21 +1054,6 @@ public void checkPenalty() {
 					mp.addToCommPipe(false);
 					return mp;
 				}
-				String addPermissionQuery = "INSERT INTO permissions VALUES (?,'CanReserve')";
-				stmt = conn.prepareStatement(addPermissionQuery);
-				stmt.setString(1, newUser.getUserID());
-				if (stmt.executeUpdate() == 0) {
-					mp.addToCommPipe(false);
-					return mp;
-				}
-				addPermissionQuery = "INSERT INTO permissions VALUES (?,'CanBorrow')";
-				stmt = conn.prepareStatement(addPermissionQuery);
-				stmt.setString(1, newUser.getUserID());
-				if (stmt.executeUpdate() == 0) {
-					mp.addToCommPipe(false);
-					return mp;
-				}
-				mp.addToCommPipe(true);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1205,67 +1212,51 @@ public void checkPenalty() {
 	}
 
 	/**
-	 * gets a user with all the permissions.<br></br>
 	 * @see control.DBController#searchForUser(MsgParser)
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-	public MsgParser checkUser(MsgParser msg) {
-		PreparedStatement stmt;
-		User tmpUser = null;
-		String username = ((User) msg.getCommPipe().get(0)).getUserID();
-		try {
-			String getUserQuery = "SELECT * " + "FROM users U " + "WHERE U.userID = ?";
-			stmt = conn.prepareStatement(getUserQuery);
-			stmt.setString(1, username);
-			ResultSet rs = stmt.executeQuery();
-			// get the matching tuple, if there's any
-			msg.clearCommPipe();
-			if (rs.next()) {
-				tmpUser = new User();
-				tmpUser.setUserID(rs.getString(1));
-				tmpUser.setFirstName(rs.getString(2));
-				tmpUser.setLastName(rs.getString(3));
-				tmpUser.setPhoneNumber(rs.getString(4));
-				tmpUser.setMembershipNumber(rs.getString(5));
-				tmpUser.setPassword(rs.getString(6));
-				tmpUser.setStrikes(rs.getInt(7));
-				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(8)));
-				tmpUser.setEmail(rs.getString(9));
-				msg.addToCommPipe(tmpUser);
-			} else {
-				msg.addToCommPipe(tmpUser);
-				msg.setIsExist(ExistStatus.NotExist);
-				return msg;
-			}
+public MsgParser checkUser(MsgParser msg) {
+    PreparedStatement stmt;
+    User tmpUser = null;
+    String username = ((User) msg.getCommPipe().get(0)).getUserID();
+    try {
+        // Query to fetch user details
+        String getUserQuery = "SELECT userID, firstName, lastName, phoneNumber, membershipNumber, password, strikes, status, email " +
+                              "FROM users WHERE userID = ?";
+        stmt = conn.prepareStatement(getUserQuery);
+        stmt.setString(1, username);
+        ResultSet rs = stmt.executeQuery();
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-			msg.addToCommPipe(tmpUser);
-			return msg;
-		}
-		msg.setIsExist(ExistStatus.Exist);
-		try {
-			String canBorrowQuery = "SELECT * " + "FROM permissions P "
-					+ "WHERE P.userID = ? AND P.permission = 'CanBorrow'";
-			stmt = conn.prepareStatement(canBorrowQuery);
-			stmt.setString(1, username);
-			ResultSet rs1 = stmt.executeQuery();
-			if (rs1.next()) {
-				msg.setPer(enums.UserPermissions.valueOf(rs1.getString(2)));
-			} else {
+        // Clear previous data in MsgParser
+        msg.clearCommPipe();
 
-				return msg;
-			}
+        // If a user is found, populate the User object
+        if (rs.next()) {
+            tmpUser = new User();
+            tmpUser.setUserID(rs.getString("userID"));
+            tmpUser.setFirstName(rs.getString("firstName"));
+            tmpUser.setLastName(rs.getString("lastName"));
+            tmpUser.setPhoneNumber(rs.getString("phoneNumber"));
+            tmpUser.setMembershipNumber(rs.getString("membershipNumber"));
+            tmpUser.setPassword(rs.getString("password"));
+            tmpUser.setStrikes(rs.getInt("strikes"));
+            tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString("status"))); // Convert status to enum
+            tmpUser.setEmail(rs.getString("email"));
+            msg.addToCommPipe(tmpUser); // Add the User object to the MsgParser
+            msg.setIsExist(ExistStatus.Exist); // Mark user as existing
+        } else {
+            msg.addToCommPipe(null); // No user found
+            msg.setIsExist(ExistStatus.NotExist); // Mark user as not existing
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        msg.addToCommPipe(null); // Handle exception gracefully
+        msg.setIsExist(ExistStatus.NotExist);
+    }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-
-		}
-
-		return msg;
-
-	}
+    return msg; // Return the MsgParser
+}
 
 	public MsgParser checkCopy(MsgParser msg) {
 		PreparedStatement stmt;
@@ -1441,10 +1432,8 @@ public void checkPenalty() {
 			stmt.setString(1, catalogNumber);
 			System.out.println(b);
 			rs = stmt.executeQuery();
-			System.out.println("rani");
 			if (rs.next()) {
 				b = new Book();
-				System.out.println("la bseder");
 				b.setCatalogNumber(rs.getString(1));
 				b.setTitle(rs.getString(2));
 				b.setAuthorName(rs.getString(3));
@@ -1786,32 +1775,6 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
     return msg;
 }
 
-	/**
-	 * gets the permissions of a member.
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getMemberPermissions(MsgParser msg) {
-		PreparedStatement stmt;
-		String userID = ((Permissions) msg.getCommPipe().get(0)).getUserID();
-		try {
-			String getMemberPermissionsQuery = "SELECT * FROM permissions P WHERE P.userID = ? ";
-			stmt = conn.prepareStatement(getMemberPermissionsQuery);
-			stmt.setString(1, userID);
-			ResultSet rs = stmt.executeQuery();
-			// get the matching tuples, if there's any
-			// msg.clearCommPipe();
-			while (rs.next()) {
-				if (enums.UserPermissions.valueOf(rs.getString(2)) == enums.UserPermissions.CanBorrow)
-					((Permissions) msg.getCommPipe().get(0)).setCanBorrow(true);
-				if (enums.UserPermissions.valueOf(rs.getString(2)) == enums.UserPermissions.CanReserve)
-					((Permissions) msg.getCommPipe().get(0)).setCanReserve(true);
-			}
-		} catch (SQLException e) {
-			msg.addToCommPipe(false);
-		}
-		return msg;
-	}
 
 	/**
 	 * checks the status of a member
@@ -1840,42 +1803,6 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 		return msg;
 	}
 
-	/**
-	 * changes the status of the borrow permission (true to false and vice versa).
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser changeBorrowPermission(MsgParser msg) {
-		PreparedStatement stmt;
-		String userID = ((Permissions) msg.getCommPipe().get(0)).getUserID();
-		boolean canBorrow = ((Permissions) msg.getCommPipe().get(0)).isCanBorrow();
-		msg.clearCommPipe();
-		try {
-			if (canBorrow) {
-				String addQuery = "INSERT INTO permissions VALUES (?,'CanBorrow')";
-				stmt = conn.prepareStatement(addQuery);
-				stmt.setString(1, userID);
-				int rs = stmt.executeUpdate();
-				if (rs == 0)
-					msg.addToCommPipe(false);
-				else
-					msg.addToCommPipe(true);
-			} else {
-				String deleteQuery = "DELETE FROM permissions WHERE userID = ? and permission = 'CanBorrow'";
-				stmt = conn.prepareStatement(deleteQuery);
-				stmt.setString(1, userID);
-				int rs = stmt.executeUpdate();
-				if (rs == 0)
-					msg.addToCommPipe(false);
-				else
-					msg.addToCommPipe(true);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			msg.addToCommPipe(false);
-		}
-		return msg;
-	}
 
 	/**
 	 * gets all existing categories in the DB.
@@ -1898,41 +1825,7 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 		return msg;
 	}
 
-	/**
-	 * changes the status of the reserve permission (true to false and vice versa).
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser changeReservePermission(MsgParser msg) {
-		PreparedStatement stmt;
-		String userID = ((Permissions) msg.getCommPipe().get(0)).getUserID();
-		boolean canReserve = ((Permissions) msg.getCommPipe().get(0)).isCanReserve();
-		msg.clearCommPipe();
-		try {
-			if (canReserve) {
-				String addQuery = "INSERT INTO permissions VALUES (?,'CanReserve')";
-				stmt = conn.prepareStatement(addQuery);
-				stmt.setString(1, userID);
-				int rs = stmt.executeUpdate();
-				if (rs == 0)
-					msg.addToCommPipe(false);
-				else
-					msg.addToCommPipe(true);
-			} else {
-				String deleteQuery = "DELETE FROM permissions WHERE userID = ? and permission = 'CanReserve'";
-				stmt = conn.prepareStatement(deleteQuery);
-				stmt.setString(1, userID);
-				int rs = stmt.executeUpdate();
-				if (rs == 0)
-					msg.addToCommPipe(false);
-				else
-					msg.addToCommPipe(true);
-			}
-		} catch (SQLException e) {
-			msg.addToCommPipe(false);
-		}
-		return msg;
-	}
+
 
 	/**
 	 * gets number of available book copies.
@@ -1995,72 +1888,82 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-	public MsgParser addReserve(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		String userID = (String) msg.getCommPipe().get(0);
-		String catalogNumber = (String) msg.getCommPipe().get(1);
-		String barcode = "";
-		msg.clearCommPipe();
-		String getBarcodeQuery = "SELECT BC.barcode "
-			    + "FROM bookcopies BC "
-			    + "JOIN borrows B ON BC.barcode = B.barcode "
-			    + "WHERE BC.catalognumber = ? "
-			    + "AND (B.status = 'Active' OR B.status = 'LateNotReturned') "
-			    + "AND BC.barcode NOT IN (SELECT R.barcode "
-			    + "FROM reservations R "
-			    + "JOIN bookcopies BC1 ON R.barcode = BC1.barcode "
-			    + "WHERE R.reservestatus = 'Pending' AND BC1.catalogNumber = BC.catalogNumber) "
-			    + "ORDER BY B.ReturnDate ASC";
+public MsgParser addReserve(MsgParser msg) {
+    PreparedStatement stmt;
+    ResultSet rs;
+    String userID = (String) msg.getCommPipe().get(0);
+    String catalogNumber = (String) msg.getCommPipe().get(1);
+    String barcode = "";
+    msg.clearCommPipe();
 
-		try {
-			stmt = conn.prepareStatement(getBarcodeQuery);
-			stmt.setString(1, catalogNumber);
-			rs = stmt.executeQuery();
-			// there will always be a barCode to reserve, the situation in which the user
-			// cannot reserve has already been handled
-			if (rs.next())
-				barcode = rs.getString(1);
-			stmt.close();
-			String checkIfCanReserve = "SELECT R.userID,R.barcode " + "FROM reservations R, bookcopies BC "
-					+ "WHERE (R.userID = ? AND (BC.catalogNumber = ? AND R.barcode = BC.barcode)) AND ((R.userID,R.barcode) IN (SELECT R1.userID,R1.barcode "
-					+ "FROM reservations R1 "
-					+ "WHERE (R1.reservestatus = 'Pending' OR R1.reservestatus = 'twoDaysPending')))";
+    String getBarcodeQuery = "SELECT BC.barcode "
+            + "FROM bookcopies BC "
+            + "JOIN borrows B ON BC.barcode = B.barcode "
+            + "WHERE BC.catalognumber = ? "
+            + "AND (B.status = 'Active' OR B.status = 'LateNotReturned') "
+            + "AND BC.barcode NOT IN (SELECT R.barcode "
+            + "FROM reservations R "
+            + "JOIN bookcopies BC1 ON R.barcode = BC1.barcode "
+            + "WHERE R.reservestatus = 'Pending' AND BC1.catalogNumber = BC.catalogNumber) "
+            + "ORDER BY B.ReturnDate ASC";
 
-			stmt = conn.prepareStatement(checkIfCanReserve);
-			stmt.setString(1, userID);
-			stmt.setString(2, catalogNumber);
-			rs = stmt.executeQuery();
-			// stmt.close();
-			if (rs.next()) {
-				msg.addToCommPipe(1);// user already reserved the book
-			} else {
-				MsgParser<Permissions> mp = new MsgParser<>();
-				Permissions p = new Permissions(userID, false, false);
-				mp.addToCommPipe(p);
-				mp = this.getMemberPermissions(mp);
-				// check if user has CanReserve permission..
-				if (((Permissions) mp.getCommPipe().get(0)).isCanReserve()) {
-					String addReserveQuery = "INSERT INTO reservations VALUES(?,?,NOW(),'Pending')";
-					stmt = conn.prepareStatement(addReserveQuery);
-					stmt.setString(1, userID);
-					stmt.setString(2, barcode);
-					if (stmt.executeUpdate() > 0) {
-						msg.addToCommPipe(0);
-					} else {
-						msg.addToCommPipe(2);// couldn't insert the tuple into the table
-					}
-				} else {
-					msg.addToCommPipe(3);// user doesn't have reserve permission
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			msg.addToCommPipe(-1);
-		}
+    try {
+        stmt = conn.prepareStatement(getBarcodeQuery);
+        stmt.setString(1, catalogNumber);
+        rs = stmt.executeQuery();
+        // There will always be a barCode to reserve; the situation in which the user
+        // cannot reserve has already been handled
+        if (rs.next()) {
+            barcode = rs.getString(1);
+        }
+        stmt.close();
 
-		return msg;
-	}
+        String checkIfCanReserve = "SELECT R.userID,R.barcode "
+                + "FROM reservations R, bookcopies BC "
+                + "WHERE (R.userID = ? AND (BC.catalogNumber = ? AND R.barcode = BC.barcode)) AND ((R.userID,R.barcode) IN (SELECT R1.userID,R1.barcode "
+                + "FROM reservations R1 "
+                + "WHERE (R1.reservestatus = 'Pending' OR R1.reservestatus = 'twoDaysPending')))";
+
+        stmt = conn.prepareStatement(checkIfCanReserve);
+        stmt.setString(1, userID);
+        stmt.setString(2, catalogNumber);
+        rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            msg.addToCommPipe(1); // User already reserved the book
+        } else {
+            // NEW: Check the user's status to determine if they can reserve
+            String getUserStatusQuery = "SELECT status FROM users WHERE userID = ?";
+            stmt = conn.prepareStatement(getUserStatusQuery);
+            stmt.setString(1, userID);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String status = rs.getString("status");
+                if (status.equals("Active")) { // User can reserve
+                    String addReserveQuery = "INSERT INTO reservations VALUES(?,?,NOW(),'Pending')";
+                    stmt = conn.prepareStatement(addReserveQuery);
+                    stmt.setString(1, userID);
+                    stmt.setString(2, barcode);
+                    if (stmt.executeUpdate() > 0) {
+                        msg.addToCommPipe(0); // Successfully added reservation
+                    } else {
+                        msg.addToCommPipe(2); // Couldn't insert the tuple into the table
+                    }
+                } else { // User cannot reserve
+                    msg.addToCommPipe(3); // User's status does not allow reserving
+                }
+            } else {
+                msg.addToCommPipe(4); // User not found
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        msg.addToCommPipe(-1);
+    }
+
+    return msg;
+}
 
 	/**
 	 * checks if a reservation exists.

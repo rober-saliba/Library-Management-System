@@ -94,39 +94,23 @@ public class BookDetailsController {
 	 * @param book - the book to display
 	 * @return boolean - return value is not used here, it is used in the subclass.
 	 */
-public boolean loadBook(Book book) {
-    currentBook = book;
-
-    // Set book details in the labels
-    bookTitleLabel.setText(currentBook.getTitle());
-    catalogNumberLabel.setText(currentBook.getCatalogNumber());
-    authorNameLabel.setText(currentBook.getAuthorName());
-    publicationLabel.setText(currentBook.getPublication());
-    numberOfCopiesLabel.setText(Integer.toString(currentBook.getNumberOfCopies()));
-    locationOnShelfLabel.setText(currentBook.getLocationOnShelf());
-
-    // Handle BookType conversion to String
-    if (currentBook.getType() != null) {
-        typeLabel.setText(currentBook.getType().toString()); // Convert BookType to String
-    } else {
-        typeLabel.setText("Unknown type"); // Default value if type is null
-    }
-
-    // Fetch earliest return date if no copies are available
-    int availableCopies = bookCopyController.getNumberOfAvailableCopies(currentBook.getCatalogNumber());
-    if (availableCopies == 0) {
-        BookController bookController = BookController.getInstance(ConstantsAndGlobalVars.ipAddress,
-                ConstantsAndGlobalVars.DEFAULT_PORT);
-        String earliestReturnDate = bookController.getEarliestReturnDate(currentBook.getCatalogNumber());
-        if (earliestReturnDate != null) {
-            earliestReturnDateLabel.setText("Earliest return: " + earliestReturnDate);
-        } else {
-            earliestReturnDateLabel.setText("Return date unknown.");
-        }
-    } else {
-        earliestReturnDateLabel.setText(""); // Clear label if copies are available
-    }
-
-    return true;
-}
+	public boolean loadBook(Book book) {
+		currentBook = book;
+		bookTitleLabel.setText(currentBook.getTitle());
+		catalogNumberLabel.setText(currentBook.getCatalogNumber());
+		authorNameLabel.setText(currentBook.getAuthorName());
+		publicationLabel.setText(currentBook.getPublication());
+		numberOfCopiesLabel.setText(
+				Integer.toString(bookCopyController.getNumberOfAvailableCopies(currentBook.getCatalogNumber())));
+		locationOnShelfLabel.setText(currentBook.getLocationOnShelf());
+		typeLabel.setText(currentBook.getType().name());
+		descriptionTA.setText(currentBook.getDescription());
+		ArrayList<String> categoriesArrayList = this.currentBook.getCategories();
+		String text = "";
+		for (String string : categoriesArrayList) {
+			text = text + string + ",";
+		}
+		categoriesTA.setText(text);
+		return true;
+	}
 }

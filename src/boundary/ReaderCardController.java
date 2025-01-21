@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import control.FaultsHistoryController;
 import control.LibrarianController;
 import entity.ConstantsAndGlobalVars;
-import entity.Permissions;
 import entity.User;
+import enums.UserStatus;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,12 +34,10 @@ public class ReaderCardController {
 	 * member - the member being edited
 	 * currentUser - the currently logged user (librarian)
 	 * librarianController - an instance of LibrarianController to use when applying the changes done.
-	 * permissions - to view the permissions for the member.
 	 */
 	private User member;
 	private User currentUser;
 	private LibrarianController librarianController;
-	private Permissions permissions;
 	private FaultsHistoryController faultsHistoryController;
 
 
@@ -199,48 +197,40 @@ public class ReaderCardController {
      * @param member - the member to edit
      * @param user - the currently logged in member.
      */
-    public void loadUser(User member, User user) {
-    	this.member = member;
-    	this.currentUser = user;
-    	userIDTF.setText(member.getUserID());
-    	firstNameTF.setText(member.getFirstName());
-    	lastNameTF.setText(member.getLastName());
-    	phoneNumberTF.setText(member.getPhoneNumber());
-    	emailTF.setText(member.getEmail());
-    	passwordTF.setText(member.getPassword());
-    	membershipNumberTF.setText(member.getMembershipNumber());
+public void loadUser(User member, User user) {
+    this.member = member;
+    this.currentUser = user;
+    userIDTF.setText(member.getUserID());
+    firstNameTF.setText(member.getFirstName());
+    lastNameTF.setText(member.getLastName());
+    phoneNumberTF.setText(member.getPhoneNumber());
+    emailTF.setText(member.getEmail());
+    passwordTF.setText(member.getPassword());
+    membershipNumberTF.setText(member.getMembershipNumber());
 
-		
-		try {
-			permissions = librarianController.getMemberPermissions(member.getUserID());
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.initOwner(CancelBtn.getScene().getWindow());
-			alert.initModality(Modality.APPLICATION_MODAL);
-			alert.setTitle("Can't load permissions");
-			alert.setHeaderText(null);
-			alert.setContentText("Can't get the member permissions !!!");
-			alert.showAndWait();
-		}
-		
-
-		
-    	boolean isManager = false;
-		try {
-			isManager = librarianController.checkEmployeeType(currentUser);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.initOwner(CancelBtn.getScene().getWindow());
-			alert.initModality(Modality.APPLICATION_MODAL);
-			alert.setTitle("Can't edit details");
-			alert.setHeaderText(null);
-			alert.setContentText("Can't get user identity !!!");
-			alert.showAndWait();
-		}
-
+    UserStatus status = member.getStatus(); // Change the type to UserStatus
+    if (status == UserStatus.Active) {
+        System.out.println("User is Active and can borrow and reserve.");
+    } else if (status == UserStatus.Frozen) {
+        System.out.println("User is Frozen and cannot borrow or reserve.");
+    } else {
+        System.out.println("Unexpected status: " + status);
     }
+
+
+    boolean isManager = false;
+    try {
+        isManager = librarianController.checkEmployeeType(currentUser);
+    } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.initOwner(CancelBtn.getScene().getWindow());
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setTitle("Can't edit details");
+        alert.setHeaderText(null);
+        alert.setContentText("Can't get user identity !!!");
+        alert.showAndWait();
+    }
+}
 }

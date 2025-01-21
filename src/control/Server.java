@@ -382,38 +382,10 @@ public class Server extends AbstractServer {
 			}
 		}
 		
-		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.getMemberPermissionsTask)) {
-			try {
-				clientMsg = dbController.getMemberPermissions(clientMsg);
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		}
+
 		
 		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.changeMemberStatusTask)) {
 			clientMsg = dbController.changeMemberStatus(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.changeBorrowPermissionTask)) {
-			clientMsg = dbController.changeBorrowPermission(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.changeReservePermissionTask)) {
-			clientMsg = dbController.changeReservePermission(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
@@ -653,6 +625,14 @@ public class Server extends AbstractServer {
 		    }
 		}
 
+		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getUserStatusTask)) {
+		    try {
+		        clientMsg = dbController.getUserStatus(clientMsg); // Call to DBController
+		        client.sendToClient(clientMsg); // Send the result back to the client
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
+		}
 
 
 

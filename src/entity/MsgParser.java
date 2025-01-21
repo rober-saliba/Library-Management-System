@@ -16,7 +16,6 @@ public class MsgParser<E> implements Serializable {
 	 * task - the task the server will do.
 	 * returnResult - the return result of the log in task
 	 * isExist - 
-	 * per - stores the permissions of a user.
 	 * type - stores the book type
 	 * updatecopyresult - stores the result of the insertion update of into the table 'BookCopies' (success, failure)
 	 * numOfCopies - stores total number of copies for a book
@@ -35,7 +34,6 @@ public class MsgParser<E> implements Serializable {
 	//private boolean returnResult;
 	private enums.LogInStatus returnResult;
 	private enums.ExistStatus isExist;
-	private enums.UserPermissions per;
 	private enums.BookType type;
 	private enums.Result updateborrowresult;
 	private enums.UpdateCopyResult updatecopyresult;
@@ -138,20 +136,8 @@ public class MsgParser<E> implements Serializable {
 	public void setIsExist(enums.ExistStatus isExist) {
 		this.isExist = isExist;
 	}
-	/**
-	 * 
-	 * @return
-	 */
-	public enums.UserPermissions getPer() {
-		return per;
-	}
-	/**
-	 * 
-	 * @param per
-	 */
-	public void setPer(enums.UserPermissions per) {
-		this.per = per;
-	}
+
+
 	/**
 	 * 
 	 * @return

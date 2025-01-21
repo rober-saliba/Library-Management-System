@@ -38,9 +38,6 @@ public class ConstantsAndGlobalVars {
 	public final static String UpdateBorrowTableAfterDelayingTask= "updateBorrowtableafterdelaying";
 	public final static String UpdateDelayTableTask= "updatedelaytable";
 	public final static String getAllCategoriesTask = "getAllCategories";
-	public final static String getMemberPermissionsTask = "getMemberPermissions";
-	public final static String changeBorrowPermissionTask = "changeBorrowPermissin";
-	public final static String changeReservePermissionTask = "changeReservePermission";
 	public final static String changeMemberStatusTask = "changeMemberStatus";
 	public final static String getNumberOfAvailableCopies = "getAvailbleCopies";
 	public final static String getNumberOfReservesTask = "getNumberOfReserves";
@@ -64,6 +61,7 @@ public class ConstantsAndGlobalVars {
 	public final static String getDataForBorrowedReportTask = "getDataForBorrowedReport";
 	public final static String getDataForLateReturnedReportTask = "getDataForLateReturnedReport";
 	public static final String getEarliestReturnDateTask = "GetEarliestReturnDate";
+	public final static String getUserStatusTask = "getUserStatus";
 
 }
 
