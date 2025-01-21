@@ -128,11 +128,7 @@ public class MainPageController {
 
 			MsgParser Msg = userController.login(userName, password, tbl);
 			enums.LogInStatus loginResult=Msg.getReturnResult();
-			if(((User)Msg.getCommPipe().get(0)).getStatus()==enums.UserStatus.Locked) {
-				wrongInputLabel.setText("User is locked");
-				wrongInputLabel.setVisible(true);
-				return;
-			}
+
 			if (loginResult != enums.LogInStatus.Success) {
 				String error = "";
 				if (loginResult == enums.LogInStatus.isLoggedIn)

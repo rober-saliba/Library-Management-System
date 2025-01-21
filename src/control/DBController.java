@@ -154,11 +154,11 @@ public boolean connectToDB(String username, String password, String host, String
 				stmt.setString(1, username);
 				rs = stmt.executeQuery();
 			} else { // if(table.equals("managers"))
-				String loginQuery = "SELECT U.* " + "FROM users U,managers M "
-						+ "WHERE U.userID=M.managerID AND M.managerID = ?";
-				stmt = conn.prepareStatement(loginQuery);
-				stmt.setString(1, username);
-				rs = stmt.executeQuery();
+				//String loginQuery = "SELECT U.* " + "FROM users U,managers M "
+						//+ "WHERE U.userID=M.managerID AND M.managerID = ?";
+				//stmt = conn.prepareStatement(loginQuery);
+				//stmt.setString(1, username);
+				rs = null;
 				// get the matching tuple, if there's any
 			}
 			msg.setReturnResult(LogInStatus.Success);
@@ -185,10 +185,8 @@ public boolean connectToDB(String username, String password, String host, String
 				tmpUser.setStrikes(rs.getInt(7));
 				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(8)));
 				tmpUser.setEmail(rs.getString(9));
-				// System.out.println(tmpUser.getUserID());
-				if (tmpUser.getStatus() != enums.UserStatus.Locked) {
-					changeIsLoggedIn(username);
-				}
+				changeIsLoggedIn(username);
+
 				msg.clearCommPipe();
 				msg.addToCommPipe(tmpUser);
 			} else {
