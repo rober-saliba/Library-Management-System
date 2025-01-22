@@ -47,9 +47,6 @@ public class CreateMemberController {
 
 	@FXML
 	private TextField phoneNumberTF;
-
-	@FXML
-	private Button verifyBtn;
 	
 	
 	@FXML
@@ -116,7 +113,6 @@ public class CreateMemberController {
 					isOk = faultsHistoryController.addFault("Resolved", userIDTF.getText());
 					((Stage) createBtn.getScene().getWindow()).close();
 					Alert alert = new Alert(AlertType.INFORMATION);
-					//alert.initOwner(verifyBtn.getScene().getWindow());
 					alert.initModality(Modality.APPLICATION_MODAL);
 					alert.setTitle("Add user");
 					alert.setHeaderText(null);
@@ -124,7 +120,6 @@ public class CreateMemberController {
 					alert.showAndWait();
 				}else {
 					Alert alert = new Alert(AlertType.WARNING);
-					alert.initOwner(verifyBtn.getScene().getWindow());
 					alert.initModality(Modality.APPLICATION_MODAL);
 					alert.setTitle("Add user");
 					alert.setHeaderText(null);
@@ -284,17 +279,7 @@ public class CreateMemberController {
 			}
 		}
 	}
-	/**
-	 * shows a simulation of an email.
-	 */
-	private void showPopUpEmailWindow() {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.initOwner(verifyBtn.getScene().getWindow());
-		alert.initModality(Modality.APPLICATION_MODAL);
-		alert.setTitle("Verfication mail");
-		alert.setHeaderText(null);
-		alert.showAndWait();
-	}
+
 
 	
 	

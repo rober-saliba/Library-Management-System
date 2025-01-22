@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.itextpdf.text.log.SysoCounter;
 
 import control.BookController;
 import control.BookCopyController;
