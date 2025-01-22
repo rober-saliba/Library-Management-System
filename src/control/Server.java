@@ -478,65 +478,11 @@ public class Server extends AbstractServer {
 			}
 		}
 		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfAllMembersTask)) {
-			clientMsg = dbController.getNumOfAllMembers(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
 		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfActiveMembersTask)) {
-			clientMsg = dbController.getNumOfActiveMembers(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfFrozenMembersTask)) {
-			clientMsg = dbController.getNumOfFrozenMembers(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfLockedMembersTask)) {
-			clientMsg = dbController.getNumOfLockedMembers(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfBorrowedBooksTask)) {
-			clientMsg = dbController.getNumOfBorrowedBooks(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumOfLateReturnMembersTask)) {
-			clientMsg = dbController.getNumOfLateReturnMembers(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+
+
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.checkIfReservedTask)) {
 			clientMsg = dbController.checkIfReserved(clientMsg);
@@ -568,25 +514,8 @@ public class Server extends AbstractServer {
 			}
 		}
 		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.checkReportExistenceTask)) {
-			clientMsg = dbController.checkReportExistence(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.addReportToDBTask)) {
-			clientMsg = dbController.addReportToDB(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+
 		
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getDataForBorrowedReportTask)) {
 			clientMsg = dbController.getDataForBorrowedReport(clientMsg);

@@ -1,8 +1,11 @@
 package control;
 
+import java.io.File;
+
 import entity.ConstantsAndGlobalVars;
 import entity.MsgParser;
 import enums.UserStatus;
+
 
 public class ManualTest {
     public static void main(String[] args) {
@@ -21,11 +24,39 @@ public class ManualTest {
         boolean isConnected = dbController.connectToDB(username, password, host, dbName);
 
         if (isConnected) {
-            System.out.println("Connected to the database successfully.");
-            dbController.checkLateReturn();
+          // dbController.checkLateReturn();
             // Test the getUserStatusTask
             try {
-                testGetUserStatus(dbController);
+                
+            	
+                // Simulated user data for testing
+                //int[] testUserCounts = {754, 675}; // Active = 150, Frozen = 50
+
+                ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
+                // Generate the chart
+                //File chartFile = generator.createChart(testUserCounts);
+
+                //if (chartFile != null && chartFile.exists()) {
+                  //  System.out.println("Chart generated successfully: " + chartFile.getAbsolutePath());
+                //} else {
+                  //  System.out.println("Failed to generate chart.");
+                //}
+            	
+            	
+            	generator.generateReport();
+            	
+            	
+            	
+            	
+            	//testGetUserStatus(dbController);
+            	
+            	
+                /*ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
+                int[] counts = generator.fetchData();
+                System.out.println("Active Users: " + counts[0]);
+                System.out.println("Frozen Users: " + counts[1]);*/
+            	
+            	
             } catch (Exception e) {
                 e.printStackTrace();
             }

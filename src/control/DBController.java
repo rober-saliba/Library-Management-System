@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import entity.ActivityReport;
 import entity.Book;
 import entity.Borrows;
 import entity.ConstantsAndGlobalVars;
@@ -34,7 +34,6 @@ import entity.Message;
 import entity.ManualDelays;
 import entity.MsgParser;
 import entity.MyFile;
-import entity.Report;
 import entity.History;
 import entity.Reservations;
 import entity.StatData;
@@ -2146,164 +2145,9 @@ public MsgParser addReserve(MsgParser msg) {
 		return msg;
 	}
 
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfAllMembers(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(DISTINCT F.userID) FROM faultshistory F WHERE (F.Date >= ? AND F.Date < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		return msg;
-	}
 
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfActiveMembers(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(DISTINCT F.userID) FROM faultshistory F WHERE (F.faultDesc= 'Active' AND F.Date >= ? AND F.Date < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		return msg;
-	}
-
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfFrozenMembers(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(DISTINCT F.userID) FROM faultshistory F WHERE (F.faultDesc= 'Frozen' AND F.Date >= ? AND F.Date < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return msg;
-	}
-
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfLockedMembers(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(DISTINCT F.userID) FROM faultshistory F WHERE (F.faultDesc= 'Locked' AND F.Date >= ? AND F.Date < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return msg;
-	}
-
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfBorrowedBooks(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(*) FROM borrows B WHERE ((B.status='Active' OR B.status='LateNotReturned') AND B.borrowDate >= ? AND B.borrowDate < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return msg;
-	}
-	/**
-	 * gets data for the the activity report
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getNumOfLateReturnMembers(MsgParser msg) {
-		PreparedStatement stmt;
-		ResultSet rs;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		try {
-			String str = "SELECT COUNT(*) FROM borrows B WHERE ((B.status='LateNotReturned' OR B.status = 'LateReturned') AND B.returnDate >= ? AND B.returnDate < ?)";
-			stmt = conn.prepareStatement(str);
-			stmt.setDate(1, ar.getFromDate());
-			stmt.setDate(2, ar.getToDate());
-			rs = stmt.executeQuery();
-			if (rs.next())
-				msg.setIntResult(rs.getInt(1));
-			else
-				msg.setIntResult(0);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return msg;
-	}
 	/**
 	 * check if the user already reserved the book.
 	 * @param msg the parameters
@@ -2386,70 +2230,7 @@ public MsgParser addReserve(MsgParser msg) {
 		return msg;
 	}
 
-	/**
-	 * check if an activity exists and fetches it.
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser checkReportExistence(MsgParser msg) {
-		PreparedStatement stmt;
-		String reportName = ((ActivityReport) msg.getCommPipe().get(0)).getName();
-		msg.clearCommPipe();
-		try {
-			String query = "SELECT AR.reportFile FROM activityreports AR WHERE AR.reportName = ?";
-			stmt = conn.prepareStatement(query);
-			stmt.setString(1, reportName);
-			ResultSet rs = stmt.executeQuery();
-			if (rs.next()) {
-				MyFile reportFile = new MyFile(reportName + ".pdf");
-				Blob blob = rs.getBlob(1);
-				if (blob == null)
-					reportFile = null;
-				else {
-					int blobLength = (int) blob.length();
-					reportFile.initArray(blobLength);
-					byte[] arr = blob.getBytes(1, blobLength);
-					reportFile.setMybytearray(arr);
-					reportFile.setSize(blobLength);
-					blob.free();
-					msg.addToCommPipe(reportFile);
-				}
-			} else
-				msg.addToCommPipe(null);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			msg.addToCommPipe(null);
-		}
-		return msg;
-	}
 
-	/**
-	 * adds an activity report to the DB
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser addReportToDB(MsgParser msg) {
-		PreparedStatement stmt;
-		ActivityReport ar = (ActivityReport) msg.getCommPipe().get(0);
-		InputStream is = new ByteArrayInputStream((ar.getFile()).getMybytearray());
-		try {
-			String query = "INSERT INTO activityreports VALUES (?,?,?,?)";
-			stmt = conn.prepareStatement(query);
-			stmt.setString(1, ar.getName());
-			stmt.setDate(2, ar.getFromDate());
-			stmt.setDate(3, ar.getToDate());
-			stmt.setBlob(4, is);
-			stmt.executeUpdate();
-			msg.clearCommPipe();
-			msg.addToCommPipe(true);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			msg.addToCommPipe(false);
-		}
-		return msg;
-	}
 
 	/**
 	 * check if the specific user has an active borrow
@@ -2664,6 +2445,55 @@ public String getEarliestReturnDate(String catalogNumber) {
     }
 
     return earliestReturnDate;
+}
+
+
+
+public static int[] getUserCountsByStatus() {
+    int[] userCounts = new int[2]; // [active, frozen]
+    String query = "SELECT status, COUNT(*) AS count FROM users GROUP BY status";
+
+    try (PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            String status = rs.getString("status");
+            int count = rs.getInt("count");
+
+            switch (status) {
+                case "Active":
+                    userCounts[0] = count;
+                    break;
+                case "Frozen":
+                    userCounts[1] = count;
+                    break;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return userCounts;
+}
+
+public static List<String> getLibrarianEmails() {
+    List<String> emailList = new ArrayList<>();
+    String query = "SELECT u.email " +
+                   "FROM librarians l " +
+                   "JOIN users u ON l.librarianID = u.userID " +
+                   "WHERE u.email IS NOT NULL";
+
+    try (PreparedStatement stmt = conn.prepareStatement(query);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            emailList.add(rs.getString("email"));
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return emailList;
 }
 
 
