@@ -1,6 +1,7 @@
 package control;
 
 import java.io.File;
+import java.util.List;
 
 import entity.ConstantsAndGlobalVars;
 import entity.MsgParser;
@@ -22,6 +23,7 @@ public class ManualTest {
 
         // Connect to the database
         boolean isConnected = dbController.connectToDB(username, password, host, dbName);
+        ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
 
         if (isConnected) {
           // dbController.checkLateReturn();
@@ -32,7 +34,6 @@ public class ManualTest {
                 // Simulated user data for testing
                 //int[] testUserCounts = {754, 675}; // Active = 150, Frozen = 50
 
-                ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
                 // Generate the chart
                 //File chartFile = generator.createChart(testUserCounts);
 
@@ -43,9 +44,37 @@ public class ManualTest {
                 //}
             	
             	
-            	generator.generateReport();
+            	//generator.generateReport();
             	
             	
+                
+                // Generate the Gantt chart
+               /* BorrowingReportGenerator generator2 = new BorrowingReportGenerator();
+                File chartFile = generator2.createGanttChart(borrowingDataList);
+
+                if (chartFile != null && chartFile.exists()) {
+                    System.out.println("Gantt chart generated successfully: " + chartFile.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to generate Gantt chart.");
+                }*/
+            	
+            	
+            	
+                BorrowingReportGenerator reportGenerator = new BorrowingReportGenerator();
+
+                // Specify the month and year for the report
+                int month = 1;  // January
+                int year = 2025;
+
+                // Generate the report
+                File chartFile = reportGenerator.generateBorrowingReportForMonth(month, year);
+
+                if (chartFile != null && chartFile.exists()) {
+                    System.out.println("Gantt chart generated successfully: " + chartFile.getAbsolutePath());
+                } else {
+                    System.out.println("Failed to generate Gantt chart.");
+                }
+                
             	
             	
             	//testGetUserStatus(dbController);

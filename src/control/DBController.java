@@ -2497,6 +2497,41 @@ public static List<String> getLibrarianEmails() {
 }
 
 
+public static List<BorrowingData> getBorrowingPeriods(int month, int year) {
+    List<BorrowingData> dataList = new ArrayList<>();
+    String query = "SELECT barcode, borrowDate, returnDate, actualReturnDate " +
+                   "FROM borrows " +
+                   "WHERE status != 'Active' " +
+                   "AND MONTH(borrowDate) = ? " +
+                   "AND YEAR(borrowDate) = ?";
+
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+
+        // Set the parameters for month and year
+        stmt.setInt(1, month);
+        stmt.setInt(2, year);
+
+        // Execute the query and process the result set
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                dataList.add(new BorrowingData(
+                    rs.getString("barcode"),
+                    rs.getTimestamp("borrowDate"),       // Use Timestamp for date/time precision
+                    rs.getTimestamp("returnDate"),
+                    rs.getTimestamp("actualReturnDate")
+                ));
+            }
+        }
+
+    } catch (SQLException e) {
+        // Log and handle the exception
+        System.err.println("Error fetching borrowing periods: " + e.getMessage());
+    }
+
+    return dataList;
+}
+
+
 
 
 }
