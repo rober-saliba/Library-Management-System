@@ -2,11 +2,15 @@
 package control;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -20,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.TextStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -2256,174 +2262,7 @@ public MsgParser addReserve(MsgParser msg) {
 
 	}
 
-	/**
-	 * get data for the borrow report.
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getDataForBorrowedReport(MsgParser msg) {
-		Statement stmt;
-		ResultSet rs;
-		int numOfBooks = 0;
-		int median = 0;
-		double avg = 0;
-		int maxRange = 0;
-		int sum = 0;
-		StatData sd = new StatData();
-		ArrayList<Integer> arr = new ArrayList();
-		try {
-			stmt = conn.createStatement();
-			String select = "SELECT DATEDIFF(BR.actualReturnDate, BR.borrowDate) ";
-			String select1 = "SELECT COUNT(DATEDIFF(BR.actualReturnDate, BR.borrowDate)) , MAX(DATEDIFF(BR.actualReturnDate, BR.borrowDate)) , SUM(DATEDIFF(BR.actualReturnDate, BR.borrowDate)), AVG(DATEDIFF(BR.actualReturnDate, BR.borrowDate)) ";
-			String from = "FROM borrows BR, bookcopies BC, books B ";
-			String where = "WHERE BR.barcode = BC.barcode AND (BR.status = 'Returned' OR BR.status = 'LateReturned') AND BC.catalogNumber = B.catalogNumber AND B.type = 'Wanted'";
-			String where1 = "WHERE BR.barcode = BC.barcode AND (BR.status = 'Returned' OR BR.status = 'LateReturned') AND BC.catalogNumber = B.catalogNumber AND B.type = 'Regular'";
-			rs = stmt.executeQuery(select + from + where);
-			while (rs.next())
-				arr.add(rs.getInt(1));
-			if (!arr.isEmpty()) {
-				Arrays.sort(arr.toArray());
-				median = arr.get(arr.size() / 2);
-				sd.setWantedArr(arr);
-			} else
-				sd.setWantedArr(null);
-			rs = stmt.executeQuery(select1 + from + where);
-			if (rs.next()) {
-				numOfBooks = rs.getInt(1);
-				maxRange = rs.getInt(2);
-				sum = rs.getInt(3);
-				avg = rs.getDouble(4);
-			}
 
-			sd.setNumOfWantedBooks(numOfBooks);
-			sd.setMaxRangeForWantedBooks(maxRange);
-			sd.setSumOfDaysForWantedBooks(sum);
-			sd.setAvgOfWantedBooks(avg);
-			sd.setMedianOfWantedBooks(median);
-			stmt.close();
-			arr.clear();
-			// get statistical data for regular books
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(select + from + where1);
-			while (rs.next())
-				arr.add(rs.getInt(1));
-			if (!arr.isEmpty()) {
-				Arrays.sort(arr.toArray());
-				median = arr.get(arr.size() / 2);
-				sd.setRegularArr(arr);
-			} else
-				sd.setRegularArr(null);
-
-			rs = stmt.executeQuery(select1 + from + where1);
-			if (rs.next()) {
-				numOfBooks = rs.getInt(1);
-				maxRange = rs.getInt(2);
-				sum = rs.getInt(3);
-				avg = rs.getDouble(4);
-			}
-
-			sd.setNumOfRegularBooks(numOfBooks);
-			sd.setMaxRangeForRegularBooks(maxRange);
-			sd.setSumOfDaysForRegularBooks(sum);
-			sd.setAvgOfRegularBooks(avg);
-			sd.setMedianOfRegularBooks(median);
-			stmt.close();
-
-			msg.addToCommPipe(sd);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			msg.addToCommPipe(null);
-		}
-		return msg;
-	}
-
-	/**
-	 * get data for the late returned report.
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getDataForLateReturnedReport(MsgParser msg) {
-		Statement stmt;
-		ResultSet rs,rs1;
-		int i2;
-		String select = "SELECT BC.catalognumber,B.title,DATEDIFF(BR.actualReturnDate,BR.returnDate) ";
-		String from = "FROM borrows BR, bookcopies BC,books B ";
-		String where = "WHERE BC.barcode = BR.barcode AND BR.status = 'LateReturned' AND BC.catalognumber = B.catalogNumber ";
-		String groupby = "GROUP BY BC.catalognumber,BC.barcode ORDER BY BC.catalogNumber ASC";
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(select + from + where + groupby);
-			ArrayList<StatDataForLateReturnedReport> arr = new ArrayList<>();
-			
-				
-				
-				
-			while (rs.next()) {
-				StatDataForLateReturnedReport s = new StatDataForLateReturnedReport();
-				ArrayList<Integer> durations = new ArrayList<>();
-				String bookTitle = rs.getString(2);
-				String previous = rs.getString(1);
-				String catalogNumber = previous;
-				String next;
-				rs1 = rs;
-				do {
-					next = rs1.getString(1);
-
-					if (previous.equals(next)) {
-						durations.add(rs.getInt(3));
-						if(rs1.next()) {
-							
-						}
-					}
-				} while (previous.equals(next));
-				if(rs1 != null)
-					rs = rs1;
-				
-				s.setDurations(durations);
-				s.setBookName(bookTitle);
-				s.setCatalogNumber(catalogNumber);
-				arr.add(s);
-				s = null;
-				durations = null;
-				if(rs1 == null || rs1.next() == false) break;
-			}
-			stmt.close();
-			select = "SELECT BC.catalogNumber,B.title,COUNT(DATEDIFF(BR.actualReturnDate,BR.returnDate)),SUM(DATEDIFF(BR.actualReturnDate,BR.returnDate)),MAX(DATEDIFF(BR.actualReturnDate,BR.returnDate)),AVG(DATEDIFF(BR.actualReturnDate,BR.returnDate)) ";
-			groupby = "GROUP BY BC.catalognumber ORDER BY BC.catalogNumber ASC";
-			int i = 0;
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(select + from + where + groupby);
-			while (rs.next()) {
-				int totalNumberOfDurations = rs.getInt(3);
-				int sumOfDurations = rs.getInt(4);
-				int maxDuration = rs.getInt(5);
-				double avgDuration = rs.getDouble(6);
-				arr.get(i).setTotalNumberOfDurations(totalNumberOfDurations);
-				arr.get(i).setSumOfDuration(sumOfDurations);
-				arr.get(i).setMaxDuration(maxDuration);
-				arr.get(i).setAvgDuration(avgDuration);
-				i++;
-				if (i >= arr.size())
-					break;
-			}
-			System.out.println(arr);
-			if (!arr.isEmpty())
-				for (StatDataForLateReturnedReport s : arr) {
-					System.out.println("1");
-					msg.addToCommPipe(s);
-				}
-			else
-				msg.addToCommPipe(null);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			msg.addToCommPipe(null);
-		}
-
-		return msg;
-	}
-	
 public String getEarliestReturnDate(String catalogNumber) {
     String earliestReturnDate = null;
     String query = "SELECT MIN(b.returnDate) AS earliestReturnDate " +
@@ -2495,6 +2334,142 @@ public static List<String> getLibrarianEmails() {
 }
 
 
+// Method to fetch borrowing period data
+public Map<String, Map<String, Integer>> fetchBorrowingPeriodData(int month, int year) {
+    // Define result maps
+    Map<String, Integer> onTimeReturns = new HashMap<>();
+    Map<String, Integer> lateReturns = new HashMap<>();
+
+    // Initialize ranges
+    String[] durationRanges = {"0-7 days", "8-14 days", "15-21 days", "22+ days"};
+    String[] lateRanges = {"1-7 days late", "8-14 days late", "15+ days late"};
+
+    for (String range : durationRanges) {
+        onTimeReturns.put(range, 0);
+    }
+
+    for (String range : lateRanges) {
+        lateReturns.put(range, 0);
+    }
+
+    // SQL query to fetch borrowing data
+    String query = "SELECT borrowDate, returnDate, actualReturnDate, status FROM borrows " +
+                   "WHERE MONTH(borrowDate) = ? AND YEAR(borrowDate) = ?";
+
+    try (PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, month);
+        stmt.setInt(2, year);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            LocalDate borrowDate = rs.getDate("borrowDate").toLocalDate();
+            LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+            java.sql.Date actualReturnDateSQL = rs.getDate("actualReturnDate");
+
+            // Skip rows where actualReturnDate is NULL
+            if (actualReturnDateSQL == null) {
+                continue;
+            }
+
+            // Convert java.sql.Date to java.time.LocalDate
+            LocalDate actualReturnDate = actualReturnDateSQL.toLocalDate();
+
+            long borrowingDuration = ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
+
+            if (!actualReturnDate.isAfter(returnDate)) { // On-time return
+                if (borrowingDuration <= 7) {
+                    onTimeReturns.put("0-7 days", onTimeReturns.get("0-7 days") + 1);
+                } else if (borrowingDuration <= 14) {
+                    onTimeReturns.put("8-14 days", onTimeReturns.get("8-14 days") + 1);
+                } else if (borrowingDuration <= 21) {
+                    onTimeReturns.put("15-21 days", onTimeReturns.get("15-21 days") + 1);
+                } else {
+                    onTimeReturns.put("22+ days", onTimeReturns.get("22+ days") + 1);
+                }
+            } else { // Late return
+                long lateness = ChronoUnit.DAYS.between(returnDate, actualReturnDate);
+
+                if (lateness <= 7) {
+                    lateReturns.put("1-7 days late", lateReturns.get("1-7 days late") + 1);
+                } else if (lateness <= 14) {
+                    lateReturns.put("8-14 days late", lateReturns.get("8-14 days late") + 1);
+                } else {
+                    lateReturns.put("15+ days late", lateReturns.get("15+ days late") + 1);
+                }
+            }
+        }
+
+        // Debug output for on-time returns
+        System.out.println("On-Time Returns:");
+        for (Map.Entry<String, Integer> entry : onTimeReturns.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+        // Debug output for late returns
+        System.out.println("Late Returns:");
+        for (Map.Entry<String, Integer> entry : lateReturns.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    // Combine results into a single map
+    Map<String, Map<String, Integer>> result = new HashMap<>();
+    result.put("onTimeReturns", onTimeReturns);
+    result.put("lateReturns", lateReturns);
+
+    return result;
+}
+
+
+public void generateMonthlyReports(LocalDate testDate) {
+    LocalDate today = testDate != null ? testDate : LocalDate.now(); // Use testDate if provided, otherwise use the current date.
+
+    // Check if today is the first of the month
+    if (today.getDayOfMonth() != 1) {
+        System.out.println("Not the first of the month. Reports will not be generated.");
+        return;
+    }
+
+    try {
+        // Generate the Activity Status Report
+        ActivityStatusReportGenerator activityReportGenerator = new ActivityStatusReportGenerator();
+        File activityStatusReport = activityReportGenerator.createChart();
+
+        // Fetch borrowing data for the previous month
+        int previousMonth = today.minusMonths(1).getMonthValue();
+        int year = today.minusMonths(1).getYear();
+        Map<String, Map<String, Integer>> borrowingData = fetchBorrowingPeriodData(previousMonth, year);
+
+        File borrowingPeriodReport = null;
+        if (borrowingData != null && !borrowingData.isEmpty()) {
+            // Generate the Borrowing Period Report
+            BorrowingPeriodChartGenerator borrowingChartGenerator = new BorrowingPeriodChartGenerator();
+            borrowingPeriodReport = new File("BorrowingPeriodReport.png");
+            borrowingChartGenerator.generateBorrowingPeriodChart(borrowingData, borrowingPeriodReport.getAbsolutePath());
+        } else {
+            System.out.println("No borrowing data found for the previous month. Skipping Borrowing Period Report.");
+        }
+
+        // Combine both reports into a single array
+        File[] reports = {activityStatusReport, borrowingPeriodReport};
+
+        // Fetch librarian emails
+        List<String> librarianEmails = getLibrarianEmails();
+
+        // Send reports to all librarians
+        String subject = "Monthly Reports of " + today.minusMonths(1).getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        for (String email : librarianEmails) {
+            ReportEmailController.sendReportEmail(email, subject, "", reports);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
 
 }

@@ -517,25 +517,6 @@ public class Server extends AbstractServer {
 
 
 		
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getDataForBorrowedReportTask)) {
-			clientMsg = dbController.getDataForBorrowedReport(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getDataForLateReturnedReportTask)) {
-			clientMsg = dbController.getDataForLateReturnedReport(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getEarliestReturnDateTask)) {
 		    String catalogNumber = (String) clientMsg.getCommPipe().get(0); // Get catalog number
 		    System.out.println("Received catalog number: " + catalogNumber);
@@ -605,6 +586,7 @@ public class Server extends AbstractServer {
 			//--- run thread to check database
 			Timer timer = new Timer();
 			 timer.schedule(new checkDB(dbController), 0, 60000*60*24);//1 minutes.
+		        dbController.generateMonthlyReports(null); // Pass `null` to use the current date
 		}
 		try {
 			sv.listen(); // Start listening for connections

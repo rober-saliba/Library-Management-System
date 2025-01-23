@@ -1,6 +1,8 @@
 package control;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.Map;
 
 import entity.ConstantsAndGlobalVars;
 import entity.MsgParser;
@@ -32,7 +34,6 @@ public class ManualTest {
                 // Simulated user data for testing
                 //int[] testUserCounts = {754, 675}; // Active = 150, Frozen = 50
 
-                ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
                 // Generate the chart
                 //File chartFile = generator.createChart(testUserCounts);
 
@@ -42,11 +43,11 @@ public class ManualTest {
                   //  System.out.println("Failed to generate chart.");
                 //}
             	
-            	
-            	generator.generateReport();
-            	
-            	
-            	
+//                ActivityStatusReportGenerator generator = new ActivityStatusReportGenerator();
+//            	generator.generateReport();
+//            	
+            	// Test fetching borrowing data and generating chart
+
             	
             	//testGetUserStatus(dbController);
             	
@@ -55,6 +56,24 @@ public class ManualTest {
                 int[] counts = generator.fetchData();
                 System.out.println("Active Users: " + counts[0]);
                 System.out.println("Frozen Users: " + counts[1]);*/
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+            	
+                // Simulate the first of February for testing
+                LocalDate testDate = LocalDate.of(2025, 2, 1);
+
+                // Call the generateMonthlyReports method with the test date
+                dbController.generateMonthlyReports(testDate);
+            	
+            	
+            	
+            	
+            	
             	
             	
             } catch (Exception e) {
