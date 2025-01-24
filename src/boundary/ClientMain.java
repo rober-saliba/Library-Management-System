@@ -1,4 +1,4 @@
-package control;
+package boundary;
 
 import javafx.application.Application;
 import javafx.application.HostServices;

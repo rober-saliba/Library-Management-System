@@ -45,8 +45,6 @@ import entity.MsgParser;
 import entity.MyFile;
 import entity.History;
 import entity.Reservations;
-import entity.StatData;
-import entity.StatDataForLateReturnedReport;
 import entity.TableQueries;
 import entity.TwoDaysMessage;
 import entity.User;

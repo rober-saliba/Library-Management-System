@@ -2,7 +2,6 @@ package boundary;
 
 import java.io.IOException;
 
-import control.Client;
 import control.ReaderController;
 import control.UserController;
 import entity.ConstantsAndGlobalVars;
