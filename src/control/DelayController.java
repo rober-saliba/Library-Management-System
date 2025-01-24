@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.Semaphore;
 
-import boundary.Client;
 import entity.BookCopies;
 import entity.Borrows;
 import entity.ConstantsAndGlobalVars;

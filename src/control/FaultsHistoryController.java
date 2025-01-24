@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import boundary.Client;
 import entity.ConstantsAndGlobalVars;
 import entity.FaultsHistory;
 import entity.History;
@@ -19,7 +18,7 @@ import entity.User;
 public class FaultsHistoryController implements IClient{
 	/**
 	 * Instance variables:
-	 * client - a {@link boundary.Client} instance to send messages to the server.
+	 * client - a {@link control.Client} instance to send messages to the server.
 	 * faultsHistoryController - the single instance of this class
 	 * sem1 - a semaphore that blocks the main thread until a response is received from the server.
 	 * semaphore is acquired each time a request to the server is sent and released after the response arrives.

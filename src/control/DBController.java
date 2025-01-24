@@ -1041,7 +1041,7 @@ public MsgParser addNewUser(MsgParser mp) {
             mp.addToCommPipe(false); // User already exists
         } else {
             System.out.println("Adding new user: " + newUser.getUserID());
-            String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,0,'Active',?,0)";
+            String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,'Active',?,0)";
             stmt = conn.prepareStatement(addTupleQuery);
             stmt.setString(1, newUser.getUserID());
             stmt.setString(2, newUser.getFirstName());

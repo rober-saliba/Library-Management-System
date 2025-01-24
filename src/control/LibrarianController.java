@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
-import boundary.Client;
 import entity.ConstantsAndGlobalVars;
 import entity.IClient;
 import entity.MsgParser;
@@ -17,7 +16,7 @@ import enums.UserStatus;
  */
 public class LibrarianController implements IClient{
 	/**
-	 * a {@link boundary.Client} instance to send messages to the server.
+	 * a {@link control.Client} instance to send messages to the server.
 	 */
 	private Client client;
 	/**
