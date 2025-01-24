@@ -1031,40 +1031,46 @@ public void checkPenalty() {
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-	public MsgParser addNewUser(MsgParser mp) {
-		PreparedStatement stmt;
-		User newUser = (User) mp.getCommPipe().get(0);
-		mp.clearCommPipe();
-		ResultSet rs;
-		try {
-			String getUserQuery = "SELECT U.userID " + "FROM users U " + "WHERE U.userID = ?";
-			stmt = conn.prepareStatement(getUserQuery);
-			stmt.setString(1, newUser.getUserID());
-			rs = stmt.executeQuery();
-			if (rs.next()) {
-				mp.addToCommPipe(false);
-			} else {
-				String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,0,'Active',?,0)";
-				stmt = conn.prepareStatement(addTupleQuery);
-				stmt.setString(1, newUser.getUserID());
-				stmt.setString(2, newUser.getFirstName());
-				stmt.setString(3, newUser.getLastName());
-				stmt.setString(4, newUser.getPhoneNumber());
-				stmt.setString(5, newUser.getMembershipNumber());
-				stmt.setString(6, newUser.getPassword());
-				stmt.setString(7, newUser.getEmail());
-				if (stmt.executeUpdate() == 0) {
-					mp.addToCommPipe(false);
-					return mp;
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			mp.addToCommPipe(false);
-		}
+public MsgParser addNewUser(MsgParser mp) {
+    PreparedStatement stmt;
+    User newUser = (User) mp.getCommPipe().get(0);
+    mp.clearCommPipe();
+    ResultSet rs;
+    try {
+        String getUserQuery = "SELECT U.userID FROM users U WHERE U.userID = ?";
+        stmt = conn.prepareStatement(getUserQuery);
+        stmt.setString(1, newUser.getUserID());
+        rs = stmt.executeQuery();
+        System.out.println("Checking if user exists: " + newUser.getUserID());
+        if (rs.next()) {
+            System.out.println("User already exists: " + newUser.getUserID());
+            mp.addToCommPipe(false); // User already exists
+        } else {
+            System.out.println("Adding new user: " + newUser.getUserID());
+            String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,0,'Active',?,0)";
+            stmt = conn.prepareStatement(addTupleQuery);
+            stmt.setString(1, newUser.getUserID());
+            stmt.setString(2, newUser.getFirstName());
+            stmt.setString(3, newUser.getLastName());
+            stmt.setString(4, newUser.getPhoneNumber());
+            stmt.setString(5, newUser.getMembershipNumber());
+            stmt.setString(6, newUser.getPassword());
+            stmt.setString(7, newUser.getEmail());
+            if (stmt.executeUpdate() > 0) {
+                System.out.println("User added successfully: " + newUser.getUserID());
+                mp.addToCommPipe(true); // User added successfully
+            } else {
+                System.out.println("Failed to add user: " + newUser.getUserID());
+                mp.addToCommPipe(false); // Insert failed
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        mp.addToCommPipe(false); // Database error
+    }
 
-		return mp;
-	}
+    return mp;
+}
 
 	/**
 	 * adds a new book tuple to the books table.

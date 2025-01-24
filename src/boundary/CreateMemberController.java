@@ -3,6 +3,7 @@ package boundary;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -109,27 +110,38 @@ public class CreateMemberController {
 			librarianController = LibrarianController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);
 			faultsHistoryController = FaultsHistoryController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);
 			try {
-				if(librarianController.addNewUser(newUser)) {
-					isOk = faultsHistoryController.addFault("Resolved", userIDTF.getText());
-					((Stage) createBtn.getScene().getWindow()).close();
-					Alert alert = new Alert(AlertType.INFORMATION);
-					alert.initModality(Modality.APPLICATION_MODAL);
-					alert.setTitle("Add user");
-					alert.setHeaderText(null);
-					alert.setContentText("User successfully added");
-					alert.showAndWait();
-				}else {
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.initModality(Modality.APPLICATION_MODAL);
-					alert.setTitle("Add user");
-					alert.setHeaderText(null);
-					alert.setContentText("User already exists!!!");
-					alert.showAndWait();
-				}
+			    if (librarianController.addNewUser(newUser)) {
+			        isOk = faultsHistoryController.addFault("Resolved", userIDTF.getText());
+			        ((Stage) createBtn.getScene().getWindow()).close();
+			        
+			        // Success alert
+			        Platform.runLater(() -> {
+			            Alert alert = new Alert(AlertType.INFORMATION);
+			            alert.initModality(Modality.APPLICATION_MODAL);
+			            alert.initOwner(createBtn.getScene().getWindow()); // Set the owner to the current window
+			            alert.setTitle("Add User");
+			            alert.setHeaderText(null);
+			            alert.setContentText("User successfully added");
+			            alert.showAndWait();
+			        });
+
+			    } else {
+			        // Duplicate user alert
+			    	Platform.runLater(() -> {
+			    	    Alert alert = new Alert(AlertType.WARNING);
+			    	    alert.initModality(Modality.APPLICATION_MODAL);
+			    	    alert.initOwner(createBtn.getScene().getWindow()); // Set the owner to the current window
+			    	    alert.setTitle("Add User");
+			    	    alert.setHeaderText(null);
+			    	    alert.setContentText("User already exists!!!");
+			    	    alert.showAndWait();
+			    	});
+
+			    }
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			    e.printStackTrace(); // Handle or log exception as needed
 			}
+
 		}
 	}
 
