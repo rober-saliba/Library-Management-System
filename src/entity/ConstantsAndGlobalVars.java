@@ -31,8 +31,6 @@ public class ConstantsAndGlobalVars {
 	public final static String getMessagesTask = "messages";
 	public final static String getNumberOfMessagesTask = "messagesNumber";
 	public final static String getFaultsHistoryTask = "getFaultsHistory";
-	public final static String checkEmployeeTypeTask = "checkEmployeeType";
-	public final static String getUserPermissionsTask = "getUserPermissions";
 	public final static String updateBookCopyTask = "updatebookcopytable";
 	public final static String checkBorrowTask= "checkborrow";
 	public final static String UpdateBorrowTableAfterDelayingTask= "updateBorrowtableafterdelaying";

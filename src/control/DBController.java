@@ -152,20 +152,14 @@ public boolean connectToDB(String username, String password, String host, String
 				stmt = conn.prepareStatement(loginQuery);
 				stmt.setString(1, username);
 				rs = stmt.executeQuery();
-			} else if (table.equals("librarians")) {
+			} else {
 				String loginQuery = "SELECT U.* " + "FROM users U,librarians L "
 						+ "WHERE  L.librarianID = U.userID AND L.librarianID = ?";
 				stmt = conn.prepareStatement(loginQuery);
 				stmt.setString(1, username);
 				rs = stmt.executeQuery();
-			} else { // if(table.equals("managers"))
-				//String loginQuery = "SELECT U.* " + "FROM users U,managers M "
-						//+ "WHERE U.userID=M.managerID AND M.managerID = ?";
-				//stmt = conn.prepareStatement(loginQuery);
-				//stmt.setString(1, username);
-				rs = null;
-				// get the matching tuple, if there's any
 			}
+			
 			msg.setReturnResult(LogInStatus.Success);
 			if (rs.next()) {
 				int bit = Integer.parseInt(rs.getString(9));
@@ -197,7 +191,7 @@ public boolean connectToDB(String username, String password, String host, String
 				msg.setReturnResult(LogInStatus.UserNotExist);
 				return msg;
 			}
-
+			
 		} catch (SQLException e) {
 //			msg.setReturnResult(LogInStatus.UserNotExist);
 //			return msg;
@@ -205,7 +199,7 @@ public boolean connectToDB(String username, String password, String host, String
 
 		return msg;
 	}
-
+	
 	// if the all conditions to a log in are met, change isLoggedIn flag to 1.
 	/**
 	 * changes isLoggedIn status for the user specified.
@@ -321,7 +315,7 @@ public boolean connectToDB(String username, String password, String host, String
 	
 
 	/**
-	 * gets the messages for a librarian or a manager.
+	 * gets the messages for a librarian
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -832,7 +826,7 @@ public void checkPenalty() {
 }
 
 	/**
-	 * gets number of messages for a specific librarian/ manager.
+	 * gets number of messages for a specific librarian
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1581,32 +1575,6 @@ public MsgParser checkUser(MsgParser msg) {
 		return msg;
 	}
 
-	/**
-	 * gets the employee role (librarian/manager).
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser checkEmployeeType(MsgParser msg) {
-		// this function return true if the user is manager
-		// or false if the user is librarian
-		PreparedStatement stmt;
-		String username = ((User) msg.getCommPipe().get(0)).getUserID();
-		try {
-			String checkUserTypeQuery = "SELECT M.managerID FROM managers M WHERE M.managerID = ? ";
-			stmt = conn.prepareStatement(checkUserTypeQuery);
-			stmt.setString(1, username);
-			ResultSet rs = stmt.executeQuery();
-			// get the matching tuples, if there's any
-			msg.clearCommPipe();
-			if (rs.next())
-				msg.addToCommPipe(true);
-			else
-				msg.addToCommPipe(false);
-		} catch (SQLException e) {
-			msg.addToCommPipe(false);
-		}
-		return msg;
-	}
 
 	/**
 	 * sets the status of the book copy to 'borrowed'

@@ -134,23 +134,7 @@ public class LibrarianController implements IClient{
 		return resultUser;
 		
 	}
-	/**
-	 * sends a request to the server to get the role of a specific user (manager or not).
-	 * @param user - the user to check the role for.
-	 * @return true if user is a manager, false otherwise.
-	 * @throws InterruptedException - thrown should acquiring the semaphore encounter any problems.
-	 */
-	public boolean checkEmployeeType(User user) throws InterruptedException {
-		MsgParser<User> msg = new MsgParser<>();
-		
-		msg.setTask(ConstantsAndGlobalVars.checkEmployeeTypeTask);
-		msg.addToCommPipe(user);
-		
-		client.sendMessageToServer(msg);
-		sem.acquire();
-		
-		return retVal;
-	}
+
 	/**
 	 * sends a request to the server to get user status
 	 * @param userID - the ID of the user.
@@ -214,9 +198,7 @@ public class LibrarianController implements IClient{
 				}
 		}
 		
-		if(msg.getTask().equals(ConstantsAndGlobalVars.checkEmployeeTypeTask)) {
-			retVal = ((boolean)msg.getCommPipe().get(0));
-		}
+
 		
 		
 		

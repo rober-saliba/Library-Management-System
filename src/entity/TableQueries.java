@@ -18,10 +18,6 @@ public class TableQueries {
 			+ "  PRIMARY KEY (`librarianID`),\r\n" + "  UNIQUE KEY `employeeNumber_UNIQUE` (`employeeNumber`),\r\n"
 			+ "  CONSTRAINT `LibrarianID` FOREIGN KEY (`librarianID`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE\r\n"
 			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";
-	private static final String managersQuery = "CREATE TABLE `managers` (\r\n"
-			+ "  `managerID` varchar(10) NOT NULL,\r\n" + "  PRIMARY KEY (`managerID`),\r\n"
-			+ "  CONSTRAINT `managerID` FOREIGN KEY (`managerID`) REFERENCES `librarians` (`librarianid`)\r\n"
-			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";
 	private static final String booksQuery = "CREATE TABLE `books` (\r\n" + "  `CatalogNumber` varchar(15) NOT NULL,\r\n"
 			+ "  `Title` varchar(45) NOT NULL,\r\n" + "  `AuthorName` varchar(45) NOT NULL,\r\n"
 			+ "  `publication` varchar(45) NOT NULL,\r\n" + "  `numberOfCopies` int(11) NOT NULL,\r\n"
@@ -89,7 +85,7 @@ public class TableQueries {
 			+ "  PRIMARY KEY (`startDate`,`endDate`)\r\n"
 			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";
 
-	public static final String[] orderOfBuild = { usersQuery, librariansQuery, managersQuery, booksQuery,
+	public static final String[] orderOfBuild = { usersQuery, librariansQuery, booksQuery,
 			bookcopiesQuery, categoriesQuery, borrowsQuery, reservationsQuery, faultHistoryQuery, manualDelaysQuery,
 			messagesQuery, periodicalReportsQuery};
 }

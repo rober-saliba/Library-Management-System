@@ -218,19 +218,5 @@ public void loadUser(User member, User user) {
     }
 
 
-    boolean isManager = false;
-    try {
-        isManager = librarianController.checkEmployeeType(currentUser);
-    } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.initOwner(CancelBtn.getScene().getWindow());
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.setTitle("Can't edit details");
-        alert.setHeaderText(null);
-        alert.setContentText("Can't get user identity !!!");
-        alert.showAndWait();
-    }
 }
 }

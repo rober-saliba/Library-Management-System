@@ -325,15 +325,7 @@ public class Server extends AbstractServer {
 			}
 		}
 
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.checkEmployeeTypeTask)) {
-			clientMsg = dbController.checkEmployeeType(clientMsg);
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.UpdateBorrowTableAfterDelayingTask)) {
 			try {
