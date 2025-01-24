@@ -35,12 +35,11 @@ public class UserSearchResultsController extends ReaderSearchResultsController{
 			int numberOfCopies = b.getNumberOfCopies();
 			Date purchaseDate = b.getPurchaseDate();
 			String locationOnShelf = b.getLocationOnShelf();
-			MyFile tableOfContents = b.getTableOfContents();
 			String description = b.getDescription();
 			enums.BookType bookType = b.getType();
 			ArrayList<String> categories = b.getCategories();
 			BookWithButton book = new BookWithButton(catalogNumber, title, authorName, publication, numberOfCopies,
-					purchaseDate, locationOnShelf, tableOfContents, description, bookType,categories);
+					purchaseDate, locationOnShelf, description, bookType,categories);
 			book.getViewDetailsBtn().setOnAction(e -> {
 				try {
 					viewDetailsHandler(b,currentUser);

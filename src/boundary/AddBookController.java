@@ -274,32 +274,13 @@ public class AddBookController {
 			String description = descriptionTA.getText();
 			enums.BookType booktype = enums.BookType
 					.valueOf(bookTypesList.get(typeCB.getSelectionModel().getSelectedIndex()));
-			String filePath = tableOfContentsPathTF.getText();
 
-			File newFile = new File(filePath);// open the file
-			// convert the file to a MyFile object so it can be sent to the server.
-			// i.e. set the byte array, set the size, the name, etc.
-			MyFile fileToUpload = new MyFile(newFile.getName());// instantiate a new MyFile object with the files' name
-			// Initialise the byte array
-			fileToUpload.initArray((int) newFile.length());
-			// set the file size attribute
-			fileToUpload.setSize((int) newFile.length());
-			fileToUpload.setDescription(title + "Table of contents");
-			// a temp byte array
-			byte[] mybytearray = new byte[(int) newFile.length()];
-			// copy the byte array from newFile to fileToUpload byte array.
-			FileInputStream fis = new FileInputStream(newFile);
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			bis.read(fileToUpload.getMybytearray(), 0, mybytearray.length);
-			// close the streams so the file won't be in use.
-			bis.close();
-			fis.close();
 			LocalDate purchaseDate_ld = purchaseDateDP.getValue();
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			Date purchaseDate = Date.from(purchaseDate_ld.atStartOfDay(ZoneId.systemDefault()).toInstant());
 			format.format(purchaseDate);
 			Book book = new Book(catalogNumber, title, author, publication, numberOfCopies, purchaseDate,
-					locationOnShelf, fileToUpload, description, booktype);
+					locationOnShelf, description, booktype);
 			String[] categoryArr = categoriesTA.getText().split(",");
 			ArrayList<String> categoriesForBook = new ArrayList<>();
 			categoriesForBook.addAll(Arrays.asList(categoryArr));

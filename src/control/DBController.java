@@ -1076,7 +1076,7 @@ public MsgParser addNewUser(MsgParser mp) {
 	 */
 	public MsgParser addBook(MsgParser mp) throws ParseException {
 		Book b = (Book) mp.getCommPipe().get(0);
-		String insertBookQuery = "INSERT INTO books values (?,?,?,?,?,?,?,?,?,?)";
+		String insertBookQuery = "INSERT INTO books values (?,?,?,?,?,?,?,?,?)";
 		mp.clearCommPipe();
 		/*
 		 * Convert Java Date to SQL Date
@@ -1087,8 +1087,7 @@ public MsgParser addNewUser(MsgParser mp) {
 		Date temp = new SimpleDateFormat("yyyy-MM-dd").parse(pd);
 		// java.sql.Date d = new java.sql.Date(temp.getDate());
 		java.sql.Date d = new java.sql.Date(temp.getTime());
-		// create an inputStream from the byteArray..
-		InputStream is = new ByteArrayInputStream((b.getTableOfContents()).getMybytearray());
+
 		try {
 			PreparedStatement stmt = conn.prepareStatement(insertBookQuery);
 			stmt.setString(1, b.getCatalogNumber());
@@ -1098,9 +1097,8 @@ public MsgParser addNewUser(MsgParser mp) {
 			stmt.setInt(5, b.getNumberOfCopies());
 			stmt.setDate(6, d);// convert to SQL Date
 			stmt.setString(7, b.getLocationOnShelf());
-			stmt.setBlob(8, is);
-			stmt.setString(9, b.getDescription());
-			stmt.setString(10, b.getType().name());
+			stmt.setString(8, b.getDescription());
+			stmt.setString(9, b.getType().name());
 			if (stmt.executeUpdate() > 0) {
 				stmt.close();
 				String addCategoryQuery = "INSERT INTO categories VALUES(?,?)";
@@ -1388,10 +1386,7 @@ public MsgParser checkUser(MsgParser msg) {
 		Date temp = new SimpleDateFormat("yyyy-MM-dd").parse(pd);
 		// java.sql.Date d = new java.sql.Date(temp.getDate());
 		java.sql.Date purchaseDate = new java.sql.Date(temp.getTime());
-		// just for checking if all is valid..
-		int fileSize = (b.getTableOfContents()).getSize();
-		System.out.printf("File of size %d received", fileSize);
-		InputStream is = new ByteArrayInputStream((b.getTableOfContents()).getMybytearray());
+
 		try {
 			PreparedStatement stmt = conn.prepareStatement(updateBookQuery);
 			stmt.setString(1, b.getTitle());
@@ -1400,10 +1395,9 @@ public MsgParser checkUser(MsgParser msg) {
 			stmt.setInt(4, b.getNumberOfCopies());
 			stmt.setDate(5, purchaseDate);// convert to SQL Date
 			stmt.setString(6, b.getLocationOnShelf());
-			stmt.setBlob(7, is);
-			stmt.setString(8, b.getDescription());
-			stmt.setString(9, b.getType().name());
-			stmt.setString(10, b.getCatalogNumber());
+			stmt.setString(7, b.getDescription());
+			stmt.setString(8, b.getType().name());
+			stmt.setString(9, b.getCatalogNumber());
 			stmt.executeUpdate();
 			if (stmt.executeUpdate() > 0)
 				mp.addToCommPipe(true);
@@ -1436,46 +1430,46 @@ public MsgParser checkUser(MsgParser msg) {
 			System.out.println(b);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				b = new Book();
-				b.setCatalogNumber(rs.getString(1));
-				b.setTitle(rs.getString(2));
-				b.setAuthorName(rs.getString(3));
-				b.setPublication(rs.getString(4));
-				b.setNumberOfCopies(rs.getInt(5));
-				java.sql.Date date = rs.getDate(6);
-				Date purchaseDate = null;
-				if (date != null)
-					purchaseDate = new Date(date.getTime());
-				b.setPurchaseDate(purchaseDate);
-				b.setLocationOnShelf(rs.getString(7));
-				/*
-				 * get blob and convert to byteArray
-				 */
-				MyFile tableOfContents = new MyFile(b.getTitle() + " Table of contents.pdf");
-				Blob blob = rs.getBlob(8);
-				int blobLength = (int) blob.length();
-				tableOfContents.initArray(blobLength);
-				byte[] arr = blob.getBytes(1, blobLength);
-				tableOfContents.setMybytearray(arr);
-				tableOfContents.setSize(blobLength);
-				blob.free();
-				b.setTableOfContents(tableOfContents);
-				b.setDescription(rs.getString(9));
-				b.setType(enums.BookType.valueOf(rs.getString(10)));
+			    b = new Book();
+			    b.setCatalogNumber(rs.getString(1)); // catalogNumber
+			    b.setTitle(rs.getString(2));         // title
+			    b.setAuthorName(rs.getString(3));    // authorName
+			    b.setPublication(rs.getString(4));  // publication
+			    b.setNumberOfCopies(rs.getInt(5));  // numberOfCopies
 
-				stmt = conn.prepareStatement(getCategoriesQuery);
-				System.out.println("miao");
-				stmt.setString(1, catalogNumber);
-				rs = stmt.executeQuery();
-				System.out.println("timo");
-				ArrayList<String> categories = new ArrayList<>();
-				while (rs.next()) {
-					categories.add(rs.getString(1));
-				}
-				b.setCategories(categories);
-				System.out.println(b);
-				mp.addToCommPipe(b);
+			    java.sql.Date date = rs.getDate(6); // purchaseDate
+			    Date purchaseDate = (date != null) ? new Date(date.getTime()) : null;
+			    b.setPurchaseDate(purchaseDate);
+
+			    b.setLocationOnShelf(rs.getString(7)); // locationOnShelf
+
+			    // Map description
+			    b.setDescription(rs.getString(8)); // description (add null-check if needed)
+
+			    // Map bookType
+			    String bookTypeValue = rs.getString(9); // bookType
+			    if (bookTypeValue != null) {
+			        b.setBookType(enums.BookType.valueOf(bookTypeValue));
+			    } else {
+			        b.setBookType(enums.BookType.Regular); // Provide a default value if null
+			    }
+
+			    // Fetch categories
+			    stmt = conn.prepareStatement(getCategoriesQuery);
+			    stmt.setString(1, catalogNumber);
+			    rs = stmt.executeQuery();
+			    ArrayList<String> categories = new ArrayList<>();
+			    while (rs.next()) {
+			        categories.add(rs.getString(1));
+			    }
+			    b.setCategories(categories);
+
+			    // Log the populated book
+			    System.out.println("Populated Book: " + b);
+
+			    mp.addToCommPipe(b);
 			}
+
 
 		} catch (SQLException e) {
 			e.printStackTrace();

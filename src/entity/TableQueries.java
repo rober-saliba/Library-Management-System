@@ -22,7 +22,7 @@ public class TableQueries {
 			+ "  `Title` varchar(45) NOT NULL,\r\n" + "  `AuthorName` varchar(45) NOT NULL,\r\n"
 			+ "  `publication` varchar(45) NOT NULL,\r\n" + "  `numberOfCopies` int(11) NOT NULL,\r\n"
 			+ "  `purchaseDate` date NOT NULL,\r\n" + "  `locationOnShelf` varchar(15) NOT NULL,\r\n"
-			+ "  `tableOfContents` longblob,\r\n" + "  `Description` varchar(1000) DEFAULT NULL,\r\n"
+			 + "  `Description` varchar(1000) DEFAULT NULL,\r\n"
 			+ "  `type` enum('Wanted','Regular') NOT NULL,\r\n" + "  PRIMARY KEY (`CatalogNumber`),\r\n"
 			+ "  UNIQUE KEY `CatalogNumber_UNIQUE` (`CatalogNumber`)\r\n"
 			+ ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\r\n";

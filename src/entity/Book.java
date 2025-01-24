@@ -21,7 +21,6 @@ public class Book implements Serializable {
 	protected int numberOfCopies;
 	protected Date purchaseDate;
 	protected String locationOnShelf;
-	protected MyFile tableOfContents;
 	protected String description;
 	protected enums.BookType bookType;
 	protected ArrayList<String> categories;
@@ -40,20 +39,55 @@ public class Book implements Serializable {
 	 * @param categories
 	 */
 	public Book(String CatalogNumber, String Title, String AuthorName, String publication, int numberOfCopies,
-			Date purchaseDate, String locationOnShelf, MyFile tableOfContents, String Description, enums.BookType Type,
-			ArrayList<String> categories) {
-		this.catalogNumber = CatalogNumber;
-		this.title = Title;
-		this.authorName = AuthorName;
-		this.publication = publication;
-		this.numberOfCopies = numberOfCopies;
-		this.purchaseDate = purchaseDate;
-		this.locationOnShelf = locationOnShelf;
-		this.tableOfContents = tableOfContents;
-		this.description = Description;
-		this.bookType = Type;
-		this.categories = categories;
+	        Date purchaseDate, String locationOnShelf, String Description, enums.BookType Type,
+	        ArrayList<String> categories) {
+	    this.catalogNumber = CatalogNumber;
+	    this.title = Title;
+	    this.authorName = AuthorName;
+	    this.publication = publication;
+	    this.numberOfCopies = numberOfCopies;
+	    this.purchaseDate = purchaseDate;
+	    this.locationOnShelf = locationOnShelf;
+	    this.description = Description;
+	    this.bookType = Type;
+	    this.categories = categories;
+
+	    // Log the object data and location
+	    System.out.println("Book Constructor Called (Full-Argument):");
+	    System.out.println(this);
+	    printLocation();
 	}
+	
+	
+	
+	private void printLocation() {
+	    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+	    // Skip the first few elements to avoid including this method and the constructor itself
+	    if (stackTrace.length > 2) {
+	        System.out.println("Called From: " + stackTrace[2]);
+	    }
+	}
+
+	
+	
+	@Override
+	public String toString() {
+	    return "Book{" +
+	           "catalogNumber='" + catalogNumber + '\'' +
+	           ", title='" + title + '\'' +
+	           ", authorName='" + authorName + '\'' +
+	           ", publication='" + publication + '\'' +
+	           ", numberOfCopies=" + numberOfCopies +
+	           ", purchaseDate=" + purchaseDate +
+	           ", locationOnShelf='" + locationOnShelf + '\'' +
+	           ", description='" + description + '\'' +
+	           ", bookType=" + bookType +
+	           ", categories=" + categories +
+	           '}';
+	}
+
+	
+
 	/**
 	 * a constructor that doesn't initialize the categories ArrayList
 	 * @param CatalogNumber
@@ -68,19 +102,23 @@ public class Book implements Serializable {
 	 * @param Type
 	 */
 	public Book(String CatalogNumber, String Title, String AuthorName, String publication, int numberOfCopies,
-			Date purchaseDate, String locationOnShelf, MyFile tableOfContents, String Description,
-			enums.BookType Type) {
-		this.catalogNumber = CatalogNumber;
-		this.title = Title;
-		this.authorName = AuthorName;
-		this.publication = publication;
-		this.numberOfCopies = numberOfCopies;
-		this.purchaseDate = purchaseDate;
-		this.locationOnShelf = locationOnShelf;
-		this.tableOfContents = tableOfContents;
-		this.description = Description;
-		this.bookType = Type;
+	        Date purchaseDate, String locationOnShelf, String Description, enums.BookType Type) {
+	    this.catalogNumber = CatalogNumber;
+	    this.title = Title;
+	    this.authorName = AuthorName;
+	    this.publication = publication;
+	    this.numberOfCopies = numberOfCopies;
+	    this.purchaseDate = purchaseDate;
+	    this.locationOnShelf = locationOnShelf;
+	    this.description = Description;
+	    this.bookType = Type;
+
+	    // Log the object data and location
+	    System.out.println("Book Constructor Called (Without Categories):");
+	    System.out.println(this);
+	    printLocation();
 	}
+
 	/**
 	 * an argument-less constructor that only initializes the categories ArrayList.
 	 */
@@ -214,20 +252,7 @@ public class Book implements Serializable {
 	public void setLocationOnShelf(String locationOnShelf) {
 		this.locationOnShelf = locationOnShelf;
 	}
-	/**
-	 * 
-	 * @return
-	 */
-	public MyFile getTableOfContents() {
-		return tableOfContents;
-	}
-	/**
-	 * 
-	 * @param tableOfContents
-	 */
-	public void setTableOfContents(MyFile tableOfContents) {
-		this.tableOfContents = tableOfContents;
-	}
+
 	/**
 	 * 
 	 * @return

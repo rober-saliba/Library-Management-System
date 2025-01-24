@@ -187,11 +187,13 @@ public class MainPageController {
 	void searchHandler(ActionEvent event) {
 		try {
 			String selectedCombo = searchTypeList.get(searchTypeCombo.getSelectionModel().getSelectedIndex());
+			System.out.println("hgy" + selectedCombo);
 			if(searchTF.getText().isEmpty()) {
 				searchTF.setPromptText("enter keyword !!!");
 				searchTF.setStyle("-fx-prompt-text-fill: red;"+"-fx-font-weight: bold;");
 			}else {
 				ArrayList<Book> searchResult = readerController.searchForBook(selectedCombo, searchTF.getText());
+				System.out.println("sdfs"+ searchResult);
 				Stage primaryStage = new Stage();
 				FXMLLoader loader = new FXMLLoader();
 				Parent root = loader.load(getClass().getResource("/boundary/ReaderSearchResultsGUI.fxml").openStream());

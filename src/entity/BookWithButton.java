@@ -26,10 +26,9 @@ public class BookWithButton extends Book {
 	 * @param categories
 	 */
 	public BookWithButton(String CatalogNumber, String Title, String AuthorName, String publication, int numberOfCopies,
-			Date purchaseDate, String locationOnShelf, MyFile tableOfContents, String Description,
+			Date purchaseDate, String locationOnShelf, String Description,
 			enums.BookType Type,ArrayList<String> categories) {
-		super(CatalogNumber, Title, AuthorName, publication, numberOfCopies, purchaseDate, locationOnShelf,
-				tableOfContents, Description, Type,categories);
+		super(CatalogNumber, Title, AuthorName, publication, numberOfCopies, purchaseDate, locationOnShelf, Description, Type,categories);
 		this.viewDetailsBtn = new Button("View book details");
 	}
 	/**

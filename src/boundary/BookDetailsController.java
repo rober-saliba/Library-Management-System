@@ -34,7 +34,6 @@ public class BookDetailsController {
 	 */
 	private BookCopyController bookCopyController;
 	protected Book currentBook;
-	protected String filePath;
 	@FXML
 	protected Label bookTitleLabel;
 
