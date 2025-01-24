@@ -168,7 +168,7 @@ public boolean connectToDB(String username, String password, String host, String
 			}
 			msg.setReturnResult(LogInStatus.Success);
 			if (rs.next()) {
-				int bit = Integer.parseInt(rs.getString(10));
+				int bit = Integer.parseInt(rs.getString(9));
 				boolean isLoggedIn = (bit == 1) ? true : false;
 				// check if already logged in
 				if (isLoggedIn) {
@@ -187,9 +187,8 @@ public boolean connectToDB(String username, String password, String host, String
 				tmpUser.setPhoneNumber(rs.getString(4));
 				tmpUser.setMembershipNumber(rs.getString(5));
 				tmpUser.setPassword(rs.getString(6));
-				tmpUser.setStrikes(rs.getInt(7));
-				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(8)));
-				tmpUser.setEmail(rs.getString(9));
+				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(7)));
+				tmpUser.setEmail(rs.getString(8));
 				changeIsLoggedIn(username);
 
 				msg.clearCommPipe();
@@ -1182,9 +1181,8 @@ public MsgParser addNewUser(MsgParser mp) {
 			tmpUser.setPhoneNumber(rs.getString(4));
 			tmpUser.setMembershipNumber(rs.getString(5));
 			tmpUser.setPassword(rs.getString(6));
-			tmpUser.setStrikes(rs.getInt(7));
-			tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(8)));
-			tmpUser.setEmail(rs.getString(9));
+			tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(7)));
+			tmpUser.setEmail(rs.getString(8));
 		} else {
 			tmpUser = null;
 		}
@@ -1231,7 +1229,7 @@ public MsgParser checkUser(MsgParser msg) {
     String username = ((User) msg.getCommPipe().get(0)).getUserID();
     try {
         // Query to fetch user details
-        String getUserQuery = "SELECT userID, firstName, lastName, phoneNumber, membershipNumber, password, strikes, status, email " +
+        String getUserQuery = "SELECT userID, firstName, lastName, phoneNumber, membershipNumber, password, status, email " +
                               "FROM users WHERE userID = ?";
         stmt = conn.prepareStatement(getUserQuery);
         stmt.setString(1, username);
@@ -1249,7 +1247,6 @@ public MsgParser checkUser(MsgParser msg) {
             tmpUser.setPhoneNumber(rs.getString("phoneNumber"));
             tmpUser.setMembershipNumber(rs.getString("membershipNumber"));
             tmpUser.setPassword(rs.getString("password"));
-            tmpUser.setStrikes(rs.getInt("strikes"));
             tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString("status"))); // Convert status to enum
             tmpUser.setEmail(rs.getString("email"));
             msg.addToCommPipe(tmpUser); // Add the User object to the MsgParser
@@ -2084,9 +2081,8 @@ public MsgParser addReserve(MsgParser msg) {
 				tmpUser.setPhoneNumber(rs.getString(4));
 				tmpUser.setMembershipNumber(rs.getString(5));
 				tmpUser.setPassword(rs.getString(6));
-				tmpUser.setStrikes(rs.getInt(7));
-				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(8)));
-				tmpUser.setEmail(rs.getString(9));
+				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString(7)));
+				tmpUser.setEmail(rs.getString(8));
 				msg.addToCommPipe(tmpUser);
 			}
 		} catch (SQLException e) {

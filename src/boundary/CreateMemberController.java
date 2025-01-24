@@ -105,7 +105,6 @@ public class CreateMemberController {
 			newUser.setPassword(passwordTF.getText());
 			newUser.setPhoneNumber(phoneNumberTF.getText());
 			newUser.setStatus(enums.UserStatus.Active);
-			newUser.setStrikes(0);	
 			
 			librarianController = LibrarianController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);
 			faultsHistoryController = FaultsHistoryController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);

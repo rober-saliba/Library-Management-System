@@ -9,7 +9,6 @@ public class User implements Serializable {
 	private String phoneNumber;
 	private String membershipNumber;
 	private String password;
-	private int strikes;
 	private enums.UserStatus status;
 	private String email;
 	
@@ -23,7 +22,6 @@ public class User implements Serializable {
 		this.phoneNumber=phoneNumber;
 		this.password=password;
 		this.email=email;
-		this.strikes=0;
 		this.status=status;
 		this.membershipNumber = (Integer.toString((Integer.parseInt(this.userID) % 10000)));
 	}
@@ -83,13 +81,7 @@ public class User implements Serializable {
 		return membershipNumber;
 	}
 
-	public int getStrikes() {
-		return strikes;
-	}
 
-	public void setStrikes(int strikes) {
-		this.strikes = strikes;
-	}
 
 	public enums.UserStatus getStatus() {
 		return status;
