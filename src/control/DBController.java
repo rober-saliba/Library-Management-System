@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
+
+import control.EmailController;
+
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,6 +60,7 @@ import enums.UserStatus;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
+
 import java.net.DatagramSocket;
 import java.net.SocketAddress;
 import java.sql.Connection;
@@ -83,7 +87,6 @@ import entity.User;
 import enums.Result;
 import enums.ExistStatus;
 import enums.LogInStatus;
-import control.EmailController;
 /**
  * The class responsible for connection and executing queries and updates to the schema.
  * all methods in this class are self documented.
@@ -99,7 +102,7 @@ public class DBController {
 	static ArrayList<TwoDaysMessage> timerList;
 	/**
 	 * connects to the SQL server.
-	 * @see control.Server#openServerConnection(String, String, String, String).
+	 * @see server.Server#openServerConnection(String, String, String, String).
 	 * @return true if connection succeeded, false otherwise
 	 */
 public boolean connectToDB(String username, String password, String host, String dbName) {

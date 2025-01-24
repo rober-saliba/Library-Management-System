@@ -3,6 +3,8 @@ package boundary;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import control.FaultsHistoryController;
+import control.LibrarianController;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,9 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import control.FaultsHistoryController;
-//import control.EmailController;
-import control.LibrarianController;
 import entity.ConstantsAndGlobalVars;
 import entity.User;
 /**
