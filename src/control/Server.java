@@ -64,6 +64,9 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+		
+		
+		
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getMessagesTask)) {
 			clientMsg = dbController.getMessages(clientMsg);

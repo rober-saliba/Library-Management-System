@@ -136,7 +136,7 @@ public class LendBookController {
 			
 			if(isexist==enums.ExistStatus.NotExist)
 	    	{
-	    		resultlabel.setText("Lend fail.User not exist");
+	    		resultlabel.setText("Lend fail User doesn't exist");
 	    		resultlabel.setTextFill(Color.RED);
 			    resultlabel.setVisible(true);
 			    return;
@@ -144,7 +144,7 @@ public class LendBookController {
 			
 			status=((User) msg.getCommPipe().get(0)).getStatus();
 			if(status!=enums.UserStatus.Active) {
-				resultlabel.setText("Lend fail.User status isn't ACTIVE");
+				resultlabel.setText("Lend fail User status isn't ACTIVE");
 				resultlabel.setTextFill(Color.RED);
 			    resultlabel.setVisible(true);
 			    return;
@@ -164,7 +164,7 @@ public class LendBookController {
 			
 			if(copy.getStatus()==enums.BookCopyStatus.borrowed)
 			{
-				resultlabel.setText("Lend fail.Copy of book isn't available");
+				resultlabel.setText("Lend fail Copy of book isn't available");
 				resultlabel.setTextFill(Color.RED);
 			    resultlabel.setVisible(true);
 			    return;
@@ -174,7 +174,7 @@ public class LendBookController {
 				reservExist=lendController.checkreserve(userName,copyBarcode);
 				System.out.println(reservExist);
 				if(reservExist==-1) {
-					resultlabel.setText("Lend fail.Copy of book has already been saved  to someone else");
+					resultlabel.setText("Lend fail Copy of book has already been saved  to someone else");
 					resultlabel.setTextFill(Color.RED);
 				    resultlabel.setVisible(true);
 				    return;
@@ -214,7 +214,7 @@ public class LendBookController {
 			  if(msg2.getType()==enums.BookType.Wanted) {
 			   if(wantedDate.isBefore(lendDate))
 			   {
-				   resultlabel.setText("Lend fail.This book is marked as WANTED you cann't lend it for more than three days");
+				   resultlabel.setText("Lend fail This book is marked as WANTED you can't lend it for more than three days");
 				   resultlabel.setTextFill(Color.RED);
 				   resultlabel.setVisible(true);
 				   return;
@@ -238,7 +238,6 @@ public class LendBookController {
 					    return;
 				  }
 				  if(reservExist==1) {
-					  System.out.println("200");
 				  updateReserveresult=lendController.updateReserve(userName,copyBarcode);
 				  if(updateReserveresult==enums.Result.Fail) {
 					  resultlabel.setText("Lend FAIL");
@@ -283,14 +282,24 @@ public class LendBookController {
 						    return;
 					  }
 					  if(reservExist==1) {
-						  System.out.println("300");
 					  updateReserveresult=lendController.updateReserve(userName,copyBarcode);
 					  if(updateReserveresult==enums.Result.Fail) {
 						  resultlabel.setText("Lend FAIL");
 						  resultlabel.setTextFill(Color.RED);
 						    resultlabel.setVisible(true);
 						    return;
+						    
+						    
+						    
 					  }
+//					    // Check if the book should transition from Wanted to Regular
+//					    boolean isTransitionSuccessful = lendController.checkAndUpdateBookType(catalognum);
+//					    if (!isTransitionSuccessful) {
+//					        System.out.println("Failed to update book type to Regular.");
+//					    } else {
+//					        System.out.println("Book type updated to Regular successfully.");
+//					    }
+					}
 					  }
 					  
 						  
@@ -304,7 +313,7 @@ public class LendBookController {
 				  }
 			 
 			  
-			  }
+			  
 			  }catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

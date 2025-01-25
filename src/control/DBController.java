@@ -500,7 +500,70 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
     }
 
     if (!bookReservations.isEmpty()) {
-        // Logic for handling reservations remains unchanged
+    	if (!bookReservations.isEmpty()) {
+    	    Reservations earliestReservation = bookReservations.get(0);
+    	    for (Reservations reservation : bookReservations) {
+    	        LocalDateTime minDate = earliestReservation.gettS().toLocalDateTime();
+    	        LocalDateTime currentDate = reservation.gettS().toLocalDateTime();
+    	        if (minDate.isAfter(currentDate)) {
+    	            earliestReservation = reservation;
+    	        }
+    	    }
+
+    	    PreparedStatement stmtUpdateReservation = conn.prepareStatement(
+    	        "UPDATE reservations SET reserveStatus = ? WHERE userID = ? AND barcode = ? AND reserveDate = ?");
+    	    stmtUpdateReservation.setString(1, ReserveStatus.twoDaysPending.name());
+    	    stmtUpdateReservation.setString(2, earliestReservation.getUserID());
+    	    stmtUpdateReservation.setString(3, earliestReservation.getBarcode());
+    	    stmtUpdateReservation.setTimestamp(4, earliestReservation.gettS());
+
+    	    if (stmtUpdateReservation.executeUpdate() > 0) {
+    	        System.out.println("Reservation status updated successfully for user ID: "
+    	            + earliestReservation.getUserID());
+
+    	        // Fetch email for the user
+    	        PreparedStatement stmtFetchEmail = conn.prepareStatement(
+    	            "SELECT email FROM users WHERE userID = ?");
+    	        stmtFetchEmail.setString(1, earliestReservation.getUserID());
+    	        ResultSet rsEmail = stmtFetchEmail.executeQuery();
+
+    	        if (rsEmail.next()) {
+    	            String recipientEmail = rsEmail.getString("email");
+    	            String subject = "Book Arrived Notification";
+    	            String body = "Dear User,\n\nYour reserved book is now available for pickup. "
+    	                + "Please collect it within the next 2 days.\n\nBook Barcode: "
+    	                + earliestReservation.getBarcode() + "\n\nThank you,\nBlib System";
+
+    	            // Send email using EmailController
+    	            EmailController.sendEmail(recipientEmail, subject, body);
+    	            
+ 	            
+    	            
+    	        }
+    	     
+    	    }
+
+    	    // Schedule a 48-hour timer for the reservation
+    	    TwoDaysMessage twoDaysMessage = new TwoDaysMessage();
+    	    Timer timer = new Timer();
+    	    Calendar calendar = Calendar.getInstance();
+    	    calendar.add(Calendar.HOUR, 48);
+    	    Date expirationTime = calendar.getTime();
+
+    	    timer.schedule(
+    	        new TwoDaysMessagecontroller(this, earliestReservation, catalogNumber, barcode),
+    	        expirationTime);
+
+    	    twoDaysMessage.setTimer(timer);
+    	    twoDaysMessage.setReservation(earliestReservation);
+    	    twoDaysMessage.setRealBarcode(barcode);
+    	    timerList.add(twoDaysMessage);
+    	    
+    	    
+
+    	    
+    	    
+    	}
         msg1.addToCommPipe("Book returned successfully, reservation handled.");
     } else {
         msg1.addToCommPipe("Book returned successfully!");
@@ -508,6 +571,66 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 
     return msg1;
 }
+
+
+
+	
+//public MsgParser checkPendingReservations(MsgParser msg) {
+//    String catalogNumber = (String) msg.getCommPipe().get(0);
+//    msg.clearCommPipe();
+//    try {
+//        String query = "SELECT COUNT(*) " +
+//                       "FROM reservations R " +
+//                       "JOIN bookcopies BC ON R.barcode = BC.barcode " +
+//                       "WHERE BC.catalogNumber = ? AND R.reserveStatus = 'Pending'";
+//        PreparedStatement stmt = conn.prepareStatement(query);
+//        stmt.setString(1, catalogNumber);
+//        ResultSet rs = stmt.executeQuery();
+//        if (rs.next()) {
+//            msg.addToCommPipe(rs.getInt(1)); // Add count to CommPipe
+//        } else {
+//            msg.addToCommPipe(0); // No pending reservations
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//        msg.addToCommPipe(-1); // Indicate failure
+//    }
+//    return msg;
+//}
+
+	
+	
+//public MsgParser updateBookTypeToRegular(MsgParser msg) {
+//    String catalogNumber = (String) msg.getCommPipe().get(0);
+//    msg.clearCommPipe();
+//    try {
+//        String query = "UPDATE books " +
+//                       "SET type = 'Regular' " +
+//                       "WHERE CatalogNumber = ? " +
+//                       "AND NOT EXISTS (" +
+//                       "    SELECT 1 " +
+//                       "    FROM reservations R " +
+//                       "    JOIN bookcopies BC ON R.barcode = BC.barcode " +
+//                       "    WHERE BC.catalogNumber = ? AND R.reserveStatus = 'Pending'" +
+//                       ")";
+//        PreparedStatement stmt = conn.prepareStatement(query);
+//        stmt.setString(1, catalogNumber);
+//        stmt.setString(2, catalogNumber);
+//        int rowsUpdated = stmt.executeUpdate();
+//        if (rowsUpdated > 0) {
+//            msg.addToCommPipe(enums.Result.Success); // Update successful
+//        } else {
+//            msg.addToCommPipe(enums.Result.Fail); // No rows updated
+//        }
+//    } catch (SQLException e) {
+//        e.printStackTrace();
+//        msg.addToCommPipe(enums.Result.Fail); // Indicate failure
+//    }
+//    return msg;
+//}
+
+
+
 
 	// function that delete reservation and send to the next one in the list i there
 	// any
@@ -886,9 +1009,7 @@ public void checkPenalty() {
 		try {
 			stmt = conn.prepareStatement(getActiveBorrowsQuery);
 			stmt.setString(1, username);
-			System.out.println("alsaf alawal");
 			ResultSet rs = stmt.executeQuery();
-			System.out.println("alsaf alawal b");
 			// get the matching tuple, if there's any
 			msg.clearCommPipe();
 			while (rs.next()) {
@@ -1417,7 +1538,6 @@ public MsgParser checkUser(MsgParser msg) {
 		PreparedStatement stmt;
 		ResultSet rs;
 		String catalogNumber = (String) mp.getCommPipe().get(0);
-		System.out.println("bseder32323");
 		String getBookQuery = "SELECT B.* FROM books B WHERE B.catalogNumber = ? ";
 		String getCategoriesQuery = "SELECT C.categoryName FROM categories C WHERE C.catalogNumber = ? ";
 		mp.clearCommPipe();
@@ -1915,6 +2035,39 @@ public MsgParser addReserve(MsgParser msg) {
                     stmt.setString(1, userID);
                     stmt.setString(2, barcode);
                     if (stmt.executeUpdate() > 0) {
+                    	
+                    	// Successfully added reservation
+                    	msg.addToCommPipe(0); 
+
+                    	// Check if the book's type needs to be updated to "Wanted"
+                    	String checkPendingReservationsQuery = "SELECT COUNT(*) FROM reservations R "
+                    	        + "JOIN bookcopies BC ON R.barcode = BC.barcode "
+                    	        + "WHERE BC.catalogNumber = ? AND R.reserveStatus = 'Pending'";
+
+                    	try (PreparedStatement stmtCheckPending = conn.prepareStatement(checkPendingReservationsQuery)) {
+                    	    stmtCheckPending.setString(1, catalogNumber);
+                    	    try (ResultSet rsPending = stmtCheckPending.executeQuery()) {
+                    	        if (rsPending.next() && rsPending.getInt(1) > 0) {
+                    	            // If there are pending reservations, update the book type to "Wanted"
+                    	            String updateBookTypeQuery = "UPDATE books SET type = 'Wanted' WHERE catalogNumber = ?";
+                    	            try (PreparedStatement stmtUpdateType = conn.prepareStatement(updateBookTypeQuery)) {
+                    	                stmtUpdateType.setString(1, catalogNumber);
+                    	                int rowsUpdated = stmtUpdateType.executeUpdate();
+
+                    	                if (rowsUpdated > 0) {
+                    	                    System.out.println("Book type updated to Wanted for catalogNumber: " + catalogNumber);
+                    	                } else {
+                    	                    System.out.println("Failed to update book type to Wanted for catalogNumber: " + catalogNumber);
+                    	                }
+                    	            }
+                    	        }
+                    	    }
+                    	} catch (SQLException e) {
+                    	    System.err.println("Error updating book type to Wanted: " + e.getMessage());
+                    	}
+
+                    	
+                    	
                         msg.addToCommPipe(0); // Successfully added reservation
                     } else {
                         msg.addToCommPipe(2); // Couldn't insert the tuple into the table
@@ -1941,16 +2094,12 @@ public MsgParser addReserve(MsgParser msg) {
 	 */
 	public MsgParser checkReserveExistence(MsgParser msg) {
 		// PreparedStatement stmt;
-		System.out.println("100");
 		String userID = ((Reservations) msg.getCommPipe().get(0)).getUserID();
 		String barcode = ((Reservations) msg.getCommPipe().get(0)).getBarcode();
 		msg.clearCommPipe();
 		for (TwoDaysMessage td : timerList) {
-			System.out.println("400");
 			if (barcode.equals(td.getRealBarcode())) {
-				System.out.println("500");
 				if (userID.equals(td.getReservation().getUserID())) {
-					System.out.println("101");
 					msg.addToCommPipe(1);
 					return msg;
 				} else {

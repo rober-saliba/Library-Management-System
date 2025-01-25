@@ -60,6 +60,9 @@ public class ConstantsAndGlobalVars {
 	public final static String getDataForLateReturnedReportTask = "getDataForLateReturnedReport";
 	public static final String getEarliestReturnDateTask = "GetEarliestReturnDate";
 	public final static String getUserStatusTask = "getUserStatus";
+	public static final String checkPendingReservationsTask = "checkPendingReservations";
+	public static final String updateBookTypeToRegularTask = "updateBookTypeToRegular";
+
 
 }
 

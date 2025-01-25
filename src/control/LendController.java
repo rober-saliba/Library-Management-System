@@ -190,6 +190,39 @@ public int checkreserve(String userID,String barcode) throws InterruptedExceptio
 	return reserveExist;
 
 	}
+
+
+//public boolean checkAndUpdateBookType(String catalogNumber) {
+//    try {
+//        // Check if there are any pending reservations for this catalog number
+//        MsgParser msg = new MsgParser<>();
+//        msg.addToCommPipe(catalogNumber);
+//        msg.setTask(ConstantsAndGlobalVars.checkPendingReservationsTask);
+//
+//        client.sendMessageToServer(msg);
+//        sem1.acquire();
+//
+//        boolean hasPendingReservations = (boolean) Msg1.getCommPipe().get(0); // Now expecting a boolean
+//        if (!hasPendingReservations) {
+//            // No pending reservations, update the book type to Regular
+//            msg.clearCommPipe();
+//            msg.addToCommPipe(catalogNumber);
+//            msg.setTask(ConstantsAndGlobalVars.updateBookTypeToRegularTask);
+//
+//            client.sendMessageToServer(msg);
+//            sem1.acquire();
+//
+//            enums.Result updateResult = (enums.Result) Msg1.getCommPipe().get(0);
+//            return updateResult == enums.Result.Success;
+//        }
+//    } catch (InterruptedException e) {
+//        e.printStackTrace();
+//    }
+//    return false;
+//}
+
+
+
 public enums.Result updateReserve(String userID,String barcode) throws InterruptedException {
 	
 	MsgParser<Reservations> msg = new MsgParser<>();
