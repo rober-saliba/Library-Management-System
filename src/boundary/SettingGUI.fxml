@@ -6,27 +6,72 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="345.0" prefWidth="549.0" style="-fx-background-image: url(&quot;file:C:/Users/User/Desktop/scene/fifty.png&quot;); -fx-background-size: 100% 100%;" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.SettingController">
+<AnchorPane prefHeight="345.0" prefWidth="549.0" style="-fx-background-color: #fafafa;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.SettingController">
    <children>
-      <Label layoutX="47.0" layoutY="46.0" prefHeight="17.0" prefWidth="193.0" text="General Account Settings">
+      <!-- Title -->
+      <Label layoutX="172.0" layoutY="23.0" prefHeight="35.0" prefWidth="205.0" text="Account Settings" textFill="#2c3e50" underline="true">
          <font>
-            <Font name="System Bold Italic" size="15.0" />
+            <Font name="Arial" size="26.0" />
          </font>
       </Label>
-      <Label layoutX="72.0" layoutY="88.0" text="First name:" AnchorPane.leftAnchor="72.0" />
-      <Label layoutX="69.0" layoutY="148.0" text="user ID:" AnchorPane.leftAnchor="72.0" />
-      <Label layoutX="68.0" layoutY="192.0" text="phone number:" AnchorPane.leftAnchor="72.0" />
-      <Label layoutX="70.0" layoutY="231.0" text="email:" AnchorPane.leftAnchor="72.0" />
-      <TextField fx:id="phoneNumberTF" layoutX="166.0" layoutY="188.0" style="-fx-border-color: red; -fx-background-color: -fx-text-box-border, -fx-background;" />
-      <TextField fx:id="emailTF" layoutX="166.0" layoutY="227.0" style="-fx-border-color: red; -fx-background-color: -fx-text-box-border, -fx-background;" />
-      <Button fx:id="saveButton" layoutX="419.0" layoutY="307.0" mnemonicParsing="false" onAction="#OnClickSave" prefHeight="25.0" prefWidth="50.0" text="save" textFill="#05c702" />
-      <Button fx:id="cancelButton" layoutX="485.0" layoutY="307.0" mnemonicParsing="false" onAction="#OnClickCancel" text="cancel" textFill="RED" />
-      <Button fx:id="editPhoneButton" layoutX="331.0" layoutY="188.0" mnemonicParsing="false" onAction="#onEditPhone" text="edit" />
-      <Button fx:id="editEmail" layoutX="331.0" layoutY="227.0" mnemonicParsing="false" onAction="#onEditEmail" text="edit" />
-      <Label fx:id="firstNameLabel" layoutX="161.0" layoutY="88.0" text="name" underline="true" />
-      <Label fx:id="IDlabel" layoutX="162.0" layoutY="148.0" text="ID" underline="true" wrapText="true" />
-      <Label layoutX="72.0" layoutY="118.0" text="Last name:" />
-      <Label fx:id="lastNameLabel" layoutX="162.0" layoutY="118.0" text="last name" underline="true" />
-      <Label fx:id="successOrFailLabel" layoutX="72.0" layoutY="305.0" prefHeight="25.0" prefWidth="299.0" style="-fx-font-size: 20;" />
+
+      <!-- Labels for form fields -->
+      <Label layoutX="72.0" layoutY="88.0" text="First Name:" textFill="#2c3e50">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="72.0" layoutY="118.0" text="Last Name:" textFill="#2c3e50">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="72.0" layoutY="148.0" text="User ID:" textFill="#2c3e50">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="57.0" layoutY="194.0" text="Phone Number:" textFill="#2c3e50">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="117.0" layoutY="233.0" text="Email:" textFill="#2c3e50">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+
+      <!-- Text Fields for user input -->
+      <TextField fx:id="phoneNumberTF" layoutX="166.0" layoutY="188.0" prefWidth="260.0" promptText="Enter phone number" style="-fx-border-color: #3498db; -fx-background-color: #fff; -fx-border-radius: 10px; -fx-padding: 5px; -fx-font-size: 14px;" />
+      <TextField fx:id="emailTF" layoutX="166.0" layoutY="227.0" prefWidth="260.0" promptText="Enter email" style="-fx-border-color: #3498db; -fx-background-color: #fff; -fx-border-radius: 10px; -fx-padding: 5px; -fx-font-size: 14px;" />
+
+      <!-- Buttons with hover effects and dynamic styling -->
+      <Button fx:id="saveButton" layoutX="339.0" layoutY="295.0" mnemonicParsing="false" onAction="#OnClickSave" prefHeight="35.0" prefWidth="100.0" style="-fx-background-color: #27ae60; -fx-border-radius: 10px; -fx-font-size: 14px; -fx-font-weight: bold;" text="Save" textFill="white" />
+      <Button fx:id="cancelButton" layoutX="468.0" layoutY="298.0" mnemonicParsing="false" onAction="#OnClickCancel" style="-fx-background-color: #e74c3c; -fx-border-radius: 10px; -fx-font-size: 14px; -fx-font-weight: bold;" text="Cancel" />
+
+      <!-- Edit buttons with hover effects -->
+      <Button fx:id="editPhoneButton" layoutX="439.0" layoutY="191.0" mnemonicParsing="false" onAction="#onEditPhone" style="-fx-background-color: #3498db; -fx-border-radius: 10px; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;" text="Edit" />
+      <Button fx:id="editEmail" layoutX="439.0" layoutY="230.0" mnemonicParsing="false" onAction="#onEditEmail" style="-fx-background-color: #3498db; -fx-border-radius: 10px; -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white;" text="Edit" />
+
+      <!-- Display user information with vibrant color -->
+      <Label fx:id="firstNameLabel" layoutX="162.0" layoutY="88.0" text="Name" textFill="#2980b9" underline="true">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="lastNameLabel" layoutX="162.0" layoutY="118.0" text="Last Name" textFill="#2980b9" underline="true">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="IDlabel" layoutX="162.0" layoutY="148.0" text="ID" textFill="#2980b9" underline="true" wrapText="true">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+      </Label>
+
+      <!-- Success/Failure message with animation -->
+      <Label fx:id="successOrFailLabel" layoutX="72.0" layoutY="305.0" prefHeight="25.0" prefWidth="299.0" style="-fx-font-size: 20px; -fx-text-fill: #d35400;" />
    </children>
 </AnchorPane>

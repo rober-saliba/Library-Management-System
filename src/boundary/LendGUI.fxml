@@ -8,37 +8,50 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="374.0" prefWidth="641.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.LendBookController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="650.0" style="-fx-background-color: #f9f9f9;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.LendBookController">
    <children>
-      <Label layoutX="57.0" layoutY="38.0" prefHeight="17.0" prefWidth="226.0" text="fill these form to apply borrowing:">
+      <!-- Header Label -->
+      <Label layoutX="215.0" layoutY="25.0" prefHeight="40.0" prefWidth="184.0" text="Lend a Book" textFill="#2b83c6">
          <font>
-            <Font name="System Bold" size="13.0" />
+            <Font name="Arial Bold" size="28.0" />
          </font>
       </Label>
-      <AnchorPane layoutX="15.0" layoutY="82.0" prefHeight="224.0" prefWidth="612.0" AnchorPane.bottomAnchor="68.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="82.0">
+
+      <!-- Main Container -->
+      <Pane layoutX="25.0" layoutY="80.0" prefHeight="250.0" prefWidth="600.0" style="-fx-background-color: #ffffff; -fx-border-color: #dcdcdc; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.2, 2, 2);">
          <children>
-            <Pane layoutX="35.0" layoutY="7.0" prefHeight="217.0" prefWidth="572.0" style="-fx-border-color: black; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="7.0">
-               <children>
-                  <Label layoutX="49.0" layoutY="42.0" prefHeight="19.0" prefWidth="84.0" text="*ID borrower:" />
-                  <Label layoutX="49.0" layoutY="79.0" prefHeight="17.0" prefWidth="84.0" text="*fill barcode:">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="49.0" layoutY="115.0" prefHeight="17.0" prefWidth="70.0" text="*due date:" />
-                  <DatePicker fx:id="date" layoutX="139.0" layoutY="110.0" prefHeight="25.0" prefWidth="149.0" />
-                  <TextField fx:id="barcode" layoutX="139.0" layoutY="76.0" />
-                  <TextField fx:id="borrowerID" layoutX="139.0" layoutY="39.0" />
-                  <Button fx:id="lendbtn" layoutX="465.0" layoutY="165.0" mnemonicParsing="false" onAction="#lendHandler" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Lend" />
-                  <Label fx:id="resultlabel" layoutX="14.0" layoutY="169.0" prefHeight="17.0" prefWidth="444.0" textFill="RED">
-                     <font>
-                        <Font name="System Bold Italic" size="12.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
+            <!-- Labels and Input Fields -->
+            <Label layoutX="40.0" layoutY="40.0" text="Borrower ID:" textFill="#555555" />
+            <TextField fx:id="borrowerID" layoutX="140.0" layoutY="35.0" prefHeight="30.0" prefWidth="200.0" promptText="Enter Borrower ID" />
+
+            <Label layoutX="40.0" layoutY="90.0" text="Book Barcode:" textFill="#555555" />
+            <TextField fx:id="barcode" layoutX="140.0" layoutY="85.0" prefHeight="30.0" prefWidth="200.0" promptText="Enter Book Barcode" />
+
+            <Label layoutX="40.0" layoutY="140.0" text="Date:" textFill="#555555" />
+            <DatePicker fx:id="date" layoutX="140.0" layoutY="135.0" prefHeight="30.0" prefWidth="200.0" />
+
+            <!-- Lend Button -->
+            <Button fx:id="lendbtn" layoutX="400.0" layoutY="190.0" mnemonicParsing="false" onAction="#lendHandler" prefHeight="35.0" prefWidth="130.0" style="-fx-background-color: #2b83c6; -fx-text-fill: white; -fx-background-radius: 20px;" text="Lend Book">
+               <font>
+                  <Font name="Arial Bold" size="14.0" />
+               </font>
+            </Button>
+
+            <!-- Result Label -->
+            <Label fx:id="resultlabel" layoutX="40.0" layoutY="200.0" prefHeight="25.0" prefWidth="350.0" textFill="RED">
+               <font>
+                  <Font name="Arial Italic" size="14.0" />
+               </font>
+            </Label>
          </children>
-      </AnchorPane>
-      <Button fx:id="cancelbtn" layoutX="575.0" layoutY="335.0" mnemonicParsing="false" onAction="#onClose" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Cancel" />
+      </Pane>
+
+      <!-- Cancel Button -->
+      <Button fx:id="cancelbtn" layoutX="525.0" layoutY="350.0" mnemonicParsing="false" onAction="#onClose" prefHeight="35.0" prefWidth="90.0" style="-fx-background-color: #e57373; -fx-text-fill: white; -fx-background-radius: 20px;" text="Cancel">
+         <font>
+            <Font name="Arial Bold" size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
+

@@ -230,9 +230,9 @@ public class MainPageController {
 		readerController = ReaderController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
-		Image imgUsername = new Image("/pictures/usernameLogo.png");
+		Image imgUsername = new Image("/images/usernameLogo.png");
 		usernameImg.setImage(imgUsername);
-		Image imgPassword = new Image("/pictures/passwordLogo.png");
+		Image imgPassword = new Image("/images/passwordLogo.png");
 		passwordImg.setImage(imgPassword);
 
 

@@ -6,16 +6,26 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="347.0" prefWidth="456.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.viewMessageController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="350.0" prefWidth="460.0" style="-fx-background-color: linear-gradient(to bottom, #f9f9f9, #e6e6e6);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.viewMessageController">
    <children>
-      <Button fx:id="closeButton" layoutX="401.0" layoutY="272.0" mnemonicParsing="false" onAction="#onCloseHandler" text="close" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="9.0" />
-      <Label fx:id="titleLabel" alignment="CENTER" layoutX="143.0" layoutY="26.0" prefHeight="40.0" prefWidth="195.0" AnchorPane.leftAnchor="143.0" AnchorPane.rightAnchor="118.0" AnchorPane.topAnchor="26.0">
+      <!-- Close Button -->
+      <Button fx:id="closeButton" layoutX="380.0" layoutY="290.0" mnemonicParsing="false" onAction="#onCloseHandler" style="-fx-background-color: #3f51b5; -fx-text-fill: white; -fx-font-size: 14px; -fx-border-radius: 5; -fx-background-radius: 5; -fx-cursor: hand;" text="Close" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" />
+
+      <!-- Title Label -->
+      <Label fx:id="titleLabel" alignment="CENTER" layoutX="115.0" layoutY="20.0" prefHeight="40.0" prefWidth="230.0" style="-fx-text-fill: #3f51b5; -fx-font-weight: bold;">
          <font>
-            <Font name="Century" size="16.0" />
+            <Font name="Arial" size="18.0" />
          </font>
       </Label>
-      <TextArea fx:id="textAreaMessage" layoutX="77.0" layoutY="112.0" prefHeight="191.0" prefWidth="327.0" AnchorPane.bottomAnchor="57.0" AnchorPane.leftAnchor="77.0" AnchorPane.rightAnchor="52.0" AnchorPane.topAnchor="112.0" />
-      <Label layoutX="77.0" layoutY="80.0" text="Message belong to:" />
-      <Label fx:id="IDLabel" layoutX="192.0" layoutY="80.0" prefHeight="17.0" prefWidth="112.0" />
+
+      <!-- Message Text Area -->
+      <TextArea fx:id="textAreaMessage" editable="false" layoutX="50.0" layoutY="110.0" prefHeight="150.0" prefWidth="360.0" style="-fx-background-color: #ffffff; -fx-border-color: #d3d3d3; -fx-border-radius: 5; -fx-padding: 10;" wrapText="true" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="110.0" />
+
+      <!-- "Message Belong To" Label -->
+      <Label layoutX="50.0" layoutY="80.0" style="-fx-text-fill: #333333; -fx-font-size: 14px; -fx-font-weight: bold;" text="Message belongs to:" />
+
+      <!-- ID Label -->
+      <Label fx:id="IDLabel" layoutX="190.0" layoutY="80.0" prefHeight="20.0" prefWidth="148.0" style="-fx-text-fill: #555555; -fx-font-size: 14px;" />
    </children>
 </AnchorPane>
+

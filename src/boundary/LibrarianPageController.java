@@ -13,6 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,6 +32,27 @@ public class LibrarianPageController extends UserPageController {
 	protected LibrarianController librarianController;
 	protected BookController bookController;
     private MsgController msgcontroller;
+    
+    
+    @FXML
+   	protected ImageView creatememberImg;
+       
+    @FXML
+   	protected ImageView returnbookImg;
+   	
+   	@FXML
+   	protected ImageView InventorymgImg;
+   	
+   	@FXML
+   	protected ImageView searchmemberImg;
+   	
+   	@FXML
+   	protected ImageView lendbookImg;
+   	
+   	@FXML
+   	protected ImageView delaybookImg;
+    
+    
     
 	int numberOfMsg;
     @FXML
@@ -204,38 +227,25 @@ public class LibrarianPageController extends UserPageController {
 	@Override
 	void initialize() {
 		super.initialize();
-		String img = "/pictures/lendHand.png";
-		lendBookBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
-		img = "/pictures/return.png";
-		returnBookBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
-		img = "/pictures/delay.png";
-		delayBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
-		img = "/pictures/searchMember.png";
-		searchMemberBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
-		img = "/pictures/Register.png";
-		signupBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
-		img = "/pictures/Managment1.png";
-		inventoryBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 132px; "
-				+ "-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;" + "-fx-background-repeat: no-repeat;"
-				+ "-fx-background-position: center 8px;" + "-fx-border-color: #0090ff;" + "-fx-border-radious: 5;"
-				+ "-fx-border-width: 2;");
+		Image imgcreatemember = new Image("/images/Register.png");
+		creatememberImg.setImage(imgcreatemember);
 		
-		img = "/pictures/messageIcon.png";
+		Image imgretbook = new Image("/images/return.png");
+		returnbookImg.setImage(imgretbook);
+		
+		Image imginventorymanag = new Image("/images/inventory.png");
+		InventorymgImg.setImage(imginventorymanag);
+		
+		Image imgsearchmember = new Image("/images/people.png");
+		searchmemberImg.setImage(imgsearchmember);
+		
+		Image imglendbook = new Image("/images/lendHand.png");
+		lendbookImg.setImage(imglendbook);
+		
+		Image imgdelaybook = new Image("/images/delay.png");
+		delaybookImg.setImage(imgdelaybook);
+		
+		String img = "/images/messageIcon.png";
 		messageButton.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 50px; "+"-fx-min-width: 70px;" + "-fx-background-size: 20px 20px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;");
 
 		// System.out.println(super.currentUser);

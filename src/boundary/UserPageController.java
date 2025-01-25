@@ -43,6 +43,18 @@ public class UserPageController {
 	protected ImageView userImg;
 	
 	@FXML
+	protected ImageView	myreservesImg;
+	
+	@FXML
+	protected ImageView myborrowsImg;
+	
+	@FXML
+	protected ImageView historyImg;
+	
+	@FXML
+	protected ImageView settingsImg;
+	
+	@FXML
 	protected Button logoutBtn;
 
 	@FXML
@@ -214,19 +226,23 @@ protected void searchHandler(ActionEvent event) {
 		readerController = ReaderController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 		setSearchTypeComboBox();
-		String img = "/pictures/search.png";
+		String img = "/images/search.png";
 		searchBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-background-position: center center; "+"-fx-background-repeat: stretch;" + "-fx-background-size: 100% 100%;");
-		img = "/pictures/borrow.png";
-		myBorrowsBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 132px; "+"-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;"+"-fx-border-color: #0090ff;"+"-fx-border-radious: 5;"+"-fx-border-width: 2; ");
-		img = "/pictures/reserve.png";
-		reservesBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 132px; "+"-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;"+"-fx-border-color: #0090ff;"+"-fx-border-radious: 5;"+"-fx-border-width: 2;");
-		img = "/pictures/history.png";
-		historyBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 132px; "+"-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;"+"-fx-border-color: #0090ff;"+"-fx-border-radious: 5;"+"-fx-border-width: 2;");
-		img = "/pictures/setting.png";
-		settingsBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 132px; "+"-fx-min-width: 128px;" + "-fx-background-size: 100px 100px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;"+"-fx-border-color: #0090ff;"+"-fx-border-radious: 5;"+"-fx-border-width: 2;");
-		img = "/pictures/logout.png";
-		logoutBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 50px; "+"-fx-min-width: 70px;" + "-fx-background-size: 20px 20px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;");
+		Image imgrborrow = new Image("/images/borrow.png");
 		
+		myborrowsImg.setImage(imgrborrow);
+
+		Image imgres = new Image("/images/reserves.png");
+		myreservesImg.setImage(imgres);
+		
+		Image imghistory = new Image("/images/history.png");
+		historyImg.setImage(imghistory);
+		
+		Image imgsitting = new Image("/images/setting.png");
+		settingsImg.setImage(imgsitting);
+
+		img = "/images/logout.png";
+		logoutBtn.setStyle("-fx-background-image: url('"+img+"'); "+"-fx-min-height: 50px; "+"-fx-min-width: 70px;" + "-fx-background-size: 20px 20px;"+"-fx-background-repeat: no-repeat;"+"-fx-background-position: center 8px;");
 		
 	}
 	/**
@@ -236,7 +252,7 @@ protected void searchHandler(ActionEvent event) {
 	public void loadUser(User u) {
 		this.currentUser = u;
 		usernameLabel.setText("      "+currentUser.getFirstName() + " " + currentUser.getLastName());
-		Image img = new Image("/pictures/user.png");
+		Image img = new Image("/images/user.png");
 		userImg.setImage(img);
 	}
 	/**

@@ -7,25 +7,40 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="459.0" prefWidth="700.0" style="-fx-background-color: #efe8ec;" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.messagesController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: linear-gradient(to bottom, #e0f7fa, #80deea);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.messagesController">
    <children>
-      <AnchorPane prefHeight="48.0" prefWidth="700.0" style="-fx-background-color: eddce6;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <!-- Header Section -->
+      <AnchorPane prefHeight="60.0" prefWidth="800.0" style="-fx-background-color: #0288d1; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0.5, 0, 2);" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" layoutX="196.0" layoutY="9.0" prefHeight="30.0" prefWidth="309.0" text="messages" textAlignment="CENTER" AnchorPane.leftAnchor="196.0" AnchorPane.rightAnchor="195.0" AnchorPane.topAnchor="9.0">
+            <Label alignment="CENTER" layoutX="250.0" layoutY="15.0" prefHeight="30.0" prefWidth="300.0" text="Messages" textAlignment="CENTER">
                <font>
-                  <Font name="Berlin Sans FB Demi Bold" size="26.0" />
+                  <Font name="SansSerif Bold Italic" size="26.0" />
                </font>
+               <textFill>#ffffff</textFill>
             </Label>
          </children>
       </AnchorPane>
-      <Button fx:id="closeButton" layoutX="643.0" layoutY="420.0" mnemonicParsing="false" onAction="#onCloseHandler" text="close" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
-      <TableView fx:id="messagesTabel" layoutX="33.0" layoutY="96.0" prefHeight="314.0" prefWidth="634.0" AnchorPane.bottomAnchor="49.0" AnchorPane.leftAnchor="33.0" AnchorPane.rightAnchor="33.0" AnchorPane.topAnchor="96.0">
-        <columns>
-            <TableColumn fx:id="DateCol1" minWidth="0.0" prefWidth="155.33334350585938" text="date" />
-          <TableColumn fx:id="titleCol" prefWidth="276.6666259765625" text="title" />
-          <TableColumn fx:id="messageInfoCol" minWidth="0.0" prefWidth="104.0" />
-            <TableColumn fx:id="deleteMessage" minWidth="0.0" prefWidth="98.0" />
-        </columns>
+
+      <!-- Close Button -->
+      <Button fx:id="closeButton" layoutX="700.0" layoutY="450.0" mnemonicParsing="false" onAction="#onCloseHandler" style="-fx-background-color: #0288d1; -fx-text-fill: white; -fx-font-size: 14px; -fx-cursor: hand; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.5, 0, 1);" text="Close" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
+
+      <!-- Table Section -->
+      <TableView fx:id="messagesTabel" layoutX="50.0" layoutY="100.0" prefHeight="320.0" prefWidth="700.0" style="-fx-background-color: white; -fx-border-color: #0288d1; -fx-border-radius: 10; -fx-background-radius: 10;" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="100.0">
+         <columns>
+            <TableColumn fx:id="DateCol1" prefWidth="163.11107730865479" style="-fx-alignment: CENTER;" text="Date">
+               <style>-fx-font-size: 14px; -fx-text-fill: #0288d1;</style>
+            </TableColumn>
+            <TableColumn fx:id="titleCol" prefWidth="227.5556182861328" style="-fx-alignment: CENTER;" text="Title">
+               <style>-fx-font-size: 14px; -fx-text-fill: #0288d1;</style>
+            </TableColumn>
+            <TableColumn fx:id="messageInfoCol" minWidth="0.0" prefWidth="172.4444580078125" style="-fx-alignment: CENTER;" text="Message">
+               <style>-fx-font-size: 14px; -fx-text-fill: #0288d1;</style>
+            </TableColumn>
+            <TableColumn fx:id="deleteMessage" prefWidth="135.5555419921875" style="-fx-alignment: CENTER;" text="Delete">
+               <style>-fx-font-size: 14px; -fx-text-fill: #0288d1;</style>
+            </TableColumn>
+         </columns>
       </TableView>
    </children>
 </AnchorPane>
+

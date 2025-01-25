@@ -51,7 +51,7 @@ public class SearchMemberController {
     	librarianController = LibrarianController.getInstance(ConstantsAndGlobalVars.ipAddress, ConstantsAndGlobalVars.DEFAULT_PORT);
     	
 
-		String img = "/pictures/search.png";
+		String img = "/images/search.png";
 		searchBtn.setStyle("-fx-background-image: url('" + img + "'); " + "-fx-min-height: 10px; "
 				+ "-fx-min-width: 10px;" + "-fx-background-size: 100% 100%;" + "-fx-background-repeat: no-repeat;"
 				+ "-fx-background-position: center;");

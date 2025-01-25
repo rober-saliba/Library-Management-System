@@ -4,40 +4,59 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="424.0" prefWidth="490.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.InventoryManagementController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="399.0" prefWidth="600.0" style="-fx-background-color: #f7f9fc; -fx-padding: 20;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.InventoryManagementController">
    <children>
-      <Label layoutX="137.0" layoutY="14.0" prefHeight="26.0" prefWidth="200.0" text="Inventory managment">
-         <font>
-            <Font name="System Bold Italic" size="17.0" />
-         </font>
-      </Label>
-      <Label layoutX="18.0" layoutY="61.0" text="Number of books in the library:" />
-      <Label fx:id="numberOfBooksLabel" layoutX="195.0" layoutY="61.0" prefHeight="17.0" prefWidth="62.0" />
-      <Label layoutX="18.0" layoutY="106.0" prefHeight="17.0" prefWidth="101.0" text="manage books:">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font></Label>
-      <Button fx:id="cancelButton" layoutX="424.0" layoutY="371.0" mnemonicParsing="false" onAction="#cancelHandler" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Cancel" />
-      <Label layoutX="61.0" layoutY="147.0" prefHeight="17.0" prefWidth="117.0" text="To add Book click:">
-         <font>
-            <Font size="13.0" />
-         </font>
-      </Label>
-      <Button fx:id="addButton" layoutX="227.0" layoutY="144.0" mnemonicParsing="false" onAction="#addHandler" prefHeight="25.0" prefWidth="70.0" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Add" />
-      <Label layoutX="61.0" layoutY="204.0" text="To remove Book insert catalog number:" />
-      <TextField fx:id="insertCatalogNumberTF" layoutX="63.0" layoutY="237.0" promptText="Insert catalog number" />
-      <Button fx:id="removeButton" layoutX="227.0" layoutY="237.0" mnemonicParsing="false" onAction="#removeHandler" prefHeight="25.0" prefWidth="70.0" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Remove" />
-      <AnchorPane layoutX="7.0" layoutY="44.0" prefHeight="52.0" prefWidth="376.0" style="-fx-border-color: black; -fx-border-width: 0px 0px 1px 0px;" />
-      <Label fx:id="resultLabel" layoutX="163.0" layoutY="370.0">
-         <font>
-            <Font name="System Bold Italic" size="18.0" />
-         </font>
-      </Label>
-      <Label layoutX="66.0" layoutY="279.0" text="To update Book insert catalog number:" />
-      <TextField fx:id="insertCatalogNumberTF_update" layoutX="68.0" layoutY="312.0" promptText="Insert catalog number" />
-      <Button fx:id="updateButton" layoutX="232.0" layoutY="312.0" mnemonicParsing="false" onAction="#updateHandler" prefHeight="25.0" prefWidth="70.0" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Update" />
-      <Button fx:id="addCopyButton" layoutX="327.0" layoutY="144.0" mnemonicParsing="false" onAction="#addCopyHandler" prefHeight="25.0" prefWidth="149.0" style="-fx-effect: dropshadow( one-pass-box , black , 8 , 0.0 , 2 , 0 );" text="Add copy of book" />
+      <!-- Header Section -->
+      <VBox alignment="CENTER" layoutX="20.0" layoutY="10.0" prefWidth="560.0" spacing="10">
+         <Label style="-fx-text-fill: #2a7cc7;" text="Inventory Management" underline="true">
+            <font>
+               <Font name="Arial Black" size="20.0" />
+            </font>
+         </Label>
+         <Label style="-fx-text-fill: #4a4a4a;" text="Manage your library's books with ease" />
+         <AnchorPane prefHeight="2.0" prefWidth="560.0" style="-fx-background-color: #dcdcdc;" />
+      </VBox>
+
+      <!-- Number of Books Section -->
+      <HBox alignment="CENTER_LEFT" layoutX="20.0" layoutY="80.0" prefHeight="20.0" prefWidth="232.0" spacing="10">
+         <Label prefHeight="20.0" prefWidth="204.0" style="-fx-font-size: 14; -fx-text-fill: #333333;" text="Number of books in the library:" />
+         <Label fx:id="numberOfBooksLabel" prefHeight="20.0" prefWidth="35.0" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #2a7cc7;" />
+      </HBox>
+
+      <!-- Manage Books Section -->
+      <VBox layoutX="20.0" layoutY="120.0" spacing="15">
+         <HBox spacing="10">
+            <Label style="-fx-font-size: 14; -fx-text-fill: #333333;" text="To add a book or copy:" />
+            <Button fx:id="addButton" onAction="#addHandler" style="-fx-background-color: #2a7cc7; -fx-text-fill: white; -fx-font-weight: bold;" text="Add Book" />
+            <Button fx:id="addCopyButton" onAction="#addCopyHandler" style="-fx-background-color: #2a7cc7; -fx-text-fill: white; -fx-font-weight: bold;" text="Add Copy" />
+         </HBox>
+
+         <VBox spacing="5">
+            <Label style="-fx-font-size: 14; -fx-text-fill: #333333;" text="To remove a book:" />
+            <HBox spacing="10">
+               <TextField fx:id="insertCatalogNumberTF" promptText="Enter catalog number" style="-fx-pref-width: 250;" />
+               <Button fx:id="removeButton" onAction="#removeHandler" style="-fx-background-color: #e63946; -fx-text-fill: white; -fx-font-weight: bold;" text="Remove" />
+            </HBox>
+         </VBox>
+
+         <VBox spacing="5">
+            <Label style="-fx-font-size: 14; -fx-text-fill: #333333;" text="To update a book:" />
+            <HBox spacing="10">
+               <TextField fx:id="insertCatalogNumberTF_update" promptText="Enter catalog number" style="-fx-pref-width: 250;" />
+               <Button fx:id="updateButton" onAction="#updateHandler" style="-fx-background-color: #2a9d8f; -fx-text-fill: white; -fx-font-weight: bold;" text="Update" />
+            </HBox>
+         </VBox>
+      </VBox>
+
+      <!-- Footer Section -->
+      <HBox alignment="CENTER" layoutX="20.0" layoutY="400.0" spacing="10">
+         <Label fx:id="resultLabel" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #2a7cc7;" />
+      </HBox>
+      <Button fx:id="cancelButton" layoutX="500.0" layoutY="336.0" onAction="#cancelHandler" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold;" text="Cancel" />
    </children>
 </AnchorPane>
+

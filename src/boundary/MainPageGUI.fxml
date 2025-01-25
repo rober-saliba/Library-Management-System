@@ -13,56 +13,43 @@
 <?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="547.0" prefWidth="1250.0" style="-fx-background-color: #dedbda;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.MainPageController">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: linear-gradient(to bottom, #74ebd5, #acb6e5);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.MainPageController">
    <children>
-      <AnchorPane layoutX="836.0" layoutY="108.0" prefHeight="351.0" prefWidth="301.0" style="-fx-border-color: black; -fx-border-width: 3px 3px 3px 3px; -fx-background-color: white;" AnchorPane.leftAnchor="836.0">
+      <!-- Login Section -->
+      <AnchorPane layoutX="69.0" layoutY="100.0" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: #f9f9f9; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-background-radius: 15px;">
          <children>
-            <TextField fx:id="usernameTF" layoutX="53.0" layoutY="171.0" prefHeight="25.0" prefWidth="221.0" promptText="username" style="-fx-background-radius: 20px;" />
-            <PasswordField fx:id="passwordTF" layoutX="53.0" layoutY="217.0" prefHeight="25.0" prefWidth="221.0" promptText="password" style="-fx-background-radius: 20px;" />
-            <Button fx:id="loginBtn" layoutX="70.0" layoutY="285.0" mnemonicParsing="false" onAction="#loginHandler" prefHeight="25.0" prefWidth="186.0" style="-fx-background-radius: 7px;" text="Login" />
-            <ImageView fx:id="usernameImg" fitHeight="25.0" fitWidth="25.0" layoutX="26.0" layoutY="171.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="passwordImg" fitHeight="25.0" fitWidth="25.0" layoutX="26.0" layoutY="217.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="wrongInputLabel" layoutX="52.0" layoutY="257.0" prefHeight="25.0" prefWidth="221.0" text="Wrong Input" textFill="#f40303" visible="false" AnchorPane.topAnchor="257.0">
+            <Label layoutX="169.0" layoutY="22.0" text="BLib" textFill="#2c3e50">
                <font>
-                  <Font name="System Bold Italic" size="16.0" />
+                  <Font name="Arial Bold" size="28.0" />
                </font>
             </Label>
-            <RadioButton fx:id="studentRadio" layoutX="38.0" layoutY="109.0" mnemonicParsing="false" text="I am a Student" />
-            <RadioButton fx:id="librarianRadio" layoutX="177.0" layoutY="109.0" mnemonicParsing="false" text="I am a librarian" />
-            <Label layoutX="133.0" layoutY="14.0" prefHeight="70.0" prefWidth="100.0" text="BLib" textFill="#4a59c7">
+            <TextField fx:id="usernameTF" layoutX="100.0" layoutY="100.0" prefHeight="40.0" prefWidth="200.0" promptText="Username" style="-fx-background-radius: 10px;" />
+            <PasswordField fx:id="passwordTF" layoutX="100.0" layoutY="160.0" prefHeight="40.0" prefWidth="200.0" promptText="Password" style="-fx-background-radius: 10px;" />
+            <Button fx:id="loginBtn" layoutX="100.0" layoutY="261.0" mnemonicParsing="false" onAction="#loginHandler" prefHeight="40.0" prefWidth="200.0" style="-fx-background-radius: 20px; -fx-background-color: #2c3e50; -fx-text-fill: white;" text="Login" />
+            <RadioButton fx:id="studentRadio" layoutX="59.0" layoutY="221.0" mnemonicParsing="false" text="I am a Subscriber" />
+            <RadioButton fx:id="librarianRadio" layoutX="226.0" layoutY="221.0" mnemonicParsing="false" text="I am a Librarian" />
+            <ImageView fx:id="usernameImg" fitHeight="32.0" fitWidth="40.0" layoutX="59.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="passwordImg" fitHeight="32.0" fitWidth="40.0" layoutX="59.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="wrongInputLabel" layoutX="81.0" layoutY="316.0" prefHeight="48.0" prefWidth="237.0">
                <font>
-                  <Font name="System Bold Italic" size="42.0" />
+                  <Font name="Arial Black" size="12.0" />
                </font>
             </Label>
-            <ImageView fx:id="blibimg" fitHeight="63.0" fitWidth="80.0" layoutX="53.0" layoutY="18.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="93.0" layoutY="121.0" prefHeight="326.0" prefWidth="660.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px 3px 3px 3px;" AnchorPane.leftAnchor="93.0">
+
+      <!-- Search Section -->
+      <AnchorPane layoutX="540.0" layoutY="100.0" prefHeight="400.0" prefWidth="400.0" style="-fx-background-color: #f9f9f9; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 15px; -fx-background-radius: 15px;">
          <children>
-            <ComboBox fx:id="searchTypeCombo" layoutX="14.0" layoutY="174.0" onAction="#searchTypeHandler" prefWidth="150.0" promptText="          Search type" />
-            <TextField fx:id="searchTF" layoutX="164.0" layoutY="174.0" prefHeight="25.0" prefWidth="328.0" promptText="enter keyword" />
-            <Button fx:id="searchBtn" layoutX="492.0" layoutY="174.0" mnemonicParsing="false" onAction="#searchHandler" text="Search" />
-            <Label layoutX="174.0" layoutY="63.0" prefHeight="70.0" prefWidth="328.0" text="Search Books">
+            <Label layoutX="106.0" layoutY="24.0" text="Search Books" textFill="#2c3e50">
                <font>
-                  <Font name="System Bold Italic" size="48.0" />
+                  <Font name="Arial Bold" size="28.0" />
                </font>
-               <textFill>
-                  <LinearGradient endX="1.0" endY="1.0">
-                     <stops>
-                        <Stop>
-                           <color>
-                              <Color />
-                           </color>
-                        </Stop>
-                        <Stop offset="1.0">
-                           <color>
-                              <Color red="0.7143166661262512" green="0.7383726835250854" blue="0.8947368264198303" />
-                           </color>
-                        </Stop>
-                     </stops>
-                  </LinearGradient>
-               </textFill>
             </Label>
-         </children></AnchorPane>
+            <ComboBox fx:id="searchTypeCombo" layoutX="90.0" layoutY="109.0" prefHeight="40.0" prefWidth="220.0" promptText="Search Type" style="-fx-background-radius: 10px;" />
+            <TextField fx:id="searchTF" layoutX="90.0" layoutY="180.0" prefHeight="40.0" prefWidth="220.0" promptText="Enter Keyword" style="-fx-background-radius: 10px;" />
+            <Button fx:id="searchBtn" layoutX="90.0" layoutY="270.0" mnemonicParsing="false" onAction="#searchHandler" prefHeight="40.0" prefWidth="220.0" style="-fx-background-radius: 20px; -fx-background-color: #2c3e50; -fx-text-fill: white;" text="Search" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

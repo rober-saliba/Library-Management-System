@@ -9,9 +9,9 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.UserFaultsHistoryController">
    <children>
-      <AnchorPane prefHeight="100.0" prefWidth="1200.0">
+      <AnchorPane prefHeight="100.0" prefWidth="1200.0" style="-fx-background-color: #34495e;">
          <children>
-            <Label alignment="CENTER" layoutX="446.0" layoutY="28.0" prefHeight="41.0" prefWidth="307.0" text="Faults history" underline="true">
+            <Label alignment="CENTER" layoutX="446.0" layoutY="28.0" prefHeight="41.0" prefWidth="307.0" text="Faults history" textFill="WHITE" underline="true">
                <font>
                   <Font name="Microsoft Sans Serif" size="36.0" />
                </font>
@@ -29,6 +29,7 @@
             </TableView>
          </children>
       </AnchorPane>
-      <Button fx:id="closeBtn" layoutX="1114.0" layoutY="611.0" mnemonicParsing="false" onAction="#onClose" text="close" />
+      <Button fx:id="closeBtn" layoutX="1086.0" layoutY="600.0" mnemonicParsing="false" onAction="#onClose" prefHeight="13.0" prefWidth="70.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white; -fx-border-radius: 5px; -fx-padding: 10px; -fx-font-size: 14px;" text="Close" />
    </children>
 </AnchorPane>
+
