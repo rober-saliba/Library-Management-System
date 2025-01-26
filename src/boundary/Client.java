@@ -18,30 +18,31 @@ import entity.User;
  */
 public class Client extends AbstractClient {
 	/**
-	 * instance variables:
-	 * iClient - an instance of IClient interface so different parts of the system can receive messages from the server.
+	 * instance variables: iClient - an instance of IClient interface so different
+	 * parts of the system can receive messages from the server.
 	 */
 	IClient iClient;
-	
-	
+
 	// Constructor ************************************************
-	
+
 	public Client(String host, int port) throws IOException {
 		super(host, port);
 		openConnection();
 	}
+
 	/**
-	 * @param host - the IP address of the server
-	 * @param port - the port which the server dwells on.
-	 * @param iClient - an instance of the interface IClient to initialize the instance variable. 
+	 * @param host    - the IP address of the server
+	 * @param port    - the port which the server dwells on.
+	 * @param iClient - an instance of the interface IClient to initialize the
+	 *                instance variable.
 	 * @throws IOException
 	 */
-	public Client(String host, int port,IClient iClient) throws IOException {
+	public Client(String host, int port, IClient iClient) throws IOException {
 		super(host, port);
 		this.iClient = iClient;
 		openConnection();
 	}
-	
+
 	// Instance methods ************************************************
 	/**
 	 * This method handles all data that comes in from the server.
@@ -53,21 +54,23 @@ public class Client extends AbstractClient {
 		iClient.recieveMessageFromServer(msgFromServer);
 	}
 
-
 	/**
 	 * This method terminates the client.
 	 */
 	public void quit() {
 		try {
 			closeConnection();
-			//System.out.println("Client connection closed");
+			// System.out.println("Client connection closed");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		System.exit(0);
 	}
+
 	/**
-	 * receives a message from different parts of the system and sends it to the server.
+	 * receives a message from different parts of the system and sends it to the
+	 * server.
+	 * 
 	 * @param msg - the message to send to the server.
 	 */
 	public void sendMessageToServer(Object msg) {

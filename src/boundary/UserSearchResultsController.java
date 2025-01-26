@@ -16,13 +16,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 /**
  * {@inheritDoc}
- * @see boundary.ReaderSearchResultsController, very similar only difference is the addition of a "reserve" button in the book details window.
+ * 
+ * @see boundary.ReaderSearchResultsController, very similar only difference is
+ *      the addition of a "reserve" button in the book details window.
  */
-public class UserSearchResultsController extends ReaderSearchResultsController{
+public class UserSearchResultsController extends ReaderSearchResultsController {
 	protected User currentUser;
-	
+
 	@Override
 	public void setResults(ArrayList<Book> results) {
 		this.results = new ArrayList<>();
@@ -39,10 +42,10 @@ public class UserSearchResultsController extends ReaderSearchResultsController{
 			enums.BookType bookType = b.getType();
 			ArrayList<String> categories = b.getCategories();
 			BookWithButton book = new BookWithButton(catalogNumber, title, authorName, publication, numberOfCopies,
-					purchaseDate, locationOnShelf, description, bookType,categories);
+					purchaseDate, locationOnShelf, description, bookType, categories);
 			book.getViewDetailsBtn().setOnAction(e -> {
 				try {
-					viewDetailsHandler(b,currentUser);
+					viewDetailsHandler(b, currentUser);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -57,14 +60,16 @@ public class UserSearchResultsController extends ReaderSearchResultsController{
 		shelfCol.setCellValueFactory(new PropertyValueFactory<Book, String>("locationOnShelf"));
 		viewDetailsCol.setCellValueFactory(new PropertyValueFactory<Book, Button>("viewDetailsBtn"));
 	}
+
 	/**
 	 * very similar to the method found in the super class, with a small tweak:
 	 * loading the current user to know to whom to place the reservation.
+	 * 
 	 * @param b - the book to load.
 	 * @param u - the currently logged in user.
 	 * @throws IOException - thrown should loading the FXML file fail.
 	 */
-	private void viewDetailsHandler(Book b,User u) throws IOException {
+	private void viewDetailsHandler(Book b, User u) throws IOException {
 		Stage primaryStage = new Stage();
 		primaryStage.initModality(Modality.APPLICATION_MODAL);
 		FXMLLoader loader = new FXMLLoader();
@@ -72,11 +77,12 @@ public class UserSearchResultsController extends ReaderSearchResultsController{
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("Book Details");
 		BookDetailsForUserController bdc = loader.getController();
-		if(bdc.loadBook(b)) {
+		if (bdc.loadBook(b)) {
 			bdc.loadUser(currentUser);
 			primaryStage.show();
 		}
 	}
+
 	public void loadUser(User u) {
 		this.currentUser = u;
 	}

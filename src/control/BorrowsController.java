@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
 import boundary.Client;
+import entity.Book;
 import entity.Borrows;
 import entity.ConstantsAndGlobalVars;
 import entity.IClient;
@@ -80,6 +81,8 @@ public class BorrowsController implements IClient {
 		return result;
 
 		}
+	
+	
 	/**
 	 * receives a message from the server and behaves differently depending on the task,
 	 * each task requires a different return type and/or value.

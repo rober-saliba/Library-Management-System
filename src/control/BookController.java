@@ -10,42 +10,47 @@ import entity.ConstantsAndGlobalVars;
 import entity.IClient;
 import entity.MsgParser;
 import entity.Reservations;
+
 /**
  * This class controls the functionality of the {@link entity.Book} entity.
- * {@code implements} {@link entity.IClient} as it needs to receive responses from the server.
- * Uses the design pattern Singleton to assure that <b>ONLY ONE INSTANCE</b> is created for the lifetime of the program.
+ * {@code implements} {@link entity.IClient} as it needs to receive responses
+ * from the server. Uses the design pattern Singleton to assure that <b>ONLY ONE
+ * INSTANCE</b> is created for the lifetime of the program.
  */
-public class BookController implements IClient{
+public class BookController implements IClient {
 	/**
-	 * Instance variables:
-	 * client - a {@link boundary.Client} instance to send messages to the server.
-	 * singleton - the single instance of this class
-	 * sem - a semaphore that blocks the main thread until a response is received from the server.
-	 * semaphore is acquired each time a request to the server is sent and released after the response arrives.
-	 * totalNumberOfBooks, totalNumberOfReserves, addBookResult, removeBookResult, updateBookResult, addReserveResult,
-	 *  resultBook, allCategories - different variables of different types that store the return results from the server.
+	 * Instance variables: client - a {@link boundary.Client} instance to send
+	 * messages to the server. singleton - the single instance of this class sem - a
+	 * semaphore that blocks the main thread until a response is received from the
+	 * server. semaphore is acquired each time a request to the server is sent and
+	 * released after the response arrives. totalNumberOfBooks,
+	 * totalNumberOfReserves, addBookResult, removeBookResult, updateBookResult,
+	 * addReserveResult, resultBook, allCategories - different variables of
+	 * different types that store the return results from the server.
 	 */
 	private Client client;
 	private static BookController singleton = null;
 	private Semaphore sem;
 	private int totalNumberOfBooks;
 	private int totalNumberOfReserves;
+	private String earliestreturndate = null;
 	private boolean addBookResult = false;
 	private boolean removeBookResult = false;
 	private boolean updateBookResult = false;
 	private int addReserveResult;
 	private Book resultBook = null;
 	private ArrayList<String> allCategories;
-	
+
 	/**
-	 * a private constructor that connects the client to the server and initializes some instance variables
-	 * including the semaphore which is initialized to 0.
+	 * a private constructor that connects the client to the server and initializes
+	 * some instance variables including the semaphore which is initialized to 0.
+	 * 
 	 * @param host - the IP address of the server.
 	 * @param port - the port which the server dwells on.
 	 */
-	private BookController(String host,int port) {
+	private BookController(String host, int port) {
 		try {
-			client = new Client(host, port,this);
+			client = new Client(host, port, this);
 			sem = new Semaphore(0);
 			allCategories = new ArrayList<>();
 		} catch (IOException e) {
@@ -53,26 +58,31 @@ public class BookController implements IClient{
 			e.printStackTrace();
 		}
 	}
+
 	/**
-	 * returns the instance if it exists, creates one and returns it if it doesn't exist.
-	 * marked as {@code synchronized} to ensure thread safety.
+	 * returns the instance if it exists, creates one and returns it if it doesn't
+	 * exist. marked as {@code synchronized} to ensure thread safety.
+	 * 
 	 * @param host - the IP address of the server.
 	 * @param port - the port which the server dwells on.
 	 * @return the instance of BookController
 	 */
-	public synchronized static BookController getInstance(String host,int port) {
-		if(singleton == null)
-			singleton = new BookController(host,port);
+	public synchronized static BookController getInstance(String host, int port) {
+		if (singleton == null)
+			singleton = new BookController(host, port);
 		return singleton;
 	}
+
 	/**
 	 * disconnects the client from the server.
 	 */
 	public void disconnectClient() {
-		 this.client.quit();
+		this.client.quit();
 	}
+
 	/**
 	 * sends a request to the server to get total number of books.
+	 * 
 	 * @return number of books.
 	 */
 	public int getNumberOfBooks() {
@@ -87,8 +97,10 @@ public class BookController implements IClient{
 		}
 		return totalNumberOfBooks;
 	}
+
 	/**
 	 * sends a request to the server to add a new book.
+	 * 
 	 * @param b - the book to add
 	 * @return true if addition succeeded, false otherwise.
 	 */
@@ -106,8 +118,10 @@ public class BookController implements IClient{
 		return addBookResult;
 
 	}
+
 	/**
 	 * sends a request to the server to update an existing book.
+	 * 
 	 * @param b - the book to update
 	 * @return true if update succeeded, false otherwise.
 	 */
@@ -125,8 +139,10 @@ public class BookController implements IClient{
 		return updateBookResult;
 
 	}
+
 	/**
 	 * sends a request to the server to fetch a book from the DB.
+	 * 
 	 * @param catalogNumber - the catalog number of the book to be fetched
 	 * @return the book with the passed catalog number if it exists, null otherwise.
 	 */
@@ -141,13 +157,15 @@ public class BookController implements IClient{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(resultBook != null)
+		if (resultBook != null)
 			System.out.println("success");
-		
+
 		return resultBook;
 	}
+
 	/**
 	 * sends a request to the server to delete an existing book.
+	 * 
 	 * @param catalognumber - the catalog number of the book to delete
 	 * @return true if deletion succeeded, false otherwise.
 	 */
@@ -162,14 +180,16 @@ public class BookController implements IClient{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return removeBookResult; 
+
+		return removeBookResult;
 	}
+
 	/**
 	 * sends a request to the server to fetch all existing categories.
-	 * @return an arrayList containing all categories existing in the DB 
+	 * 
+	 * @return an arrayList containing all categories existing in the DB
 	 */
-	public ArrayList<String> getAllCategories(){
+	public ArrayList<String> getAllCategories() {
 		MsgParser<String> mp = new MsgParser<>();
 		mp.setTask(ConstantsAndGlobalVars.getAllCategoriesTask);
 		try {
@@ -181,9 +201,13 @@ public class BookController implements IClient{
 		}
 		return allCategories;
 	}
+
 	/**
-	 * gets the total number of reservations on the book with the passed catalog number.
-	 * @param catalogNumber - the catalog number of the book for which to fetch number of reservations.
+	 * gets the total number of reservations on the book with the passed catalog
+	 * number.
+	 * 
+	 * @param catalogNumber - the catalog number of the book for which to fetch
+	 *                      number of reservations.
 	 * @return number of reservations on that book
 	 */
 	public int getNumberOfReserves(String catalogNumber) {
@@ -193,18 +217,20 @@ public class BookController implements IClient{
 		try {
 			client.sendMessageToServer(mp);
 			sem.acquire();
-		}catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		return totalNumberOfReserves;
 	}
+
 	/**
 	 * 
 	 * @param catalogNumber - the catalog number of the book to reserve
-	 * @param userID - the user ID of the reserver.
-	 * @return -1 for SQL Exception, 0 for success, 1 for duplicate reservation (i.e. already reserved),
+	 * @param userID        - the user ID of the reserver.
+	 * @return -1 for SQL Exception, 0 for success, 1 for duplicate reservation
+	 *         (i.e. already reserved),
 	 */
-	public int addReserve(String catalogNumber,String userID) {
+	public int addReserve(String catalogNumber, String userID) {
 		MsgParser<String> mp = new MsgParser<>();
 		mp.setTask(ConstantsAndGlobalVars.addReserveTask);
 		mp.addToCommPipe(userID);
@@ -217,87 +243,75 @@ public class BookController implements IClient{
 			e.printStackTrace();
 		}
 		return addReserveResult;
-		
+
 	}
-	//handle messages from server...
+	
+	public String getEarliestReturnDate(String catalogNumber) {
+		MsgParser<String> mp = new MsgParser<>();
+		mp.setTask(ConstantsAndGlobalVars.getEarliestReturnDateTask);
+		mp.addToCommPipe(catalogNumber);
+
+		try {
+			client.sendMessageToServer(mp); // Send request to server
+			sem.acquire(); // Wait for server response
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		return earliestreturndate;
+	}
+
+	// handle messages from server...
 	/**
-	 * receives a message from the server and behaves differently depending on the task,
-	 * each task requires a different return type and/or value.
-	 * at the end it releases the semaphore. 
+	 * receives a message from the server and behaves differently depending on the
+	 * task, each task requires a different return type and/or value. at the end it
+	 * releases the semaphore.
 	 */
 	@Override
 	public void recieveMessageFromServer(MsgParser msg) {
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getNumberOfBooksTask)) {
-			if((int) msg.getCommPipe().get(0) > 0)
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getNumberOfBooksTask)) {
+			if ((int) msg.getCommPipe().get(0) > 0)
 				totalNumberOfBooks = (int) msg.getCommPipe().get(0);
 			else
 				totalNumberOfBooks = 0;
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.addBookTask)) {
+		if (msg.getTask().equals(ConstantsAndGlobalVars.addBookTask)) {
 			addBookResult = (Boolean) msg.getCommPipe().get(0);
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.removeBookTask)) {
+		
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getEarliestReturnDateTask)) {
+			earliestreturndate = (String) msg.getCommPipe().get(0);
+		}
+		
+		if (msg.getTask().equals(ConstantsAndGlobalVars.removeBookTask)) {
 			removeBookResult = (Boolean) msg.getCommPipe().get(0);
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getBookTask)) {
-			if(!msg.getCommPipe().isEmpty())
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getBookTask)) {
+			if (!msg.getCommPipe().isEmpty())
 				resultBook = (Book) msg.getCommPipe().get(0);
 			System.out.println(resultBook);
-			System.out.println("reddd");
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.updateBookTask)) {
+		if (msg.getTask().equals(ConstantsAndGlobalVars.updateBookTask)) {
 			updateBookResult = (Boolean) msg.getCommPipe().get(0);
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getBookTask)) {
-			if(!msg.getCommPipe().isEmpty())
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getBookTask)) {
+			if (!msg.getCommPipe().isEmpty())
 				resultBook = (Book) msg.getCommPipe().get(0);
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getAllCategoriesTask)) {
-			if(!msg.getCommPipe().isEmpty())
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getAllCategoriesTask)) {
+			if (!msg.getCommPipe().isEmpty())
 				allCategories = (ArrayList<String>) msg.getCommPipe();
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.getNumberOfReservesTask)) {
-			if(!msg.getCommPipe().isEmpty())
+		if (msg.getTask().equals(ConstantsAndGlobalVars.getNumberOfReservesTask)) {
+			if (!msg.getCommPipe().isEmpty())
 				totalNumberOfReserves = (int) msg.getCommPipe().get(0);
 			else
 				totalNumberOfReserves = -1;
 		}
-		if(msg.getTask().equals(ConstantsAndGlobalVars.addReserveTask)) {
+		if (msg.getTask().equals(ConstantsAndGlobalVars.addReserveTask)) {
 			addReserveResult = (int) msg.getCommPipe().get(0);
 		}
 		sem.release();
 	}
-
-
-	
-public String getEarliestReturnDate(String catalogNumber) {
-    MsgParser<String> mp = new MsgParser<>();
-    mp.clearCommPipe(); // Clear commPipe to avoid stale data
-    mp.setTask(ConstantsAndGlobalVars.getEarliestReturnDateTask);
-    mp.addToCommPipe(catalogNumber);
-
-    try {
-        client.sendMessageToServer(mp); // Send request to server
-        sem.acquire(); // Wait for server response
-    } catch (InterruptedException e) {
-        e.printStackTrace();
-    }
-
-    // Debug: Print the commPipe content
-    System.out.println("Received commPipe content from server: " + mp.getCommPipe());
-
-    // Extract and return the earliest return date
-    if (!mp.getCommPipe().isEmpty()) {
-        return (String) mp.getCommPipe().get(0); // Get the first element from commPipe
-    } else {
-        System.out.println("Error: commPipe is empty after server response.");
-        return null;
-    }
-}
-
-
-
-
-
 
 }

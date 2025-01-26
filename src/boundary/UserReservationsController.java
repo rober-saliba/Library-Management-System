@@ -19,8 +19,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+
 /**
- * @see boundary.UserBorrowsController very similar, only difference is it displays pending reservations.
+ * @see boundary.UserBorrowsController very similar, only difference is it
+ *      displays pending reservations.
  */
 public class UserReservationsController {
 	private ReservationsController reservationsController;
@@ -28,61 +30,57 @@ public class UserReservationsController {
 	private ObservableList<Reservations> data;
 	private User currentUser;
 
+	@FXML
+	private Button closeBtn;
 
+	@FXML
+	private TableView table;
 
+	@FXML
+	private TableColumn userIDTC;
 
-    @FXML
-    private Button closeBtn;
+	@FXML
+	private TableColumn barcodeTC;
 
-    @FXML
-    private TableView table;
+	@FXML
+	private TableColumn reserveDateTC;
 
-    @FXML
-    private TableColumn userIDTC;
+	@FXML
+	private TableColumn reserveStatusTC;
 
-    @FXML
-    private TableColumn barcodeTC;
+	@FXML
+	void initialize() {
+		reservationsController = ReservationsController.getInstance(ConstantsAndGlobalVars.ipAddress,
+				ConstantsAndGlobalVars.DEFAULT_PORT);
 
-    @FXML
-    private TableColumn reserveDateTC;
+	}
 
-    @FXML
-    private TableColumn reserveStatusTC;
-    
-    @FXML
-   	void initialize() {
-       	reservationsController=ReservationsController.getInstance(ConstantsAndGlobalVars.ipAddress,
-   				ConstantsAndGlobalVars.DEFAULT_PORT);
+	public void loadUser(User u) {
+		this.currentUser = u;
 
-   		
-   	}
-       public void loadUser(User u) {
-   		this.currentUser = u;
-   		
-   		try {
-   			res = reservationsController.viewreservations(currentUser);
-   		} catch (InterruptedException e) {
-   			// TODO Auto-generated catch block
-   			e.printStackTrace();
-   		}
-   		data = FXCollections.observableArrayList(res);
-   		table.setItems(data);
-   		userIDTC.setCellValueFactory(new PropertyValueFactory("userID"));
+		try {
+			res = reservationsController.viewreservations(currentUser);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		data = FXCollections.observableArrayList(res);
+		table.setItems(data);
+		userIDTC.setCellValueFactory(new PropertyValueFactory("userID"));
 		barcodeTC.setCellValueFactory(new PropertyValueFactory("barcode"));
 		reserveDateTC.setCellValueFactory(new PropertyValueFactory("reserveDate"));
 		reserveStatusTC.setCellValueFactory(new PropertyValueFactory("status"));
-       }
-   		
-       @FXML
-       void onClose(ActionEvent event) {
-    	   closeReservationWindow();
-       }
+	}
 
-       public void closeReservationWindow()
-       {
-       	if(res!=null)
-       		res.clear();
-       	Stage window = (Stage) closeBtn.getScene().getWindow();
-       	window.close();
-       }
+	@FXML
+	void onClose(ActionEvent event) {
+		closeReservationWindow();
+	}
+
+	public void closeReservationWindow() {
+		if (res != null)
+			res.clear();
+		Stage window = (Stage) closeBtn.getScene().getWindow();
+		window.close();
+	}
 }

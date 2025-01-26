@@ -19,69 +19,70 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+
 /**
  * 
- * @see boundary.UserBorrowsController very similar, only difference is it displays the fault hsitory (account freezes, locks, late returns, etc.).
+ * @see boundary.UserBorrowsController very similar, only difference is it
+ *      displays the fault hsitory (account freezes, locks, late returns, etc.).
  */
 public class UserFaultsHistoryController {
 	private FaultsHistoryController faultsHistoryController;
 	private ArrayList<FaultsHistory> res;
 	private ObservableList<FaultsHistory> data;
 	private User currentUser;
-	
 
+	@FXML
+	private TableView table;
 
-    @FXML
-    private TableView table;
+	@FXML
+	private TableColumn userIDTC;
 
-    @FXML
-    private TableColumn userIDTC;
+	@FXML
+	private TableColumn faultsDescriptionTC;
 
-    @FXML
-    private TableColumn faultsDescriptionTC;
+	@FXML
+	private TableColumn dateTC;
 
-    @FXML
-    private TableColumn dateTC;
+	@FXML
+	private Button closeBtn;
 
-    @FXML
-    private Button closeBtn;
+	@FXML
+	void onClose(ActionEvent event) {
+		closeFaultsHistoryWindow();
+	}
 
-    @FXML
-    void onClose(ActionEvent event) {
-    	closeFaultsHistoryWindow();
-    }
-    
-    public void closeFaultsHistoryWindow()
-    {
-    	if(res != null)
-    		res.clear();
-    	Stage window = (Stage) closeBtn.getScene().getWindow();
-    	window.close();
-    }
+	public void closeFaultsHistoryWindow() {
+		if (res != null)
+			res.clear();
+		Stage window = (Stage) closeBtn.getScene().getWindow();
+		window.close();
+	}
+
 	/**
-	 * called upon loading the FXML file, initializes some GUI elements and instance variables.
+	 * called upon loading the FXML file, initializes some GUI elements and instance
+	 * variables.
 	 */
-    @FXML
-    void initialize() {
-    	faultsHistoryController = FaultsHistoryController.getInstance(ConstantsAndGlobalVars.ipAddress,
+	@FXML
+	void initialize() {
+		faultsHistoryController = FaultsHistoryController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
-    }
-    
-    public void loadUser(User u) {
-    	this.currentUser = u;
-    	
-    	try {
+	}
+
+	public void loadUser(User u) {
+		this.currentUser = u;
+
+		try {
 			res = faultsHistoryController.viewFaultsHistory(currentUser);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		data = FXCollections.observableArrayList(res);
 		table.setItems(data);
 		userIDTC.setCellValueFactory(new PropertyValueFactory("userID"));
 		faultsDescriptionTC.setCellValueFactory(new PropertyValueFactory("fault"));
 		dateTC.setCellValueFactory(new PropertyValueFactory("faultDate"));
-    }
+	}
 }

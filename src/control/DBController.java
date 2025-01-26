@@ -85,9 +85,10 @@ import entity.User;
 import enums.Result;
 import enums.ExistStatus;
 import enums.LogInStatus;
+
 /**
- * The class responsible for connection and executing queries and updates to the schema.
- * all methods in this class are self documented.
+ * The class responsible for connection and executing queries and updates to the
+ * schema. all methods in this class are self documented.
  */
 public class DBController {
 	/**
@@ -98,44 +99,46 @@ public class DBController {
 	 * an arrayList that simulates the reservation queue.
 	 */
 	static ArrayList<TwoDaysMessage> timerList;
+
 	/**
 	 * connects to the SQL server.
+	 * 
 	 * @see server.Server#openServerConnection(String, String, String, String).
 	 * @return true if connection succeeded, false otherwise
 	 */
-public boolean connectToDB(String username, String password, String host, String dbName) {
-    try {
-        // NEW Driver for MySQL 8.x (already corrected)
-        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        timerList = new ArrayList<>();
-    } catch (Exception ex) {
-        ex.printStackTrace();
-    }
+	public boolean connectToDB(String username, String password, String host, String dbName) {
+		try {
+			// NEW Driver for MySQL
+			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+			timerList = new ArrayList<>();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-    // Updated Connection URL with Time Zone Fix
-    String url = "jdbc:mysql://" + host + "/" + dbName + "?serverTimezone=Asia/Jerusalem";
+		// Updated Connection URL with Time Zone
+		String url = "jdbc:mysql://" + host + "/" + dbName + "?serverTimezone=Asia/Jerusalem";
 
-    Statement s;
-    try {
-        conn = DriverManager.getConnection(url, username, password);
-        System.out.println("SQL connection succeeded");
-    } catch (SQLException ex) {
-        System.out.println("SQLException: " + ex.getMessage());
-        System.out.println("SQLState: " + ex.getSQLState());
-        System.out.println("VendorError: " + ex.getErrorCode());
-        return false;
-    }
-    return true;
-}
-
-
-	public void setConnection(Connection conn) {
-	    this.conn = conn;
+		Statement s;
+		try {
+			conn = DriverManager.getConnection(url, username, password);
+			System.out.println("SQL connection succeeded");
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+			return false;
+		}
+		return true;
 	}
 
-	// gets the user if he/she is not already logged in.
+	public void setConnection(Connection conn) {
+		this.conn = conn;
+	}
+
 	/**
-	 * gets the user from the DB and checks the credentials sent, changes isLoggedIn status if all is valid.
+	 * gets the user from the DB and checks the credentials sent, changes isLoggedIn
+	 * status if all is valid.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -147,20 +150,23 @@ public boolean connectToDB(String username, String password, String host, String
 		String table = msg.getTableName();
 		try {
 
+			// if checkbox checked subscriber
 			ResultSet rs;
 			if (table.equals("users")) {
-				String loginQuery = "SELECT * FROM users U WHERE U.userID = ?";
+				String loginQuery =  "SELECT * FROM users U " +
+                        "WHERE U.userID = ? " +
+                        "AND NOT EXISTS (SELECT 1 FROM librarians L WHERE L.librarianID = U.userID)";
 				stmt = conn.prepareStatement(loginQuery);
 				stmt.setString(1, username);
 				rs = stmt.executeQuery();
-			} else {
+			} else {// if checkbox checked librarian
 				String loginQuery = "SELECT U.* " + "FROM users U,librarians L "
 						+ "WHERE  L.librarianID = U.userID AND L.librarianID = ?";
 				stmt = conn.prepareStatement(loginQuery);
 				stmt.setString(1, username);
 				rs = stmt.executeQuery();
 			}
-			
+
 			msg.setReturnResult(LogInStatus.Success);
 			if (rs.next()) {
 				int bit = Integer.parseInt(rs.getString(9));
@@ -192,18 +198,18 @@ public boolean connectToDB(String username, String password, String host, String
 				msg.setReturnResult(LogInStatus.UserNotExist);
 				return msg;
 			}
-			
+
 		} catch (SQLException e) {
-//			msg.setReturnResult(LogInStatus.UserNotExist);
-//			return msg;
+
 		}
 
 		return msg;
 	}
-	
+
 	// if the all conditions to a log in are met, change isLoggedIn flag to 1.
 	/**
 	 * changes isLoggedIn status for the user specified.
+	 * 
 	 * @param username - the user ID
 	 */
 	private void changeIsLoggedIn(String username) {
@@ -220,6 +226,7 @@ public boolean connectToDB(String username, String password, String host, String
 
 	/**
 	 * gets a list of books matching a search pattern and a search keyword.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -268,8 +275,8 @@ public boolean connectToDB(String username, String password, String host, String
 				e.printStackTrace();
 			}
 		}
-		if (type.equals(ConstantsAndGlobalVars.searchType[2])) {// search by Author Name
-			String bookTitleSearchQuery = "SELECT B.catalogNumber " + "FROM books B " + "WHERE (B.AuthorName LIKE ?)";
+		if (type.equals(ConstantsAndGlobalVars.searchType[2])) {// search by Description
+			String bookTitleSearchQuery = "SELECT B.catalogNumber " + "FROM books B " + "WHERE (B.Description LIKE ?)";
 			try {
 				stmt = conn.prepareStatement(bookTitleSearchQuery);
 				stmt.setString(1, "%" + keyword + "%");
@@ -290,33 +297,30 @@ public boolean connectToDB(String username, String password, String host, String
 		return msg;
 
 	}
-	
-	
-	public MsgParser getUserStatus(MsgParser msg) {
-	    String userID = (String) msg.getCommPipe().get(0); // Extract the userID from the message
-	    String query = "SELECT status FROM users WHERE userID = ?";
-	    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-	        stmt.setString(1, userID);
-	        ResultSet rs = stmt.executeQuery();
-	        if (rs.next()) {
-	            String status = rs.getString("status");
-	            msg.clearCommPipe();
-	            msg.addToCommPipe(status); // Add the retrieved status to the message
-	        } else {
-	            msg.clearCommPipe();
-	            msg.addToCommPipe("User not found"); // Handle case where userID does not exist
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return msg;
-	}
 
-	
-	
+	public MsgParser getUserStatus(MsgParser msg) {
+		String userID = (String) msg.getCommPipe().get(0); // Extract the userID from the message
+		String query = "SELECT status FROM users WHERE userID = ?";
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setString(1, userID);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				String status = rs.getString("status");
+				msg.clearCommPipe();
+				msg.addToCommPipe(status); // Add the retrieved status to the message
+			} else {
+				msg.clearCommPipe();
+				msg.addToCommPipe("User not found"); // Handle case where userID does not exist
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return msg;
+	}
 
 	/**
 	 * gets the messages for a librarian
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -344,6 +348,7 @@ public boolean connectToDB(String username, String password, String host, String
 
 	/**
 	 * updates the settings for the user specified
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -370,211 +375,204 @@ public boolean connectToDB(String username, String password, String host, String
 
 	/**
 	 * updates the related tables upon returning a book.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
-	 * @throws SQLException thrown if executing the update encounters a problem.
+	 * @throws SQLException   thrown if executing the update encounters a problem.
 	 * @throws ParseException thrown if parsing the date encounters a problem
 	 */
-public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, ParseException {
-    MsgParser<String> msg1 = msg;
-    PreparedStatement stmt, stmt2, stmt3;
-    ArrayList<String> bookBarcodes = new ArrayList<>();
-    ArrayList<Reservations> bookReservations = new ArrayList<>();
-    Statement stmt4;
-    BorrowStatus bS;
-    ResultSet rs = null;
-    LocalDate returnDate, borrowDate;
-    String userID, catalogNumber;
-    String barcode = ((String) msg1.getCommPipe().get(0));
-    LocalDate local = LocalDate.now();
-    msg1.clearCommPipe();
+	public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, ParseException {
+		MsgParser<String> msg1 = msg;
+		PreparedStatement stmt, stmt2, stmt3;
+		ArrayList<String> bookBarcodes = new ArrayList<>();
+		ArrayList<Reservations> bookReservations = new ArrayList<>();
+		Statement stmt4;
+		BorrowStatus bS;
+		ResultSet rs = null;
+		LocalDate returnDate, borrowDate;
+		String userID, catalogNumber;
+		String barcode = ((String) msg1.getCommPipe().get(0));
+		LocalDate local = LocalDate.now();
+		msg1.clearCommPipe();
 
-    // Check if the book copy exists
-    try {
-        PreparedStatement firstStmt = conn.prepareStatement("SELECT * FROM bookcopies WHERE barcode = ?");
-        firstStmt.setString(1, barcode);
-        ResultSet firstRs = firstStmt.executeQuery();
-        if (!firstRs.next()) {
-            msg1.addToCommPipe("Barcode does not exist");
-            return msg1;
-        }
-    } catch (SQLException e) {
-        msg1.addToCommPipe("Barcode does not exist");
-        return msg1;
-    }
+		// Check if the book copy exists
+		try {
+			PreparedStatement firstStmt = conn.prepareStatement("SELECT * FROM bookcopies WHERE barcode = ?");
+			firstStmt.setString(1, barcode);
+			ResultSet firstRs = firstStmt.executeQuery();
+			if (!firstRs.next()) {
+				msg1.addToCommPipe("Barcode does not exist");
+				return msg1;
+			}
+		} catch (SQLException e) {
+			msg1.addToCommPipe("Barcode does not exist");
+			return msg1;
+		}
 
-    // Get user ID and borrow details
-    try {
-        String getActiveBorrowQuery = "SELECT * FROM borrows WHERE barcode = ? AND (status = 'Active' OR status = 'LateNotReturned')";
-        stmt = conn.prepareStatement(getActiveBorrowQuery);
-        stmt.setString(1, barcode);
-        rs = stmt.executeQuery();
-    } catch (SQLException e) {
-        msg1.addToCommPipe("No one has borrowed the book");
-        return msg1;
-    }
+		// Get user ID and borrow details
+		try {
+			String getActiveBorrowQuery = "SELECT * FROM borrows WHERE barcode = ? AND (status = 'Active' OR status = 'LateNotReturned')";
+			stmt = conn.prepareStatement(getActiveBorrowQuery);
+			stmt.setString(1, barcode);
+			rs = stmt.executeQuery();
+		} catch (SQLException e) {
+			msg1.addToCommPipe("No one has borrowed the book");
+			return msg1;
+		}
 
-    if (rs.next()) {
-        userID = rs.getString("userID");
-        borrowDate = rs.getDate("borrowDate").toLocalDate();
-        returnDate = rs.getDate("returnDate").toLocalDate();
-    } else {
-        msg1.addToCommPipe("No one has borrowed the book");
-        return msg1;
-    }
+		if (rs.next()) {
+			userID = rs.getString("userID");
+			borrowDate = rs.getDate("borrowDate").toLocalDate();
+			returnDate = rs.getDate("returnDate").toLocalDate();
+		} else {
+			msg1.addToCommPipe("No one has borrowed the book");
+			return msg1;
+		}
 
-    // Determine borrow status (Returned or LateReturned)
-    if (local.isAfter(returnDate)) {
-        bS = BorrowStatus.LateReturned; // If the book is returned late
-    } else {
-        bS = BorrowStatus.Returned; // If the book is returned on time
-    }
+		// Determine borrow status (Returned or LateReturned)
+		if (local.isAfter(returnDate)) {
+			bS = BorrowStatus.LateReturned; // If the book is returned late
+		} else {
+			bS = BorrowStatus.Returned; // If the book is returned on time
+		}
 
-    try {
-        // Update borrow record with actual return date and status
-        String updateBorrowQuery = "UPDATE borrows SET actualReturnDate = NOW(), status = ? WHERE barcode = ? AND (status = 'Active' OR status = 'LateNotReturned')";
-        stmt2 = conn.prepareStatement(updateBorrowQuery);
-        stmt2.setString(1, bS.toString());
-        stmt2.setString(2, barcode);
-        stmt2.executeUpdate();
+		try {
+			// Update borrow record with actual return date and status
+			String updateBorrowQuery = "UPDATE borrows SET actualReturnDate = NOW(), status = ? WHERE barcode = ? AND (status = 'Active' OR status = 'LateNotReturned')";
+			stmt2 = conn.prepareStatement(updateBorrowQuery);
+			stmt2.setString(1, bS.toString());
+			stmt2.setString(2, barcode);
+			stmt2.executeUpdate();
 
-        // Update book copy status to available
-        String updateCopyQuery = "UPDATE bookcopies SET status = 'available' WHERE barcode = ?";
-        stmt3 = conn.prepareStatement(updateCopyQuery);
-        stmt3.setString(1, barcode);
-        stmt3.executeUpdate();
-    } catch (SQLException e) {
-        msg1.addToCommPipe("Failed to update borrow or book copy status");
-        return msg1;
-    }
+			// Update book copy status to available
+			String updateCopyQuery = "UPDATE bookcopies SET status = 'available' WHERE barcode = ?";
+			stmt3 = conn.prepareStatement(updateCopyQuery);
+			stmt3.setString(1, barcode);
+			stmt3.executeUpdate();
+		} catch (SQLException e) {
+			msg1.addToCommPipe("Failed to update borrow or book copy status");
+			return msg1;
+		}
 
-    // Check if the user has other late returns
-    if (bS == BorrowStatus.LateReturned) {
-        try {
-            PreparedStatement stmtLateReturns = conn.prepareStatement(
-                "SELECT COUNT(*) FROM borrows WHERE userID = ? AND status = 'LateNotReturned'");
-            stmtLateReturns.setString(1, userID);
-            ResultSet rsLateReturns = stmtLateReturns.executeQuery();
+		// Check if the user has other late returns
+		if (bS == BorrowStatus.LateReturned) {
+			try {
+				PreparedStatement stmtLateReturns = conn.prepareStatement(
+						"SELECT COUNT(*) FROM borrows WHERE userID = ? AND status = 'LateNotReturned'");
+				stmtLateReturns.setString(1, userID);
+				ResultSet rsLateReturns = stmtLateReturns.executeQuery();
 
-            if (rsLateReturns.next() && rsLateReturns.getInt(1) > 0) {
-                // User has other late returns, do not unfreeze
-                msg1.addToCommPipe("User has other late returns and will remain frozen.");
-            } else {
-                // User returned all late books; defer unfreezing to punishment period
-                msg1.addToCommPipe("All late books returned. User will remain frozen until the punishment period ends.");
-            }
-        } catch (SQLException e) {
-            msg1.addToCommPipe("Error checking late returns");
-            return msg1;
-        }
-    }
+				if (rsLateReturns.next() && rsLateReturns.getInt(1) > 0) {
+					// User has other late returns, do not unfreeze
+					msg1.addToCommPipe("User has other late returns and will remain frozen.");
+				} else {
+					// User returned all late books; defer unfreezing to punishment period
+					msg1.addToCommPipe(
+							"All late books returned. User will remain frozen until the punishment period ends.");
+				}
+			} catch (SQLException e) {
+				msg1.addToCommPipe("Error checking late returns");
+				return msg1;
+			}
+		}
 
-    // Handle reservations (unchanged logic)
-    ResultSet barcodeN;
-    PreparedStatement stmt7 = conn.prepareStatement("SELECT catalogNumber FROM bookcopies WHERE barcode = ?");
-    stmt7.setString(1, barcode);
-    barcodeN = stmt7.executeQuery();
-    if (barcodeN.next()) {
-        catalogNumber = barcodeN.getString(1);
-    } else {
-        msg1.addToCommPipe("Catalog does not exist");
-        return msg1;
-    }
+		// Handle reservations
+		ResultSet barcodeN;
+		PreparedStatement stmt7 = conn.prepareStatement("SELECT catalogNumber FROM bookcopies WHERE barcode = ?");
+		stmt7.setString(1, barcode);
+		barcodeN = stmt7.executeQuery();
+		if (barcodeN.next()) {
+			catalogNumber = barcodeN.getString(1);
+		} else {
+			msg1.addToCommPipe("Catalog does not exist");
+			return msg1;
+		}
 
-    PreparedStatement stmt8 = conn.prepareStatement("SELECT barcode FROM bookcopies WHERE catalogNumber = ?");
-    stmt8.setString(1, catalogNumber);
-    barcodeN = stmt8.executeQuery();
-    while (barcodeN.next()) {
-        bookBarcodes.add(barcodeN.getString(1));
-    }
+		PreparedStatement stmt8 = conn.prepareStatement("SELECT barcode FROM bookcopies WHERE catalogNumber = ?");
+		stmt8.setString(1, catalogNumber);
+		barcodeN = stmt8.executeQuery();
+		while (barcodeN.next()) {
+			bookBarcodes.add(barcodeN.getString(1));
+		}
 
-    PreparedStatement stmt9 = conn.prepareStatement(
-        "SELECT * FROM reservations WHERE reserveStatus = 'Pending' AND barcode = ?");
-    for (String barcodeI : bookBarcodes) {
-        stmt9.setString(1, barcodeI);
-        ResultSet reserveN = stmt9.executeQuery();
-        if (reserveN.next()) {
-            bookReservations.add(new Reservations(reserveN.getString("userID"), reserveN.getString("barcode"),
-                    reserveN.getTimestamp("reserveDate"), ReserveStatus.valueOf(reserveN.getString("reserveStatus"))));
-        }
-    }
+		PreparedStatement stmt9 = conn
+				.prepareStatement("SELECT * FROM reservations WHERE reserveStatus = 'Pending' AND barcode = ?");
+		for (String barcodeI : bookBarcodes) {
+			stmt9.setString(1, barcodeI);
+			ResultSet reserveN = stmt9.executeQuery();
+			if (reserveN.next()) {
+				bookReservations.add(new Reservations(reserveN.getString("userID"), reserveN.getString("barcode"),
+						reserveN.getTimestamp("reserveDate"),
+						ReserveStatus.valueOf(reserveN.getString("reserveStatus"))));
+			}
+		}
 
-    if (!bookReservations.isEmpty()) {
-    	if (!bookReservations.isEmpty()) {
-    	    Reservations earliestReservation = bookReservations.get(0);
-    	    for (Reservations reservation : bookReservations) {
-    	        LocalDateTime minDate = earliestReservation.gettS().toLocalDateTime();
-    	        LocalDateTime currentDate = reservation.gettS().toLocalDateTime();
-    	        if (minDate.isAfter(currentDate)) {
-    	            earliestReservation = reservation;
-    	        }
-    	    }
+		if (!bookReservations.isEmpty()) {
+			if (!bookReservations.isEmpty()) {
+				Reservations earliestReservation = bookReservations.get(0);
+				for (Reservations reservation : bookReservations) {
+					LocalDateTime minDate = earliestReservation.gettS().toLocalDateTime();
+					LocalDateTime currentDate = reservation.gettS().toLocalDateTime();
+					if (minDate.isAfter(currentDate)) {
+						earliestReservation = reservation;
+					}
+				}
 
-    	    PreparedStatement stmtUpdateReservation = conn.prepareStatement(
-    	        "UPDATE reservations SET reserveStatus = ? WHERE userID = ? AND barcode = ? AND reserveDate = ?");
-    	    stmtUpdateReservation.setString(1, ReserveStatus.twoDaysPending.name());
-    	    stmtUpdateReservation.setString(2, earliestReservation.getUserID());
-    	    stmtUpdateReservation.setString(3, earliestReservation.getBarcode());
-    	    stmtUpdateReservation.setTimestamp(4, earliestReservation.gettS());
+				PreparedStatement stmtUpdateReservation = conn.prepareStatement(
+						"UPDATE reservations SET reserveStatus = ? WHERE userID = ? AND barcode = ? AND reserveDate = ?");
+				stmtUpdateReservation.setString(1, ReserveStatus.twoDaysPending.name());
+				stmtUpdateReservation.setString(2, earliestReservation.getUserID());
+				stmtUpdateReservation.setString(3, earliestReservation.getBarcode());
+				stmtUpdateReservation.setTimestamp(4, earliestReservation.gettS());
 
-    	    if (stmtUpdateReservation.executeUpdate() > 0) {
-    	        System.out.println("Reservation status updated successfully for user ID: "
-    	            + earliestReservation.getUserID());
+				if (stmtUpdateReservation.executeUpdate() > 0) {
+					System.out.println(
+							"Reservation status updated successfully for user ID: " + earliestReservation.getUserID());
 
-    	        // Fetch email for the user
-    	        PreparedStatement stmtFetchEmail = conn.prepareStatement(
-    	            "SELECT email FROM users WHERE userID = ?");
-    	        stmtFetchEmail.setString(1, earliestReservation.getUserID());
-    	        ResultSet rsEmail = stmtFetchEmail.executeQuery();
+					// Fetch email for the user
+					PreparedStatement stmtFetchEmail = conn
+							.prepareStatement("SELECT email FROM users WHERE userID = ?");
+					stmtFetchEmail.setString(1, earliestReservation.getUserID());
+					ResultSet rsEmail = stmtFetchEmail.executeQuery();
 
-    	        if (rsEmail.next()) {
-    	            String recipientEmail = rsEmail.getString("email");
-    	            String subject = "Book Arrived Notification";
-    	            String body = "Dear User,\n\nYour reserved book is now available for pickup. "
-    	                + "Please collect it within the next 2 days.\n\nBook Barcode: "
-    	                + earliestReservation.getBarcode() + "\n\nThank you,\nBlib System";
+					if (rsEmail.next()) {
+						String recipientEmail = rsEmail.getString("email");
+						String subject = "Book Arrived Notification";
+						String body = "Dear User,\n\nYour reserved book is now available for pickup. "
+								+ "Please collect it within the next 2 days.\n\nBook Barcode: "
+								+ earliestReservation.getBarcode() + "\n\nThank you,\nBlib System";
 
-    	            // Send email using EmailController
-    	            EmailController.sendEmail(recipientEmail, subject, body);
-    	            
- 	            
-    	            
-    	        }
-    	     
-    	    }
+						// Send email using EmailController
+						EmailController.sendEmail(recipientEmail, subject, body);
 
-    	    // Schedule a 48-hour timer for the reservation
-    	    TwoDaysMessage twoDaysMessage = new TwoDaysMessage();
-    	    Timer timer = new Timer();
-    	    Calendar calendar = Calendar.getInstance();
-    	    calendar.add(Calendar.HOUR, 48);
-    	    Date expirationTime = calendar.getTime();
+					}
 
-    	    timer.schedule(
-    	        new TwoDaysMessagecontroller(this, earliestReservation, catalogNumber, barcode),
-    	        expirationTime);
+				}
 
-    	    twoDaysMessage.setTimer(timer);
-    	    twoDaysMessage.setReservation(earliestReservation);
-    	    twoDaysMessage.setRealBarcode(barcode);
-    	    timerList.add(twoDaysMessage);
-    	    
-    	    
+				// Schedule a 48-hour timer for the reservation
+				TwoDaysMessage twoDaysMessage = new TwoDaysMessage();
+				Timer timer = new Timer();
+				Calendar calendar = Calendar.getInstance();
+				calendar.add(Calendar.HOUR, 48);
+				Date expirationTime = calendar.getTime();
 
-    	    
-    	    
-    	}
-        msg1.addToCommPipe("Book returned successfully, reservation handled.");
-    } else {
-        msg1.addToCommPipe("Book returned successfully!");
-    }
+				timer.schedule(new TwoDaysMessagecontroller(this, earliestReservation, catalogNumber, barcode),
+						expirationTime);
 
-    return msg1;
-}
+				twoDaysMessage.setTimer(timer);
+				twoDaysMessage.setReservation(earliestReservation);
+				twoDaysMessage.setRealBarcode(barcode);
+				timerList.add(twoDaysMessage);
 
+			}
+			msg1.addToCommPipe("Book returned successfully, reservation handled.");
+		} else {
+			msg1.addToCommPipe("Book returned successfully!");
+		}
 
+		return msg1;
+	}
 
-	
 //public MsgParser checkPendingReservations(MsgParser msg) {
 //    String catalogNumber = (String) msg.getCommPipe().get(0);
 //    msg.clearCommPipe();
@@ -598,8 +596,6 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 //    return msg;
 //}
 
-	
-	
 //public MsgParser updateBookTypeToRegular(MsgParser msg) {
 //    String catalogNumber = (String) msg.getCommPipe().get(0);
 //    msg.clearCommPipe();
@@ -629,13 +625,11 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 //    return msg;
 //}
 
-
-
-
 	// function that delete reservation and send to the next one in the list i there
 	// any
 	/**
 	 * updates the status of a reservation to 'Canceled'.
+	 * 
 	 * @param R the reservation to delete
 	 */
 	public void deleteReservation(Reservations R) {
@@ -661,8 +655,7 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 
 	// check if there is another one want to reserve else change status of copy to
 	// available
-	public void sendMessageToNextOne(String catalogNumber, String barcode, String ID) {// --------------i'm working
-																						// here----------------------------------------
+	public void sendMessageToNextOne(String catalogNumber, String barcode, String ID) {
 
 		ArrayList<String> bookBarcodes = new ArrayList<>();
 		ArrayList<Reservations> bookReservations = new ArrayList<>();
@@ -718,8 +711,6 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 
 					System.out.println("your book has arrived you have 2 days to borrow it ID: "
 							+ earlierDateReserve.getUserID() + " barcode: " + barcode);
-					// send mail or add alert---------------not
-					// implemented-----<><><><><><><><><><>---------
 					PreparedStatement stmtEmail;
 					ResultSet mailRs = null;
 					String getEmailQuery = "SELECT U.email FROM users U WHERE U.userID = ?";
@@ -729,13 +720,9 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 						mailRs = stmtEmail.executeQuery();
 						if (mailRs.next()) {
 							String toSendMail = mailRs.getString(1);
-						    EmailController.sendEmail(
-						            toSendMail,
-						            "Book Arrived",
-						            "Your book has arrived. You have 2 days to borrow it. ID: "
-						            + earlierDateReserve.getUserID()
-						            + ", Barcode: " + barcode
-						        );
+							EmailController.sendEmail(toSendMail, "Book Arrived",
+									"Your book has arrived. You have 2 days to borrow it. ID: "
+											+ earlierDateReserve.getUserID() + ", Barcode: " + barcode);
 						}
 
 					} catch (SQLException e) {
@@ -784,173 +771,172 @@ public MsgParser<String> returnBookUpdate(MsgParser msg) throws SQLException, Pa
 	/**
 	 * sends a return notice to all users who borrowed a book.
 	 */
-public void checkDayBeforeReturnAndSendMessage() {
-    PreparedStatement stmt;
-    ResultSet rs;
-    String getActiveBorrows = "SELECT B.* FROM borrows B WHERE B.status = 'Active'";
-    LocalDate currentDate1 = LocalDate.now();
-    LocalDate borrowDate, borrowDateMinusOneDay;
-    String ID, barcode;
+	public void checkDayBeforeReturnAndSendMessage() {
+		PreparedStatement stmt;
+		ResultSet rs;
+		String getActiveBorrows = "SELECT B.* FROM borrows B WHERE B.status = 'Active'";
+		LocalDate currentDate1 = LocalDate.now();
+		LocalDate borrowDate, borrowDateMinusOneDay;
+		String ID, barcode;
 
-    try {
-        stmt = conn.prepareStatement(getActiveBorrows);
-        rs = stmt.executeQuery();
-        while (rs.next()) {
-            borrowDate = rs.getDate(5).toLocalDate();
-            borrowDateMinusOneDay = borrowDate.minusDays(1);
-            if (borrowDateMinusOneDay.isEqual(currentDate1)) {
-                ID = rs.getString(1);
-                barcode = rs.getString(2);
-                System.out.println("user id: " + ID + " you have one day to return book barcode number: " + barcode);
+		try {
+			stmt = conn.prepareStatement(getActiveBorrows);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+				borrowDate = rs.getDate(5).toLocalDate();
+				borrowDateMinusOneDay = borrowDate.minusDays(1);
+				if (borrowDateMinusOneDay.isEqual(currentDate1)) {
+					ID = rs.getString(1);
+					barcode = rs.getString(2);
+					System.out
+							.println("user id: " + ID + " you have one day to return book barcode number: " + barcode);
 
-                PreparedStatement stmtEmail;
-                ResultSet mailRs = null;
-                String getEmailQuery = "SELECT U.email FROM users U WHERE U.userID = ?";
-                try {
-                    stmtEmail = conn.prepareStatement(getEmailQuery);
-                    stmtEmail.setString(1, ID);
-                    mailRs = stmtEmail.executeQuery();
-                    if (mailRs.next()) {
-                        String toSendMail = mailRs.getString(1);
-                        EmailController.sendEmail(
-                            toSendMail,
-                            "Warning Message!",
-                            "User ID: " + ID + " you have one day to return the book. Barcode number: " + barcode
-                        );
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
+					PreparedStatement stmtEmail;
+					ResultSet mailRs = null;
+					String getEmailQuery = "SELECT U.email FROM users U WHERE U.userID = ?";
+					try {
+						stmtEmail = conn.prepareStatement(getEmailQuery);
+						stmtEmail.setString(1, ID);
+						mailRs = stmtEmail.executeQuery();
+						if (mailRs.next()) {
+							String toSendMail = mailRs.getString(1);
+							EmailController.sendEmail(toSendMail, "Warning Message!", "User ID: " + ID
+									+ " you have one day to return the book. Barcode number: " + barcode);
+						}
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * checks if any user has late returns and freezes the account
+	 * 
 	 * @throws ParseException thrown if parsing the date encounters a problem
 	 */
-public void checkLateReturn() {
-    PreparedStatement stmtLateBorrows, stmtFreezeUser, stmtAddFault, stmtUpdateBorrow;
-    ResultSet rsLateBorrows;
+	public void checkLateReturn() {
+		PreparedStatement stmtLateBorrows, stmtFreezeUser, stmtAddFault, stmtUpdateBorrow;
+		ResultSet rsLateBorrows;
 
-    try {
-        // 1. Query for late borrows past the 7-day grace period
-        String queryLateBorrows = "SELECT B.userID, B.barcode, B.returnDate " +
-                                  "FROM borrows B " +
-                                  "WHERE B.status = 'Active' AND B.returnDate < DATE_SUB(NOW(), INTERVAL 7 DAY)";
-        stmtLateBorrows = conn.prepareStatement(queryLateBorrows);
-        rsLateBorrows = stmtLateBorrows.executeQuery();
+		try {
+			// 1. Query for late borrows past the 7-day grace period
+			String queryLateBorrows = "SELECT B.userID, B.barcode, B.returnDate " + "FROM borrows B "
+					+ "WHERE B.status = 'Active' AND B.returnDate < DATE_SUB(NOW(), INTERVAL 7 DAY)";
+			stmtLateBorrows = conn.prepareStatement(queryLateBorrows);
+			rsLateBorrows = stmtLateBorrows.executeQuery();
 
-        while (rsLateBorrows.next()) {
-            String userID = rsLateBorrows.getString("userID");
-            String barcode = rsLateBorrows.getString("barcode");
+			while (rsLateBorrows.next()) {
+				String userID = rsLateBorrows.getString("userID");
+				String barcode = rsLateBorrows.getString("barcode");
 
-            // Freeze the user and log a fault
-            // 2. Update the user status to 'Frozen'
-            String freezeUserQuery = "UPDATE users SET status = 'Frozen' WHERE userID = ?";
-            stmtFreezeUser = conn.prepareStatement(freezeUserQuery);
-            stmtFreezeUser.setString(1, userID);
-            stmtFreezeUser.executeUpdate();
+				// Freeze the user and log a fault
+				// 2. Update the user status to 'Frozen'
+				String freezeUserQuery = "UPDATE users SET status = 'Frozen' WHERE userID = ?";
+				stmtFreezeUser = conn.prepareStatement(freezeUserQuery);
+				stmtFreezeUser.setString(1, userID);
+				stmtFreezeUser.executeUpdate();
 
-            // 3. Log the fault in faultshistory table
-            String addFaultQuery = "INSERT INTO faultshistory (userID, faultDesc, Date) VALUES (?, 'Not Resolved', NOW())";
-            stmtAddFault = conn.prepareStatement(addFaultQuery);
-            stmtAddFault.setString(1, userID);
-            stmtAddFault.executeUpdate();
+				// 3. Log the fault in faultshistory table
+				String addFaultQuery = "INSERT INTO faultshistory (userID, faultDesc, Date) VALUES (?, 'Not Resolved', NOW())";
+				stmtAddFault = conn.prepareStatement(addFaultQuery);
+				stmtAddFault.setString(1, userID);
+				stmtAddFault.executeUpdate();
 
-            // 4. Update the borrow status to 'LateNotReturned' (if not already updated)
-            String updateBorrowStatusQuery = "UPDATE borrows SET status = 'LateNotReturned' WHERE barcode = ? AND status = 'Active'";
-            stmtUpdateBorrow = conn.prepareStatement(updateBorrowStatusQuery);
-            stmtUpdateBorrow.setString(1, barcode);
-            stmtUpdateBorrow.executeUpdate();
+				// 4. Update the borrow status to 'LateNotReturned' (if not already updated)
+				String updateBorrowStatusQuery = "UPDATE borrows SET status = 'LateNotReturned' WHERE barcode = ? AND status = 'Active'";
+				stmtUpdateBorrow = conn.prepareStatement(updateBorrowStatusQuery);
+				stmtUpdateBorrow.setString(1, barcode);
+				stmtUpdateBorrow.executeUpdate();
+				System.out.println(
+						"User " + userID + " has been frozen because fo latenoreturn with barcode: " + barcode);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-            System.out.println("User " + userID + " has been frozen due to overdue book with barcode: " + barcode);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
+	public void checkPenalty() {
+		PreparedStatement stmtFrozenUsers, stmtFaultDate, stmtUnfreeze, stmtCheckLateBorrows, stmtUpdateFaultDate;
+		ResultSet rsFrozenUsers, rsFaultDate, rsLateBorrows;
 
+		try {
+			// 1. Get all users with 'Frozen' status
+			String queryFrozenUsers = "SELECT userID FROM users WHERE status = 'Frozen'";
+			stmtFrozenUsers = conn.prepareStatement(queryFrozenUsers);
+			rsFrozenUsers = stmtFrozenUsers.executeQuery();
 
-public void checkPenalty() {
-    PreparedStatement stmtFrozenUsers, stmtFaultDate, stmtUnfreeze, stmtCheckLateBorrows, stmtUpdateFaultDate;
-    ResultSet rsFrozenUsers, rsFaultDate, rsLateBorrows;
+			while (rsFrozenUsers.next()) {
+				String userID = rsFrozenUsers.getString("userID");
 
-    try {
-        // 1. Get all users with 'Frozen' status
-        String queryFrozenUsers = "SELECT userID FROM users WHERE status = 'Frozen'";
-        stmtFrozenUsers = conn.prepareStatement(queryFrozenUsers);
-        rsFrozenUsers = stmtFrozenUsers.executeQuery();
+				// 2. Get the latest fault date for the user
+				String queryLatestFault = "SELECT MAX(Date) AS latestFaultDate FROM faultshistory WHERE userID = ?";
+				stmtFaultDate = conn.prepareStatement(queryLatestFault);
+				stmtFaultDate.setString(1, userID);
+				rsFaultDate = stmtFaultDate.executeQuery();
 
-        while (rsFrozenUsers.next()) {
-            String userID = rsFrozenUsers.getString("userID");
+				if (rsFaultDate.next() && rsFaultDate.getDate("latestFaultDate") != null) {
+					LocalDate latestFaultDate = rsFaultDate.getDate("latestFaultDate").toLocalDate();
+					LocalDate currentDate = LocalDate.now();
 
-            // 2. Get the latest fault date for the user
-            String queryLatestFault = "SELECT MAX(Date) AS latestFaultDate FROM faultshistory WHERE userID = ?";
-            stmtFaultDate = conn.prepareStatement(queryLatestFault);
-            stmtFaultDate.setString(1, userID);
-            rsFaultDate = stmtFaultDate.executeQuery();
+					// Check if 30 days have passed since the latest fault
+					if (currentDate.isAfter(latestFaultDate.plusDays(30))) {
+						// 3. Check if user has any overdue books
+						String queryLateBorrows = "SELECT COUNT(*) AS lateCount " + "FROM borrows "
+								+ "WHERE userID = ? AND status = 'LateNotReturned'";
+						stmtCheckLateBorrows = conn.prepareStatement(queryLateBorrows);
+						stmtCheckLateBorrows.setString(1, userID);
+						rsLateBorrows = stmtCheckLateBorrows.executeQuery();
 
-            if (rsFaultDate.next() && rsFaultDate.getDate("latestFaultDate") != null) {
-                LocalDate latestFaultDate = rsFaultDate.getDate("latestFaultDate").toLocalDate();
-                LocalDate currentDate = LocalDate.now();
+						if (rsLateBorrows.next()) {
+							int lateCount = rsLateBorrows.getInt("lateCount");
 
-                // Check if 30 days have passed since the latest fault
-                if (currentDate.isAfter(latestFaultDate.plusDays(30))) {
-                    // 3. Check if user has any overdue books
-                    String queryLateBorrows = "SELECT COUNT(*) AS lateCount " +
-                                              "FROM borrows " +
-                                              "WHERE userID = ? AND status = 'LateNotReturned'";
-                    stmtCheckLateBorrows = conn.prepareStatement(queryLateBorrows);
-                    stmtCheckLateBorrows.setString(1, userID);
-                    rsLateBorrows = stmtCheckLateBorrows.executeQuery();
+							if (lateCount == 0) {
+								// No overdue books, unfreeze the user
+								String queryUnfreeze = "UPDATE users SET status = 'Active' WHERE userID = ?";
+								stmtUnfreeze = conn.prepareStatement(queryUnfreeze);
+								stmtUnfreeze.setString(1, userID);
+								stmtUnfreeze.executeUpdate();
 
-                    if (rsLateBorrows.next()) {
-                        int lateCount = rsLateBorrows.getInt("lateCount");
+								// Update the fault description to 'Resolved' for the latest fault
+								String queryUpdateFaultDesc = "UPDATE faultshistory SET faultDesc = 'Resolved' WHERE userID = ? AND Date = ?";
+								stmtUpdateFaultDate = conn.prepareStatement(queryUpdateFaultDesc);
+								stmtUpdateFaultDate.setString(1, userID);
+								stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
+								stmtUpdateFaultDate.executeUpdate();
 
-                        if (lateCount == 0) {
-                            // No overdue books, unfreeze the user
-                            String queryUnfreeze = "UPDATE users SET status = 'Active' WHERE userID = ?";
-                            stmtUnfreeze = conn.prepareStatement(queryUnfreeze);
-                            stmtUnfreeze.setString(1, userID);
-                            stmtUnfreeze.executeUpdate();
+								System.out
+										.println("User " + userID + " has been unfrozen after serving their penalty.");
+							} else {
+								// User still has overdue books; extend the penalty period
+								String queryExtendPenalty = "UPDATE faultshistory SET Date = NOW() WHERE userID = ? AND Date = ?";
+								stmtUpdateFaultDate = conn.prepareStatement(queryExtendPenalty);
+								stmtUpdateFaultDate.setString(1, userID);
+								stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
+								stmtUpdateFaultDate.executeUpdate();
 
-                            // Update the fault description to 'Resolved' for the latest fault
-                            String queryUpdateFaultDesc = "UPDATE faultshistory SET faultDesc = 'Resolved' WHERE userID = ? AND Date = ?";
-                            stmtUpdateFaultDate = conn.prepareStatement(queryUpdateFaultDesc);
-                            stmtUpdateFaultDate.setString(1, userID);
-                            stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
-                            stmtUpdateFaultDate.executeUpdate();
-
-                            System.out.println("User " + userID + " has been unfrozen after serving their penalty.");
-                        } else {
-                            // User still has overdue books; extend the penalty period
-                            String queryExtendPenalty = "UPDATE faultshistory SET Date = NOW() WHERE userID = ? AND Date = ?";
-                            stmtUpdateFaultDate = conn.prepareStatement(queryExtendPenalty);
-                            stmtUpdateFaultDate.setString(1, userID);
-                            stmtUpdateFaultDate.setDate(2, java.sql.Date.valueOf(latestFaultDate));
-                            stmtUpdateFaultDate.executeUpdate();
-
-                            System.out.println("Penalty period extended for user " + userID + " due to overdue books.");
-                        }
-                    }
-                } else {
-                    System.out.println("User " + userID + " is still within the penalty period.");
-                }
-            } else {
-                System.out.println("No fault history found for user: " + userID);
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-}
+								System.out.println(
+										"Penalty period extended for user " + userID + " due to not returned books.");
+							}
+						}
+					} else {
+						System.out.println("User " + userID + " is still within the penalty period.");
+					}
+				} else {
+					System.out.println("No fault history found for user: " + userID);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * gets number of messages for a specific librarian
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -976,6 +962,7 @@ public void checkPenalty() {
 
 	/**
 	 * changes the isLoggedIn status of a user
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -997,6 +984,7 @@ public void checkPenalty() {
 
 	/**
 	 * gets all active borrows for a user
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1013,7 +1001,7 @@ public void checkPenalty() {
 			// get the matching tuple, if there's any
 			msg.clearCommPipe();
 			while (rs.next()) {
-				System.out.println("alsaf altani");
+
 				tmpBorrows = new Borrows();
 				System.out.println(rs.getString(1));
 				tmpBorrows.setUserID(rs.getString(1));
@@ -1033,7 +1021,7 @@ public void checkPenalty() {
 			}
 
 		} catch (SQLException e) {
-			System.out.println("aklat 5ara");
+			System.out.println("Error Borrows");
 			e.printStackTrace();
 		}
 		return msg;
@@ -1041,6 +1029,7 @@ public void checkPenalty() {
 
 	/**
 	 * gets all pending reservations for a user.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1073,6 +1062,7 @@ public void checkPenalty() {
 
 	/**
 	 * gets all inactive borrows and reservations for a user
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1120,6 +1110,7 @@ public void checkPenalty() {
 
 	/**
 	 * gets total number of books in the inventory.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1129,7 +1120,6 @@ public void checkPenalty() {
 		int totalNumberOfBooks = 0;
 		mp.clearCommPipe();
 		try {
-			// no need for PreparedStatement, query isn't parameterised
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("SELECT COUNT(*) FROM books B");
 			if (rs.next())
@@ -1143,52 +1133,54 @@ public void checkPenalty() {
 
 	/**
 	 * adds a new user tuple to the users table
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-public MsgParser addNewUser(MsgParser mp) {
-    PreparedStatement stmt;
-    User newUser = (User) mp.getCommPipe().get(0);
-    mp.clearCommPipe();
-    ResultSet rs;
-    try {
-        String getUserQuery = "SELECT U.userID FROM users U WHERE U.userID = ?";
-        stmt = conn.prepareStatement(getUserQuery);
-        stmt.setString(1, newUser.getUserID());
-        rs = stmt.executeQuery();
-        System.out.println("Checking if user exists: " + newUser.getUserID());
-        if (rs.next()) {
-            System.out.println("User already exists: " + newUser.getUserID());
-            mp.addToCommPipe(false); // User already exists
-        } else {
-            System.out.println("Adding new user: " + newUser.getUserID());
-            String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,'Active',?,0)";
-            stmt = conn.prepareStatement(addTupleQuery);
-            stmt.setString(1, newUser.getUserID());
-            stmt.setString(2, newUser.getFirstName());
-            stmt.setString(3, newUser.getLastName());
-            stmt.setString(4, newUser.getPhoneNumber());
-            stmt.setString(5, newUser.getMembershipNumber());
-            stmt.setString(6, newUser.getPassword());
-            stmt.setString(7, newUser.getEmail());
-            if (stmt.executeUpdate() > 0) {
-                System.out.println("User added successfully: " + newUser.getUserID());
-                mp.addToCommPipe(true); // User added successfully
-            } else {
-                System.out.println("Failed to add user: " + newUser.getUserID());
-                mp.addToCommPipe(false); // Insert failed
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        mp.addToCommPipe(false); // Database error
-    }
+	public MsgParser addNewUser(MsgParser mp) {
+		PreparedStatement stmt;
+		User newUser = (User) mp.getCommPipe().get(0);
+		mp.clearCommPipe();
+		ResultSet rs;
+		try {
+			String getUserQuery = "SELECT U.userID FROM users U WHERE U.userID = ?";
+			stmt = conn.prepareStatement(getUserQuery);
+			stmt.setString(1, newUser.getUserID());
+			rs = stmt.executeQuery();
+			System.out.println("Checking if user exists: " + newUser.getUserID());
+			if (rs.next()) {
+				System.out.println("User already exists: " + newUser.getUserID());
+				mp.addToCommPipe(false); // User already exists
+			} else {
+				System.out.println("Adding new user: " + newUser.getUserID());
+				String addTupleQuery = "INSERT INTO users VALUES (?,?,?,?,?,?,'Active',?,0)";
+				stmt = conn.prepareStatement(addTupleQuery);
+				stmt.setString(1, newUser.getUserID());
+				stmt.setString(2, newUser.getFirstName());
+				stmt.setString(3, newUser.getLastName());
+				stmt.setString(4, newUser.getPhoneNumber());
+				stmt.setString(5, newUser.getMembershipNumber());
+				stmt.setString(6, newUser.getPassword());
+				stmt.setString(7, newUser.getEmail());
+				if (stmt.executeUpdate() > 0) {
+					System.out.println("User added successfully: " + newUser.getUserID());
+					mp.addToCommPipe(true); // User added successfully
+				} else {
+					System.out.println("Failed to add user: " + newUser.getUserID());
+					mp.addToCommPipe(false); // Insert failed
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			mp.addToCommPipe(false); // Database error
+		}
 
-    return mp;
-}
+		return mp;
+	}
 
 	/**
 	 * adds a new book tuple to the books table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown if parsing the date encounters a problem
@@ -1204,7 +1196,6 @@ public MsgParser addNewUser(MsgParser mp) {
 		Date input = b.getPurchaseDate();
 		String pd = df.format(input);
 		Date temp = new SimpleDateFormat("yyyy-MM-dd").parse(pd);
-		// java.sql.Date d = new java.sql.Date(temp.getDate());
 		java.sql.Date d = new java.sql.Date(temp.getTime());
 
 		try {
@@ -1229,7 +1220,6 @@ public MsgParser addNewUser(MsgParser mp) {
 					int res = stmt.executeUpdate();
 					stmt.close();
 					if (res == 0) {
-						// catalogNumber is a PFK in categories set to ON-DELETE:CASCADE..
 						String abortQuery = "DELETE FROM books WHERE (catalogNumber = ?)";
 						stmt = conn.prepareStatement(abortQuery);
 						stmt.setString(1, b.getCatalogNumber());
@@ -1250,6 +1240,7 @@ public MsgParser addNewUser(MsgParser mp) {
 
 	/**
 	 * removes a book tuple from the books table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1275,6 +1266,7 @@ public MsgParser addNewUser(MsgParser mp) {
 
 	/**
 	 * searched for a user and returns an object containing the user details.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws SQLException thrown should executing the query encounter a problem
@@ -1304,7 +1296,6 @@ public MsgParser addNewUser(MsgParser mp) {
 		return mp;
 	}
 
-	
 	public MsgParser checkNumOfCopy(MsgParser msg) {
 		PreparedStatement stmt;
 		int numBorrowCopy;
@@ -1325,8 +1316,7 @@ public MsgParser addNewUser(MsgParser mp) {
 			}
 
 		} catch (SQLException e) {
-//			msg.setReturnResult(LogInStatus.UserNotExist);
-//			return msg;
+
 		}
 		return msg;
 
@@ -1337,46 +1327,46 @@ public MsgParser addNewUser(MsgParser mp) {
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-public MsgParser checkUser(MsgParser msg) {
-    PreparedStatement stmt;
-    User tmpUser = null;
-    String username = ((User) msg.getCommPipe().get(0)).getUserID();
-    try {
-        // Query to fetch user details
-        String getUserQuery = "SELECT userID, firstName, lastName, phoneNumber, membershipNumber, password, status, email " +
-                              "FROM users WHERE userID = ?";
-        stmt = conn.prepareStatement(getUserQuery);
-        stmt.setString(1, username);
-        ResultSet rs = stmt.executeQuery();
+	public MsgParser checkUser(MsgParser msg) {
+		PreparedStatement stmt;
+		User tmpUser = null;
+		String username = ((User) msg.getCommPipe().get(0)).getUserID();
+		try {
+			// Query to fetch user details
+			String getUserQuery = "SELECT userID, firstName, lastName, phoneNumber, membershipNumber, password, status, email "
+					+ "FROM users WHERE userID = ?";
+			stmt = conn.prepareStatement(getUserQuery);
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
 
-        // Clear previous data in MsgParser
-        msg.clearCommPipe();
+			// Clear previous data in MsgParser
+			msg.clearCommPipe();
 
-        // If a user is found, populate the User object
-        if (rs.next()) {
-            tmpUser = new User();
-            tmpUser.setUserID(rs.getString("userID"));
-            tmpUser.setFirstName(rs.getString("firstName"));
-            tmpUser.setLastName(rs.getString("lastName"));
-            tmpUser.setPhoneNumber(rs.getString("phoneNumber"));
-            tmpUser.setMembershipNumber(rs.getString("membershipNumber"));
-            tmpUser.setPassword(rs.getString("password"));
-            tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString("status"))); // Convert status to enum
-            tmpUser.setEmail(rs.getString("email"));
-            msg.addToCommPipe(tmpUser); // Add the User object to the MsgParser
-            msg.setIsExist(ExistStatus.Exist); // Mark user as existing
-        } else {
-            msg.addToCommPipe(null); // No user found
-            msg.setIsExist(ExistStatus.NotExist); // Mark user as not existing
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        msg.addToCommPipe(null); // Handle exception gracefully
-        msg.setIsExist(ExistStatus.NotExist);
-    }
+			// If a user is found, populate the User object
+			if (rs.next()) {
+				tmpUser = new User();
+				tmpUser.setUserID(rs.getString("userID"));
+				tmpUser.setFirstName(rs.getString("firstName"));
+				tmpUser.setLastName(rs.getString("lastName"));
+				tmpUser.setPhoneNumber(rs.getString("phoneNumber"));
+				tmpUser.setMembershipNumber(rs.getString("membershipNumber"));
+				tmpUser.setPassword(rs.getString("password"));
+				tmpUser.setStatus(enums.UserStatus.valueOf(rs.getString("status"))); // Convert status to enum
+				tmpUser.setEmail(rs.getString("email"));
+				msg.addToCommPipe(tmpUser); // Add the User object to the MsgParser
+				msg.setIsExist(ExistStatus.Exist); // Mark user as existing
+			} else {
+				msg.addToCommPipe(null); // No user found
+				msg.setIsExist(ExistStatus.NotExist); // Mark user as not existing
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			msg.addToCommPipe(null); // Handle exception gracefully
+			msg.setIsExist(ExistStatus.NotExist);
+		}
 
-    return msg; // Return the MsgParser
-}
+		return msg; // Return the MsgParser
+	}
 
 	public MsgParser checkCopy(MsgParser msg) {
 		PreparedStatement stmt;
@@ -1414,6 +1404,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * gets the book type and number of copies for a specific book.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1436,7 +1427,7 @@ public MsgParser checkUser(MsgParser msg) {
 				msg.setNumOfCopies(numOfCopies);
 				msg.setType(type);
 			} else {
-				System.out.println("noooo");
+				System.out.println("Error book type");
 			}
 
 		} catch (SQLException e) {
@@ -1449,6 +1440,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * inserts a new borrow tuple into the borrows table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1470,7 +1462,6 @@ public MsgParser checkUser(MsgParser msg) {
 			stmt.setString(1, ((Borrows) msg.getCommPipe().get(0)).getUserID());
 			stmt.setString(2, ((Borrows) msg.getCommPipe().get(0)).getBarcode());
 			stmt.setString(3, ((Borrows) msg.getCommPipe().get(0)).getLibrarianID());
-			// stmt.setDate(4, sqlDate1);
 			stmt.setDate(4, sqlDate2);
 			stmt.setDate(5, null);
 			stmt.setString(6, enums.BorrowStatus.Active.name());
@@ -1487,6 +1478,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * updates an existing book tuple.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1503,7 +1495,6 @@ public MsgParser checkUser(MsgParser msg) {
 		Date input = b.getPurchaseDate();
 		String pd = df.format(input);
 		Date temp = new SimpleDateFormat("yyyy-MM-dd").parse(pd);
-		// java.sql.Date d = new java.sql.Date(temp.getDate());
 		java.sql.Date purchaseDate = new java.sql.Date(temp.getTime());
 
 		try {
@@ -1531,6 +1522,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * searches for a book and returns it.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1548,46 +1540,45 @@ public MsgParser checkUser(MsgParser msg) {
 			System.out.println(b);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-			    b = new Book();
-			    b.setCatalogNumber(rs.getString(1)); // catalogNumber
-			    b.setTitle(rs.getString(2));         // title
-			    b.setAuthorName(rs.getString(3));    // authorName
-			    b.setPublication(rs.getString(4));  // publication
-			    b.setNumberOfCopies(rs.getInt(5));  // numberOfCopies
+				b = new Book();
+				b.setCatalogNumber(rs.getString(1)); // catalogNumber
+				b.setTitle(rs.getString(2)); // title
+				b.setAuthorName(rs.getString(3)); // authorName
+				b.setPublication(rs.getString(4)); // publication
+				b.setNumberOfCopies(rs.getInt(5)); // numberOfCopies
 
-			    java.sql.Date date = rs.getDate(6); // purchaseDate
-			    Date purchaseDate = (date != null) ? new Date(date.getTime()) : null;
-			    b.setPurchaseDate(purchaseDate);
+				java.sql.Date date = rs.getDate(6); // purchaseDate
+				Date purchaseDate = (date != null) ? new Date(date.getTime()) : null;
+				b.setPurchaseDate(purchaseDate);
 
-			    b.setLocationOnShelf(rs.getString(7)); // locationOnShelf
+				b.setLocationOnShelf(rs.getString(7)); // locationOnShelf
 
-			    // Map description
-			    b.setDescription(rs.getString(8)); // description (add null-check if needed)
+				// Map description
+				b.setDescription(rs.getString(8)); // description (add null-check if needed)
 
-			    // Map bookType
-			    String bookTypeValue = rs.getString(9); // bookType
-			    if (bookTypeValue != null) {
-			        b.setBookType(enums.BookType.valueOf(bookTypeValue));
-			    } else {
-			        b.setBookType(enums.BookType.Regular); // Provide a default value if null
-			    }
+				// Map bookType
+				String bookTypeValue = rs.getString(9); // bookType
+				if (bookTypeValue != null) {
+					b.setBookType(enums.BookType.valueOf(bookTypeValue));
+				} else {
+					b.setBookType(enums.BookType.Regular); // Provide a default value if null
+				}
 
-			    // Fetch categories
-			    stmt = conn.prepareStatement(getCategoriesQuery);
-			    stmt.setString(1, catalogNumber);
-			    rs = stmt.executeQuery();
-			    ArrayList<String> categories = new ArrayList<>();
-			    while (rs.next()) {
-			        categories.add(rs.getString(1));
-			    }
-			    b.setCategories(categories);
+				// Fetch categories
+				stmt = conn.prepareStatement(getCategoriesQuery);
+				stmt.setString(1, catalogNumber);
+				rs = stmt.executeQuery();
+				ArrayList<String> categories = new ArrayList<>();
+				while (rs.next()) {
+					categories.add(rs.getString(1));
+				}
+				b.setCategories(categories);
 
-			    // Log the populated book
-			    System.out.println("Populated Book: " + b);
+				// Log the populated book
+				System.out.println("Populated Book: " + b);
 
-			    mp.addToCommPipe(b);
+				mp.addToCommPipe(b);
 			}
-
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1597,6 +1588,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * adds a new book copy tuple into bookcopies table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1640,7 +1632,6 @@ public MsgParser checkUser(MsgParser msg) {
 		Date input = bc.getPurchaseDate();
 		String pd = df.format(input);
 		Date temp = new SimpleDateFormat("yyyy-MM-dd").parse(pd);
-		// java.sql.Date d = new java.sql.Date(temp.getDate());
 		java.sql.Date purchaseDate = new java.sql.Date(temp.getTime());
 		enums.BookCopyStatus status = bc.getStatus();
 		try {
@@ -1662,6 +1653,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * gets all faults for a specific user
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1690,9 +1682,9 @@ public MsgParser checkUser(MsgParser msg) {
 		return msg;
 	}
 
-
 	/**
 	 * sets the status of the book copy to 'borrowed'
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1717,6 +1709,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * checks if the specified borrow is active.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1729,7 +1722,6 @@ public MsgParser checkUser(MsgParser msg) {
 			stmt = conn.prepareStatement(getActiveBorrrowsQuery);
 			stmt.setString(1, ((Borrows) msg.getCommPipe().get(0)).getUserID());
 			stmt.setString(2, ((Borrows) msg.getCommPipe().get(0)).getBarcode());
-			// stmt.setString(3, ((Borrows) msg.getCommPipe().get(0)).getLibrarianID());
 			ResultSet rs = stmt.executeQuery();
 			msg.clearCommPipe();
 			if (rs.next()) {
@@ -1752,6 +1744,7 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * updates the return date of a borrow
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
@@ -1785,88 +1778,88 @@ public MsgParser checkUser(MsgParser msg) {
 
 	/**
 	 * inserts a new manual delays tuple.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 * @throws ParseException thrown should parsing the date encounter problems.
 	 */
-public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    PreparedStatement stmt, stmt2, stmtFetchLibrarian;
-    String librarianName = null;
+	public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		PreparedStatement stmt, stmt2, stmtFetchLibrarian;
+		String librarianName = null;
 
-    String getSpecificDelayQuery = "SELECT * " +
-            "FROM manualdelays M " +
-            "WHERE (M.LibrarianID = ? AND M.date = ? AND M.userID = ? AND M.barcode= ? AND M.borrowdate=?)";
+		String getSpecificDelayQuery = "SELECT * " + "FROM manualdelays M "
+				+ "WHERE (M.LibrarianID = ? AND M.date = ? AND M.userID = ? AND M.barcode= ? AND M.borrowdate=?)";
 
-    String fetchLibrarianNameQuery = "SELECT firstName, lastName FROM users WHERE userID = ?";
+		String fetchLibrarianNameQuery = "SELECT firstName, lastName FROM users WHERE userID = ?";
 
-    Date date = ((ManualDelays) msg.getCommPipe().get(0)).getDate();
-    Timestamp borrowDate = ((ManualDelays) msg.getCommPipe().get(0)).getBorrowDate();
-    String retDate = df.format(date);
-    String borrDate = df.format(borrowDate);
-    Date utilDate1 = new SimpleDateFormat("yyyy-MM-dd").parse(borrDate);
-    Date utilDate2 = new SimpleDateFormat("yyyy-MM-dd").parse(retDate);
-    java.sql.Date sqlDate2 = new java.sql.Date(utilDate2.getTime());
-    java.sql.Date sqlDate1 = new java.sql.Date(utilDate1.getTime());
-    String s = borrowDate.toString().split("\\.")[0];
+		Date date = ((ManualDelays) msg.getCommPipe().get(0)).getDate();
+		Timestamp borrowDate = ((ManualDelays) msg.getCommPipe().get(0)).getBorrowDate();
+		String retDate = df.format(date);
+		String borrDate = df.format(borrowDate);
+		Date utilDate1 = new SimpleDateFormat("yyyy-MM-dd").parse(borrDate);
+		Date utilDate2 = new SimpleDateFormat("yyyy-MM-dd").parse(retDate);
+		java.sql.Date sqlDate2 = new java.sql.Date(utilDate2.getTime());
+		java.sql.Date sqlDate1 = new java.sql.Date(utilDate1.getTime());
+		String s = borrowDate.toString().split("\\.")[0];
 
-    try {
-        // Fetch librarian name from the `users` table
-        stmtFetchLibrarian = conn.prepareStatement(fetchLibrarianNameQuery);
-        stmtFetchLibrarian.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
-        ResultSet rsLibrarian = stmtFetchLibrarian.executeQuery();
-        if (rsLibrarian.next()) {
-            librarianName = rsLibrarian.getString("firstName") + " " + rsLibrarian.getString("lastName");
-        } else {
-            msg.setDelayResult(Result.Fail);
-            msg.addToCommPipe("Librarian not found!");
-            return msg; // Exit if librarian ID does not exist
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        msg.setDelayResult(Result.Fail);
-        msg.addToCommPipe("Error fetching librarian name!");
-        return msg;
-    }
+		try {
+			// Fetch librarian name from the `users` table
+			stmtFetchLibrarian = conn.prepareStatement(fetchLibrarianNameQuery);
+			stmtFetchLibrarian.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
+			ResultSet rsLibrarian = stmtFetchLibrarian.executeQuery();
+			if (rsLibrarian.next()) {
+				librarianName = rsLibrarian.getString("firstName") + " " + rsLibrarian.getString("lastName");
+			} else {
+				msg.setDelayResult(Result.Fail);
+				msg.addToCommPipe("Librarian not found!");
+				return msg; // Exit if librarian ID does not exist
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			msg.setDelayResult(Result.Fail);
+			msg.addToCommPipe("Error fetching librarian name!");
+			return msg;
+		}
 
-    try {
-        stmt2 = conn.prepareStatement(getSpecificDelayQuery);
-        stmt2.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
-        stmt2.setDate(2, sqlDate2);
-        stmt2.setString(3, ((ManualDelays) msg.getCommPipe().get(0)).getUserID());
-        stmt2.setString(4, ((ManualDelays) msg.getCommPipe().get(0)).getBarcode());
-        stmt2.setString(5, s);
-        ResultSet rs = stmt2.executeQuery();
-        if (rs.next()) {
-            msg.setDelayResult(Result.Occured);
-            return msg;
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+		try {
+			stmt2 = conn.prepareStatement(getSpecificDelayQuery);
+			stmt2.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
+			stmt2.setDate(2, sqlDate2);
+			stmt2.setString(3, ((ManualDelays) msg.getCommPipe().get(0)).getUserID());
+			stmt2.setString(4, ((ManualDelays) msg.getCommPipe().get(0)).getBarcode());
+			stmt2.setString(5, s);
+			ResultSet rs = stmt2.executeQuery();
+			if (rs.next()) {
+				msg.setDelayResult(Result.Occured);
+				return msg;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-    try {
-        stmt = conn.prepareStatement("INSERT INTO manualdelays VALUES(?,?,?,?,?,?)");
-        stmt.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
-        stmt.setDate(2, sqlDate2);
-        stmt.setString(3, ((ManualDelays) msg.getCommPipe().get(0)).getUserID());
-        stmt.setString(4, ((ManualDelays) msg.getCommPipe().get(0)).getBarcode());
-        stmt.setString(5, s);
-        stmt.setString(6, librarianName); // Use the retrieved librarianName
-        stmt.executeUpdate();
-        msg.clearCommPipe();
-        msg.setDelayResult(Result.Success);
+		try {
+			stmt = conn.prepareStatement("INSERT INTO manualdelays VALUES(?,?,?,?,?,?)");
+			stmt.setString(1, ((ManualDelays) msg.getCommPipe().get(0)).getLibraraianID());
+			stmt.setDate(2, sqlDate2);
+			stmt.setString(3, ((ManualDelays) msg.getCommPipe().get(0)).getUserID());
+			stmt.setString(4, ((ManualDelays) msg.getCommPipe().get(0)).getBarcode());
+			stmt.setString(5, s);
+			stmt.setString(6, librarianName); // Use the retrieved librarianName
+			stmt.executeUpdate();
+			msg.clearCommPipe();
+			msg.setDelayResult(Result.Success);
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-        msg.setDelayResult(Result.Fail);
-    }
-    return msg;
-}
-
+		} catch (SQLException e) {
+			e.printStackTrace();
+			msg.setDelayResult(Result.Fail);
+		}
+		return msg;
+	}
 
 	/**
 	 * checks the status of a member
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1892,9 +1885,9 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 		return msg;
 	}
 
-
 	/**
 	 * gets all existing categories in the DB.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1914,10 +1907,9 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 		return msg;
 	}
 
-
-
 	/**
 	 * gets number of available book copies.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1946,6 +1938,7 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 
 	/**
 	 * gets number of pending reservations for a book.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -1974,126 +1967,126 @@ public MsgParser UpdateDelayTableTask(MsgParser msg) throws ParseException {
 
 	/**
 	 * adds a reservation tuple to the reservations table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
-public MsgParser addReserve(MsgParser msg) {
-    PreparedStatement stmt;
-    ResultSet rs;
-    String userID = (String) msg.getCommPipe().get(0);
-    String catalogNumber = (String) msg.getCommPipe().get(1);
-    String barcode = "";
-    msg.clearCommPipe();
+	public MsgParser addReserve(MsgParser msg) {
+		PreparedStatement stmt;
+		ResultSet rs;
+		String userID = (String) msg.getCommPipe().get(0);
+		String catalogNumber = (String) msg.getCommPipe().get(1);
+		String barcode = "";
+		msg.clearCommPipe();
 
-    String getBarcodeQuery = "SELECT BC.barcode "
-            + "FROM bookcopies BC "
-            + "JOIN borrows B ON BC.barcode = B.barcode "
-            + "WHERE BC.catalognumber = ? "
-            + "AND (B.status = 'Active' OR B.status = 'LateNotReturned') "
-            + "AND BC.barcode NOT IN (SELECT R.barcode "
-            + "FROM reservations R "
-            + "JOIN bookcopies BC1 ON R.barcode = BC1.barcode "
-            + "WHERE R.reservestatus = 'Pending' AND BC1.catalogNumber = BC.catalogNumber) "
-            + "ORDER BY B.ReturnDate ASC";
+		String getBarcodeQuery = "SELECT BC.barcode " + "FROM bookcopies BC "
+				+ "JOIN borrows B ON BC.barcode = B.barcode " + "WHERE BC.catalognumber = ? "
+				+ "AND (B.status = 'Active' OR B.status = 'LateNotReturned') "
+				+ "AND BC.barcode NOT IN (SELECT R.barcode " + "FROM reservations R "
+				+ "JOIN bookcopies BC1 ON R.barcode = BC1.barcode "
+				+ "WHERE R.reservestatus = 'Pending' AND BC1.catalogNumber = BC.catalogNumber) "
+				+ "ORDER BY B.ReturnDate ASC";
 
-    try {
-        stmt = conn.prepareStatement(getBarcodeQuery);
-        stmt.setString(1, catalogNumber);
-        rs = stmt.executeQuery();
-        // There will always be a barCode to reserve; the situation in which the user
-        // cannot reserve has already been handled
-        if (rs.next()) {
-            barcode = rs.getString(1);
-        }
-        stmt.close();
+		try {
+			stmt = conn.prepareStatement(getBarcodeQuery);
+			stmt.setString(1, catalogNumber);
+			rs = stmt.executeQuery();
+			// There will always be a barCode to reserve; the situation in which the user
+			// cannot reserve has already been handled
+			if (rs.next()) {
+				barcode = rs.getString(1);
+			}
+			stmt.close();
 
-        String checkIfCanReserve = "SELECT R.userID,R.barcode "
-                + "FROM reservations R, bookcopies BC "
-                + "WHERE (R.userID = ? AND (BC.catalogNumber = ? AND R.barcode = BC.barcode)) AND ((R.userID,R.barcode) IN (SELECT R1.userID,R1.barcode "
-                + "FROM reservations R1 "
-                + "WHERE (R1.reservestatus = 'Pending' OR R1.reservestatus = 'twoDaysPending')))";
+			String checkIfCanReserve = "SELECT R.userID,R.barcode " + "FROM reservations R, bookcopies BC "
+					+ "WHERE (R.userID = ? AND (BC.catalogNumber = ? AND R.barcode = BC.barcode)) AND ((R.userID,R.barcode) IN (SELECT R1.userID,R1.barcode "
+					+ "FROM reservations R1 "
+					+ "WHERE (R1.reservestatus = 'Pending' OR R1.reservestatus = 'twoDaysPending')))";
 
-        stmt = conn.prepareStatement(checkIfCanReserve);
-        stmt.setString(1, userID);
-        stmt.setString(2, catalogNumber);
-        rs = stmt.executeQuery();
+			stmt = conn.prepareStatement(checkIfCanReserve);
+			stmt.setString(1, userID);
+			stmt.setString(2, catalogNumber);
+			rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            msg.addToCommPipe(1); // User already reserved the book
-        } else {
-            // NEW: Check the user's status to determine if they can reserve
-            String getUserStatusQuery = "SELECT status FROM users WHERE userID = ?";
-            stmt = conn.prepareStatement(getUserStatusQuery);
-            stmt.setString(1, userID);
-            rs = stmt.executeQuery();
+			if (rs.next()) {
+				msg.addToCommPipe(1); // User already reserved the book
+			} else {
+				// NEW: Check the user's status to determine if they can reserve
+				String getUserStatusQuery = "SELECT status FROM users WHERE userID = ?";
+				stmt = conn.prepareStatement(getUserStatusQuery);
+				stmt.setString(1, userID);
+				rs = stmt.executeQuery();
 
-            if (rs.next()) {
-                String status = rs.getString("status");
-                if (status.equals("Active")) { // User can reserve
-                    String addReserveQuery = "INSERT INTO reservations VALUES(?,?,NOW(),'Pending')";
-                    stmt = conn.prepareStatement(addReserveQuery);
-                    stmt.setString(1, userID);
-                    stmt.setString(2, barcode);
-                    if (stmt.executeUpdate() > 0) {
-                    	
-                    	// Successfully added reservation
-                    	msg.addToCommPipe(0); 
+				if (rs.next()) {
+					String status = rs.getString("status");
+					if (status.equals("Active")) { // User can reserve
+						String addReserveQuery = "INSERT INTO reservations VALUES(?,?,NOW(),'Pending')";
+						stmt = conn.prepareStatement(addReserveQuery);
+						stmt.setString(1, userID);
+						stmt.setString(2, barcode);
+						if (stmt.executeUpdate() > 0) {
 
-                    	// Check if the book's type needs to be updated to "Wanted"
-                    	String checkPendingReservationsQuery = "SELECT COUNT(*) FROM reservations R "
-                    	        + "JOIN bookcopies BC ON R.barcode = BC.barcode "
-                    	        + "WHERE BC.catalogNumber = ? AND R.reserveStatus = 'Pending'";
+							// Successfully added reservation
+							msg.addToCommPipe(0);
 
-                    	try (PreparedStatement stmtCheckPending = conn.prepareStatement(checkPendingReservationsQuery)) {
-                    	    stmtCheckPending.setString(1, catalogNumber);
-                    	    try (ResultSet rsPending = stmtCheckPending.executeQuery()) {
-                    	        if (rsPending.next() && rsPending.getInt(1) > 0) {
-                    	            // If there are pending reservations, update the book type to "Wanted"
-                    	            String updateBookTypeQuery = "UPDATE books SET type = 'Wanted' WHERE catalogNumber = ?";
-                    	            try (PreparedStatement stmtUpdateType = conn.prepareStatement(updateBookTypeQuery)) {
-                    	                stmtUpdateType.setString(1, catalogNumber);
-                    	                int rowsUpdated = stmtUpdateType.executeUpdate();
+							// Check if the book's type needs to be updated to "Wanted"
+							String checkPendingReservationsQuery = "SELECT COUNT(*) FROM reservations R "
+									+ "JOIN bookcopies BC ON R.barcode = BC.barcode "
+									+ "WHERE BC.catalogNumber = ? AND R.reserveStatus = 'Pending'";
 
-                    	                if (rowsUpdated > 0) {
-                    	                    System.out.println("Book type updated to Wanted for catalogNumber: " + catalogNumber);
-                    	                } else {
-                    	                    System.out.println("Failed to update book type to Wanted for catalogNumber: " + catalogNumber);
-                    	                }
-                    	            }
-                    	        }
-                    	    }
-                    	} catch (SQLException e) {
-                    	    System.err.println("Error updating book type to Wanted: " + e.getMessage());
-                    	}
+							try (PreparedStatement stmtCheckPending = conn
+									.prepareStatement(checkPendingReservationsQuery)) {
+								stmtCheckPending.setString(1, catalogNumber);
+								try (ResultSet rsPending = stmtCheckPending.executeQuery()) {
+									if (rsPending.next() && rsPending.getInt(1) > 0) {
+										// If there are pending reservations, update the book type to "Wanted"
+										String updateBookTypeQuery = "UPDATE books SET type = 'Wanted' WHERE catalogNumber = ?";
+										try (PreparedStatement stmtUpdateType = conn
+												.prepareStatement(updateBookTypeQuery)) {
+											stmtUpdateType.setString(1, catalogNumber);
+											int rowsUpdated = stmtUpdateType.executeUpdate();
 
-                    	
-                    	
-                        msg.addToCommPipe(0); // Successfully added reservation
-                    } else {
-                        msg.addToCommPipe(2); // Couldn't insert the tuple into the table
-                    }
-                } else { // User cannot reserve
-                    msg.addToCommPipe(3); // User's status does not allow reserving
-                }
-            } else {
-                msg.addToCommPipe(4); // User not found
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-        msg.addToCommPipe(-1);
-    }
+											if (rowsUpdated > 0) {
+												System.out.println("Book type updated to Wanted for catalogNumber: "
+														+ catalogNumber);
+											} else {
+												System.out.println(
+														"Failed to update book type to Wanted for catalogNumber: "
+																+ catalogNumber);
+											}
+										}
+									}
+								}
+							} catch (SQLException e) {
+								System.err.println("Error updating book type to Wanted: " + e.getMessage());
+							}
 
-    return msg;
-}
+							msg.addToCommPipe(0); // Successfully added reservation
+						} else {
+							msg.addToCommPipe(2); // Couldn't insert the tuple into the table
+						}
+					} else { // User cannot reserve
+						msg.addToCommPipe(3); // User's status does not allow reserving
+					}
+				} else {
+					msg.addToCommPipe(4); // User not found
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			msg.addToCommPipe(-1);
+		}
+
+		return msg;
+	}
 
 	/**
 	 * checks if a reservation exists.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
 	public MsgParser checkReserveExistence(MsgParser msg) {
-		// PreparedStatement stmt;
 		String userID = ((Reservations) msg.getCommPipe().get(0)).getUserID();
 		String barcode = ((Reservations) msg.getCommPipe().get(0)).getBarcode();
 		msg.clearCommPipe();
@@ -2136,11 +2129,12 @@ public MsgParser addReserve(MsgParser msg) {
 
 	/**
 	 * updates the reservation status to 'Closed'.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
 	public MsgParser updateReservestatusToDone(MsgParser msg) {
-		System.out.println("201");
+
 		PreparedStatement stmt;
 		String userID = ((Reservations) msg.getCommPipe().get(0)).getUserID();
 		String realbarcode = ((Reservations) msg.getCommPipe().get(0)).getBarcode();
@@ -2149,7 +2143,7 @@ public MsgParser addReserve(MsgParser msg) {
 		for (TwoDaysMessage td : timerList) {
 			if (realbarcode.equals(td.getRealBarcode())) {
 				if (userID.equals(td.getReservation().getUserID())) {
-					System.out.println("202");
+
 					barcode = td.getReservation().getBarcode();
 					try {
 						String changeReserveStatusQuery = "UPDATE reservations SET reserveStatus= 'Closed' WHERE userID = ? AND barcode= ? AND (reserveStatus= 'Pending' OR reserveStatus= 'twoDaysPending')";
@@ -2173,7 +2167,8 @@ public MsgParser addReserve(MsgParser msg) {
 	}
 
 	/**
-	 * gets all student users from the DB.
+	 * gets all subscribers from the DB.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -2206,6 +2201,7 @@ public MsgParser addReserve(MsgParser msg) {
 
 	/**
 	 * sends a message to the librarian notifying about a delay.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -2232,42 +2228,8 @@ public MsgParser addReserve(MsgParser msg) {
 	}
 
 	/**
-	 * gets all employees
-	 * @param msg the parameters
-	 * @return the return message
-	 */
-	public MsgParser getAllEmployees(MsgParser msg) {
-		Statement stmt;
-		ResultSet rs;
-		Librarian tmpLibrarian = null;
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery("SELECT * FROM users U, librarians L WHERE U.userID = L.librarianID");
-			while (rs.next()) {
-				tmpLibrarian = new Librarian();
-				tmpLibrarian.setUserID(rs.getString(1));
-				tmpLibrarian.setFirstName(rs.getString(2));
-				tmpLibrarian.setLastName(rs.getString(3));
-				tmpLibrarian.setPhoneNumber(rs.getString(4));
-				tmpLibrarian.setEmployeeNumber(rs.getString(12));
-				tmpLibrarian.setPassword(rs.getString(6));
-				tmpLibrarian.setDepartmentName(rs.getString(14));
-				tmpLibrarian.setRole(rs.getString(13));
-				tmpLibrarian.setEmail(rs.getString(9));
-				msg.addToCommPipe(tmpLibrarian);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return msg;
-	}
-
-
-
-
-	/**
 	 * check if the user already reserved the book.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -2299,6 +2261,7 @@ public MsgParser addReserve(MsgParser msg) {
 
 	/**
 	 * deletes a message from the messages table.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -2326,6 +2289,7 @@ public MsgParser addReserve(MsgParser msg) {
 
 	/**
 	 * adds a fault to a user.
+	 * 
 	 * @param msg the parameters
 	 * @return the return message
 	 */
@@ -2348,10 +2312,9 @@ public MsgParser addReserve(MsgParser msg) {
 		return msg;
 	}
 
-
-
 	/**
 	 * check if the specific user has an active borrow
+	 * 
 	 * @param ID the user ID
 	 * @return true if exists, false otherwise.
 	 */
@@ -2376,214 +2339,244 @@ public MsgParser addReserve(MsgParser msg) {
 
 	}
 
+	/*
+	 * public String getEarliestReturnDate(String catalogNumber) { String
+	 * earliestReturnDate = null; String query =
+	 * "SELECT MIN(b.returnDate) AS earliestReturnDate " + "FROM borrows b " +
+	 * "JOIN bookcopies bc ON b.barcode = bc.barcode " +
+	 * "WHERE bc.catalogNumber = ? AND b.status = 'Active' AND b.returnDate > CURRENT_DATE"
+	 * ;
+	 * 
+	 * try (PreparedStatement ps = conn.prepareStatement(query)) { ps.setString(1,
+	 * catalogNumber); ResultSet rs = ps.executeQuery();
+	 * 
+	 * if (rs.next()) { earliestReturnDate = rs.getString("earliestReturnDate"); if
+	 * (earliestReturnDate == null) {
+	 * System.out.println("No return date found for the given catalog number."); }
+	 * else { System.out.println("Earliest return date: " + earliestReturnDate); } }
+	 * } catch (SQLException e) { e.printStackTrace(); } return earliestReturnDate;
+	 * }
+	 */
 
-public String getEarliestReturnDate(String catalogNumber) {
-    String earliestReturnDate = null;
-    String query = "SELECT MIN(b.returnDate) AS earliestReturnDate " +
-                   "FROM borrows b " +
-                   "JOIN bookcopies bc ON b.barcode = bc.barcode " +
-                   "WHERE bc.catalogNumber = ? AND b.returnDate > CURRENT_DATE";
-
-    try (PreparedStatement ps = conn.prepareStatement(query)) {
-        ps.setString(1, catalogNumber);
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            earliestReturnDate = rs.getString("earliestReturnDate");
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return earliestReturnDate;
-}
+	public MsgParser getEarliestReturnDate(MsgParser msg) {
+		String catalogNumber = (String) msg.getCommPipe().get(0);
+		String earliestReturnDate = null;
+		 String query = "SELECT " +
+                 "    CASE " +
+                 "        WHEN COUNT(bc.barcode) = COUNT(CASE WHEN b.status = 'Active' THEN 1 END) " +
+                 "        THEN MIN(b.returnDate) " +
+                 "        ELSE 'Available' " +
+                 "    END AS earliestReturnDate " +
+                 "FROM " +
+                 "    bookcopies bc " +
+                 "LEFT JOIN " +
+                 "    borrows b ON bc.barcode = b.barcode AND bc.status IN ('borrowed') " + 
+                 "WHERE " +
+                 "    bc.catalogNumber = ?";
 
 
+		try (PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setString(1, catalogNumber); // Set the catalogNumber parameter
+			ResultSet rs = ps.executeQuery();
 
-public static int[] getUserCountsByStatus() {
-    int[] userCounts = new int[2]; // [active, frozen]
-    String query = "SELECT status, COUNT(*) AS count FROM users GROUP BY status";
+			if (rs.next()) {
+				earliestReturnDate = rs.getString("earliestReturnDate");
+				if (earliestReturnDate == null) {
+					System.out.println("No return date found for the given catalog number.");
+					msg.clearCommPipe();
+					msg.addToCommPipe(null);
+				} else {
+					System.out.println("Earliest return date: " + earliestReturnDate);
+					msg.clearCommPipe();
+					msg.addToCommPipe(earliestReturnDate);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return msg;
+	}
 
-    try (PreparedStatement stmt = conn.prepareStatement(query);
-         ResultSet rs = stmt.executeQuery()) {
+	public static int[] getUserCountsByStatus() {
+		int[] userCounts = new int[2]; // [active, frozen]
+		String query = "SELECT status, COUNT(*) AS count FROM users GROUP BY status";
 
-        while (rs.next()) {
-            String status = rs.getString("status");
-            int count = rs.getInt("count");
+		try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
-            switch (status) {
-                case "Active":
-                    userCounts[0] = count;
-                    break;
-                case "Frozen":
-                    userCounts[1] = count;
-                    break;
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+			while (rs.next()) {
+				String status = rs.getString("status");
+				int count = rs.getInt("count");
 
-    return userCounts;
-}
+				switch (status) {
+				case "Active":
+					userCounts[0] = count;
+					break;
+				case "Frozen":
+					userCounts[1] = count;
+					break;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-public static List<String> getLibrarianEmails() {
-    List<String> emailList = new ArrayList<>();
-    String query = "SELECT u.email " +
-                   "FROM librarians l " +
-                   "JOIN users u ON l.librarianID = u.userID " +
-                   "WHERE u.email IS NOT NULL";
+		return userCounts;
+	}
 
-    try (PreparedStatement stmt = conn.prepareStatement(query);
-         ResultSet rs = stmt.executeQuery()) {
+	public static List<String> getLibrarianEmails() {
+		List<String> emailList = new ArrayList<>();
+		String query = "SELECT u.email " + "FROM librarians l " + "JOIN users u ON l.librarianID = u.userID "
+				+ "WHERE u.email IS NOT NULL";
 
-        while (rs.next()) {
-            emailList.add(rs.getString("email"));
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+		try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
-    return emailList;
-}
+			while (rs.next()) {
+				emailList.add(rs.getString("email"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
+		return emailList;
+	}
 
 // Method to fetch borrowing period data
-public Map<String, Map<String, Integer>> fetchBorrowingPeriodData(int month, int year) {
-    // Define result maps
-    Map<String, Integer> onTimeReturns = new HashMap<>();
-    Map<String, Integer> lateReturns = new HashMap<>();
+	public Map<String, Map<String, Integer>> fetchBorrowingPeriodData(int month, int year) {
+		// Define result maps
+		Map<String, Integer> onTimeReturns = new HashMap<>();
+		Map<String, Integer> lateReturns = new HashMap<>();
 
-    // Initialize ranges
-    String[] durationRanges = {"0-7 days", "8-14 days", "15-21 days", "22+ days"};
-    String[] lateRanges = {"1-7 days late", "8-14 days late", "15+ days late"};
+		// Initialize ranges
+		String[] durationRanges = { "0-7 days", "8-14 days", "15-21 days", "22+ days" };
+		String[] lateRanges = { "1-7 days late", "8-14 days late", "15+ days late" };
 
-    for (String range : durationRanges) {
-        onTimeReturns.put(range, 0);
-    }
+		for (String range : durationRanges) {
+			onTimeReturns.put(range, 0);
+		}
 
-    for (String range : lateRanges) {
-        lateReturns.put(range, 0);
-    }
+		for (String range : lateRanges) {
+			lateReturns.put(range, 0);
+		}
 
-    // SQL query to fetch borrowing data
-    String query = "SELECT borrowDate, returnDate, actualReturnDate, status FROM borrows " +
-                   "WHERE MONTH(borrowDate) = ? AND YEAR(borrowDate) = ?";
+		// SQL query to fetch borrowing data
+		String query = "SELECT borrowDate, returnDate, actualReturnDate, status FROM borrows "
+				+ "WHERE MONTH(borrowDate) = ? AND YEAR(borrowDate) = ?";
 
-    try (PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setInt(1, month);
-        stmt.setInt(2, year);
+		try (PreparedStatement stmt = conn.prepareStatement(query)) {
+			stmt.setInt(1, month);
+			stmt.setInt(2, year);
 
-        ResultSet rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
 
-        while (rs.next()) {
-            LocalDate borrowDate = rs.getDate("borrowDate").toLocalDate();
-            LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
-            java.sql.Date actualReturnDateSQL = rs.getDate("actualReturnDate");
+			while (rs.next()) {
+				LocalDate borrowDate = rs.getDate("borrowDate").toLocalDate();
+				LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+				java.sql.Date actualReturnDateSQL = rs.getDate("actualReturnDate");
 
-            // Skip rows where actualReturnDate is NULL
-            if (actualReturnDateSQL == null) {
-                continue;
-            }
+				// Skip rows where actualReturnDate is NULL
+				if (actualReturnDateSQL == null) {
+					continue;
+				}
 
-            // Convert java.sql.Date to java.time.LocalDate
-            LocalDate actualReturnDate = actualReturnDateSQL.toLocalDate();
+				// Convert java.sql.Date to java.time.LocalDate
+				LocalDate actualReturnDate = actualReturnDateSQL.toLocalDate();
 
-            long borrowingDuration = ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
+				long borrowingDuration = ChronoUnit.DAYS.between(borrowDate, actualReturnDate);
 
-            if (!actualReturnDate.isAfter(returnDate)) { // On-time return
-                if (borrowingDuration <= 7) {
-                    onTimeReturns.put("0-7 days", onTimeReturns.get("0-7 days") + 1);
-                } else if (borrowingDuration <= 14) {
-                    onTimeReturns.put("8-14 days", onTimeReturns.get("8-14 days") + 1);
-                } else if (borrowingDuration <= 21) {
-                    onTimeReturns.put("15-21 days", onTimeReturns.get("15-21 days") + 1);
-                } else {
-                    onTimeReturns.put("22+ days", onTimeReturns.get("22+ days") + 1);
-                }
-            } else { // Late return
-                long lateness = ChronoUnit.DAYS.between(returnDate, actualReturnDate);
+				if (!actualReturnDate.isAfter(returnDate)) { // On-time return
+					if (borrowingDuration <= 7) {
+						onTimeReturns.put("0-7 days", onTimeReturns.get("0-7 days") + 1);
+					} else if (borrowingDuration <= 14) {
+						onTimeReturns.put("8-14 days", onTimeReturns.get("8-14 days") + 1);
+					} else if (borrowingDuration <= 21) {
+						onTimeReturns.put("15-21 days", onTimeReturns.get("15-21 days") + 1);
+					} else {
+						onTimeReturns.put("22+ days", onTimeReturns.get("22+ days") + 1);
+					}
+				} else { // Late return
+					long lateness = ChronoUnit.DAYS.between(returnDate, actualReturnDate);
 
-                if (lateness <= 7) {
-                    lateReturns.put("1-7 days late", lateReturns.get("1-7 days late") + 1);
-                } else if (lateness <= 14) {
-                    lateReturns.put("8-14 days late", lateReturns.get("8-14 days late") + 1);
-                } else {
-                    lateReturns.put("15+ days late", lateReturns.get("15+ days late") + 1);
-                }
-            }
-        }
+					if (lateness <= 7) {
+						lateReturns.put("1-7 days late", lateReturns.get("1-7 days late") + 1);
+					} else if (lateness <= 14) {
+						lateReturns.put("8-14 days late", lateReturns.get("8-14 days late") + 1);
+					} else {
+						lateReturns.put("15+ days late", lateReturns.get("15+ days late") + 1);
+					}
+				}
+			}
 
-        // Debug output for on-time returns
-        System.out.println("On-Time Returns:");
-        for (Map.Entry<String, Integer> entry : onTimeReturns.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+			// Debug output for on-time returns
+			System.out.println("On-Time Returns:");
+			for (Map.Entry<String, Integer> entry : onTimeReturns.entrySet()) {
+				System.out.println(entry.getKey() + ": " + entry.getValue());
+			}
 
-        // Debug output for late returns
-        System.out.println("Late Returns:");
-        for (Map.Entry<String, Integer> entry : lateReturns.entrySet()) {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+			// Debug output for late returns
+			System.out.println("Late Returns:");
+			for (Map.Entry<String, Integer> entry : lateReturns.entrySet()) {
+				System.out.println(entry.getKey() + ": " + entry.getValue());
+			}
 
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-    // Combine results into a single map
-    Map<String, Map<String, Integer>> result = new HashMap<>();
-    result.put("onTimeReturns", onTimeReturns);
-    result.put("lateReturns", lateReturns);
+		// Combine results into a single map
+		Map<String, Map<String, Integer>> result = new HashMap<>();
+		result.put("onTimeReturns", onTimeReturns);
+		result.put("lateReturns", lateReturns);
 
-    return result;
-}
+		return result;
+	}
 
+	public void generateMonthlyReports(LocalDate testDate) {
+		LocalDate today = testDate != null ? testDate : LocalDate.now(); // Use testDate if provided, otherwise use the
+																			// current date.
 
-public void generateMonthlyReports(LocalDate testDate) {
-    LocalDate today = testDate != null ? testDate : LocalDate.now(); // Use testDate if provided, otherwise use the current date.
+		// Check if today is the first of the month
+		if (today.getDayOfMonth() != 1) {
+			System.out.println("Not the first of the month. Reports will not be generated.");
+			return;
+		}
 
-    // Check if today is the first of the month
-    if (today.getDayOfMonth() != 1) {
-        System.out.println("Not the first of the month. Reports will not be generated.");
-        return;
-    }
+		try {
+			// Generate the Activity Status Report
+			ActivityStatusReportGenerator activityReportGenerator = new ActivityStatusReportGenerator();
+			File activityStatusReport = activityReportGenerator.createChart();
 
-    try {
-        // Generate the Activity Status Report
-        ActivityStatusReportGenerator activityReportGenerator = new ActivityStatusReportGenerator();
-        File activityStatusReport = activityReportGenerator.createChart();
+			// Fetch borrowing data for the previous month
+			int previousMonth = today.minusMonths(1).getMonthValue();
+			int year = today.minusMonths(1).getYear();
+			Map<String, Map<String, Integer>> borrowingData = fetchBorrowingPeriodData(previousMonth, year);
 
-        // Fetch borrowing data for the previous month
-        int previousMonth = today.minusMonths(1).getMonthValue();
-        int year = today.minusMonths(1).getYear();
-        Map<String, Map<String, Integer>> borrowingData = fetchBorrowingPeriodData(previousMonth, year);
+			File borrowingPeriodReport = null;
+			if (borrowingData != null && !borrowingData.isEmpty()) {
+				// Generate the Borrowing Period Report
+				BorrowingPeriodChartGenerator borrowingChartGenerator = new BorrowingPeriodChartGenerator();
+				borrowingPeriodReport = new File("BorrowingPeriodReport.png");
+				borrowingChartGenerator.generateBorrowingPeriodChart(borrowingData,
+						borrowingPeriodReport.getAbsolutePath());
+			} else {
+				System.out.println("No borrowing data found for the previous month. Skipping Borrowing Period Report.");
+			}
 
-        File borrowingPeriodReport = null;
-        if (borrowingData != null && !borrowingData.isEmpty()) {
-            // Generate the Borrowing Period Report
-            BorrowingPeriodChartGenerator borrowingChartGenerator = new BorrowingPeriodChartGenerator();
-            borrowingPeriodReport = new File("BorrowingPeriodReport.png");
-            borrowingChartGenerator.generateBorrowingPeriodChart(borrowingData, borrowingPeriodReport.getAbsolutePath());
-        } else {
-            System.out.println("No borrowing data found for the previous month. Skipping Borrowing Period Report.");
-        }
+			// Combine both reports into a single array
+			File[] reports = { activityStatusReport, borrowingPeriodReport };
 
-        // Combine both reports into a single array
-        File[] reports = {activityStatusReport, borrowingPeriodReport};
+			// Fetch librarian emails
+			List<String> librarianEmails = getLibrarianEmails();
 
-        // Fetch librarian emails
-        List<String> librarianEmails = getLibrarianEmails();
+			// Send reports to all librarians
+			String subject = "Monthly Reports of "
+					+ today.minusMonths(1).getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+			for (String email : librarianEmails) {
+				ReportEmailController.sendReportEmail(email, subject, "", reports);
+			}
 
-        // Send reports to all librarians
-        String subject = "Monthly Reports of " + today.minusMonths(1).getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        for (String email : librarianEmails) {
-            ReportEmailController.sendReportEmail(email, subject, "", reports);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
-
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 }

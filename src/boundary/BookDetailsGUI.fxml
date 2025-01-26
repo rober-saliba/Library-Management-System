@@ -39,11 +39,12 @@
 
             <Label layoutX="10.0" layoutY="160.0" prefHeight="30.0" prefWidth="150.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Type:" />
             <Label fx:id="typeLabel" layoutX="160.0" layoutY="160.0" prefHeight="30.0" prefWidth="150.0" style="-fx-font-size: 14px;" />
+            <Label fx:id="earliestReturnDateLabel" layoutX="160.0" layoutY="190.0" prefHeight="30.0" prefWidth="150.0" style="-fx-font-size: 14px;" />
          </children>
       </AnchorPane>
 
       <!-- Description Section -->
-      <AnchorPane layoutX="18.0" layoutY="374.0" prefHeight="100.0" prefWidth="675.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 20;">
+      <AnchorPane layoutX="19.0" layoutY="382.0" prefHeight="100.0" prefWidth="675.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 20;">
          <children>
             <Label layoutX="10.0" layoutY="10.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Description:" />
             <TextArea fx:id="descriptionTA" editable="false" layoutX="110.0" layoutY="10.0" prefHeight="62.0" prefWidth="520.0" style="-fx-font-size: 13px; -fx-background-color: #ecf0f1; -fx-background-radius: 8px;" wrapText="true" />
@@ -51,7 +52,7 @@
       </AnchorPane>
 
       <!-- Categories Section -->
-      <AnchorPane layoutX="16.0" layoutY="493.0" prefHeight="105.0" prefWidth="675.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 20;">
+      <AnchorPane layoutX="19.0" layoutY="501.0" prefHeight="105.0" prefWidth="675.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12px; -fx-padding: 20;">
          <children>
             <Label layoutX="10.0" layoutY="10.0" style="-fx-font-size: 14px; -fx-font-weight: bold;" text="Categories:" />
             <TextArea fx:id="categoriesTA" editable="false" layoutX="110.0" layoutY="10.0" prefHeight="55.0" prefWidth="520.0" style="-fx-font-size: 13px; -fx-background-color: #ecf0f1; -fx-background-radius: 8px;" wrapText="true" />

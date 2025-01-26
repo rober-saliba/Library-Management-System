@@ -20,8 +20,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
+
 /**
- * @see boundary.UserBorrowsController very similar, only difference is it displays the history (inactive borrows and reservation).
+ * @see boundary.UserBorrowsController very similar, only difference is it
+ *      displays the history (inactive borrows and reservation).
  */
 public class UserHistoryController {
 
@@ -29,8 +31,6 @@ public class UserHistoryController {
 	private ArrayList<History> res;
 	private ObservableList<History> data;
 	private User currentUser;
-
-
 
 	@FXML
 	private TableView table;
@@ -50,25 +50,23 @@ public class UserHistoryController {
 	@FXML
 	private Button closeBtn;
 
-
-    @FXML
-	void initialize(){
-    	historyController=HistoryController.getInstance(ConstantsAndGlobalVars.ipAddress,
+	@FXML
+	void initialize() {
+		historyController = HistoryController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
-		
 	}
-    public void loadUser(User u) {
+
+	public void loadUser(User u) {
 		this.currentUser = u;
-		
+
 		try {
 			res = historyController.viewhistory(currentUser);
-			//System.out.println(res);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		data = FXCollections.observableArrayList(res);
 		table.setItems(data);
 		userIDTC.setCellValueFactory(new PropertyValueFactory("userID"));
@@ -76,18 +74,17 @@ public class UserHistoryController {
 		eventTC.setCellValueFactory(new PropertyValueFactory("type"));
 		eventDateTC.setCellValueFactory(new PropertyValueFactory("eventDate"));
 	}
-    
-    @FXML
-    void onClose(ActionEvent event) {
-    	closeHistoryWindow();
-    }
-    
-    public void closeHistoryWindow()
-    {
-    	if(res!=null)
-    		res.clear();
-    	Stage window = (Stage) closeBtn.getScene().getWindow();
-    	window.close();
-    }
-    
+
+	@FXML
+	void onClose(ActionEvent event) {
+		closeHistoryWindow();
+	}
+
+	public void closeHistoryWindow() {
+		if (res != null)
+			res.clear();
+		Stage window = (Stage) closeBtn.getScene().getWindow();
+		window.close();
+	}
+
 }
