@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="747.0" prefWidth="1250.0" style="-fx-background-color: linear-gradient(to bottom, #f5f7fa, #c3cfe2);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.LibrarianPageController">
+   <children>
+      <!-- Header Section -->
+      <Pane prefHeight="120.0" prefWidth="1250.0" style="-fx-background-color: #34495e;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fx:id="userImg" fitHeight="80.0" fitWidth="80.0" layoutX="20.0" layoutY="20.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="usernameLabel" layoutX="110.0" layoutY="50.0" text="Librarian Name" textFill="white">
+               <font>
+                  <Font name="Arial Bold" size="18.0" />
+               </font>
+            </Label>
+            <Text fill="white" layoutX="588.0" layoutY="73.0" style="-fx-font-size: 36px; -fx-font-weight: bold;" text="BLib" />
+            <Button fx:id="logoutBtn" alignment="BOTTOM_CENTER" layoutX="1130.0" layoutY="17.0" mnemonicParsing="false" onAction="#logoutHandler" prefHeight="58.0" prefWidth="80.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 20px;" text="Logout" />
+            <Button fx:id="messageButton" alignment="BOTTOM_CENTER" layoutX="1035.0" layoutY="17.0" mnemonicParsing="false" onAction="#onClickMessageHandler" prefHeight="58.0" prefWidth="80.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 20px;" text="Messages" />
+         </children>
+      </Pane>
+
+      <!-- Search Section -->
+      <AnchorPane layoutX="20.0" layoutY="150.0" prefHeight="100.0" prefWidth="1210.0" style="-fx-background-color: #ecf0f1; -fx-background-radius: 15px;">
+         <children>
+            <ComboBox fx:id="searchTypeComboBox" layoutX="224.0" layoutY="35.0" prefHeight="30.0" prefWidth="200.0" promptText="Search Type" style="-fx-background-radius: 10px;" />
+            <TextField fx:id="searchTF" layoutX="446.0" layoutY="35.0" prefHeight="30.0" prefWidth="400.0" promptText="Enter Keyword" style="-fx-background-radius: 10px;" />
+            <Button fx:id="searchBtn" layoutX="856.0" layoutY="35.0" mnemonicParsing="false" onAction="#searchHandler" prefHeight="30.0" prefWidth="40.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15px;" />
+         </children>
+      </AnchorPane>
+
+      <!-- Action Buttons Section -->
+      <Pane layoutX="20.0" layoutY="270.0" prefHeight="435.0" prefWidth="1210.0" style="-fx-background-color: #ecf0f1; -fx-background-radius: 15px;">
+         <children>
+            <Button fx:id="myBorrowsBtn" layoutX="50.0" layoutY="40.0" mnemonicParsing="false" onAction="#showBorrowsHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>My Borrows</text>
+            </Button>
+
+            <Button fx:id="reservesBtn" layoutX="474.0" layoutY="40.0" mnemonicParsing="false" onAction="#showReservesHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>My Reserves</text>
+            </Button>
+
+            <Button fx:id="historyBtn" layoutX="50.0" layoutY="140.0" mnemonicParsing="false" onAction="#showHistoryHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>History</text>
+            </Button>
+
+            <Button fx:id="settingsBtn" layoutX="474.0" layoutY="140.0" mnemonicParsing="false" onAction="#showSettingsHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>Settings</text>
+            </Button>
+
+            <Button fx:id="inventoryBtn" layoutX="863.0" layoutY="40.0" mnemonicParsing="false" onAction="#InventoryManagementHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>Inventory Manager</text>
+            </Button>
+
+            <Button fx:id="lendBookBtn" layoutX="863.0" layoutY="140.0" mnemonicParsing="false" onAction="#lendBookHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>Lend a Book</text>
+            </Button>
+
+            <Button fx:id="delayBtn" layoutX="474.0" layoutY="240.0" mnemonicParsing="false" onAction="#delayBookHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <text>Delay a Book</text>
+            </Button>
+
+            <ImageView fx:id="myborrowsImg" fitHeight="40.0" fitWidth="40.0" layoutX="123.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="myreservesImg" fitHeight="40.0" fitWidth="40.0" layoutX="544.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="settingsImg" fitHeight="40.0" fitWidth="40.0" layoutX="564.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="historyImg" fitHeight="40.0" fitWidth="40.0" layoutX="123.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="InventorymgImg" fitHeight="40.0" fitWidth="40.0" layoutX="906.0" layoutY="60.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="lendbookImg" fitHeight="40.0" fitWidth="40.0" layoutX="926.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="delaybookImg" fitHeight="40.0" fitWidth="40.0" layoutX="544.0" layoutY="260.0" pickOnBounds="true" preserveRatio="true" />
+            <Button fx:id="signupBtn" layoutX="863.0" layoutY="240.0" mnemonicParsing="false" onAction="#createMemberHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;" text="Create Member">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <ImageView fx:id="creatememberImg" fitHeight="40.0" fitWidth="40.0" layoutX="926.0" layoutY="260.0" pickOnBounds="true" preserveRatio="true" />
+            <Button fx:id="returnBookBtn" layoutX="50.0" layoutY="240.0" mnemonicParsing="false" onAction="#returnBookHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;" text="Return Book">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <ImageView fx:id="returnbookImg" fitHeight="40.0" fitWidth="40.0" layoutX="123.0" layoutY="260.0" pickOnBounds="true" preserveRatio="true" />
+            <Button fx:id="searchMemberBtn" layoutX="474.0" layoutY="341.0" mnemonicParsing="false" onAction="#searchMemberHandler" prefHeight="80.0" prefWidth="320.0" style="-fx-background-color: white; -fx-border-color: #2c3e50; -fx-border-width: 2px; -fx-border-radius: 20px; -fx-background-radius: 20px;" text="Search Member">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Button>
+            <ImageView fx:id="searchmemberImg" fitHeight="40.0" fitWidth="40.0" layoutX="534.0" layoutY="361.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

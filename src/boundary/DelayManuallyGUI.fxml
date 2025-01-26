@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="667.0" style="-fx-background-color: linear-gradient(to bottom, #3a7bd5, #3a6073);" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ManualDelayBorrowController">
+   <children>
+      <Label layoutX="246.0" layoutY="35.0" style="-fx-text-fill: white;" text="Book Manual Delay">
+         <font>
+            <Font name="Arial Bold" size="19.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="8.0" layoutY="88.0" prefHeight="248.0" prefWidth="651.0" style="-fx-border-color: #5dade2; -fx-border-width: 2; -fx-border-radius: 15; -fx-background-color: #ffffff; -fx-background-radius: 15;">
+         <children>
+            <Label layoutX="27.0" layoutY="53.0" style="-fx-text-fill: #34495e;" text="*ID Borrower:">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="30.0" layoutY="96.0" style="-fx-text-fill: #34495e;" text="*Barcode:">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label layoutX="24.0" layoutY="141.0" style="-fx-text-fill: #34495e;" text="*New Due Date:">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <DatePicker fx:id="newDatePicker" layoutX="116.0" layoutY="137.0" prefHeight="25.0" prefWidth="151.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #5dade2;" />
+            <TextField fx:id="fillBarcodeTF" layoutX="116.0" layoutY="92.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #5dade2;" />
+            <TextField fx:id="IDBorrowerTF" layoutX="116.0" layoutY="49.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #5dade2;" />
+            <Button fx:id="applyButton" layoutX="557.0" layoutY="180.0" mnemonicParsing="false" onAction="#applyDelayHandler" prefHeight="39.0" prefWidth="68.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 2);" text="Apply" />
+            <Label fx:id="resultlabel" layoutX="24.0" layoutY="198.0" prefHeight="25.0" prefWidth="494.0" style="-fx-text-fill: #e74c3c;" visible="false">
+               <font>
+                  <Font name="Arial Bold" size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      <Button fx:id="cancelButton" layoutX="584.0" layoutY="404.0" mnemonicParsing="false" onAction="#cancelHandler" prefHeight="27.0" prefWidth="68.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 2);" text="Cancel" />
+   </children>
+</AnchorPane>

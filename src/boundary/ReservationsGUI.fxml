@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: #f4f4f9;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.UserReservationsController">
+   <children>
+      <!-- Title Section -->
+      <AnchorPane layoutX="-3.0" prefHeight="100.0" prefWidth="905.0" style="-fx-background-color: #2c3e50; -fx-padding: 10;">
+         <children>
+            <Label alignment="CENTER" layoutX="253.0" layoutY="35.0" prefHeight="41.0" prefWidth="399.0" text="Active Reservations" textFill="white" underline="true">
+               <font>
+                  <Font name="Microsoft Sans Serif" size="36.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      
+      <!-- Table Section -->
+      <AnchorPane layoutY="100.0" prefHeight="476.0" prefWidth="900.0" style="-fx-padding: 20;">
+         <children>
+            <TableView fx:id="table" layoutX="150.0" layoutY="50.0" prefHeight="400.0" prefWidth="600.0" style="-fx-border-color: #ddd; -fx-background-color: white; -fx-border-radius: 8px;">
+               <columns>
+                  <TableColumn fx:id="userIDTC" prefWidth="150.0" text="User ID" />
+                  <TableColumn fx:id="barcodeTC" prefWidth="150.0" text="Barcode" />
+                  <TableColumn fx:id="reserveDateTC" prefWidth="150.0" text="Reserve Date" />
+                  <TableColumn fx:id="reserveStatusTC" prefWidth="150.0" text="Reserve Status" />
+               </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      
+      <!-- Close Button -->
+      <Button fx:id="closeBtn" layoutX="778.0" layoutY="600.0" mnemonicParsing="false" onAction="#onClose" prefWidth="100.0" style="-fx-background-color: #4a90e2; -fx-text-fill: white; -fx-border-radius: 5px; -fx-padding: 10px; -fx-font-size: 14px;" text="Close">
+      </Button>
+   </children>
+</AnchorPane>

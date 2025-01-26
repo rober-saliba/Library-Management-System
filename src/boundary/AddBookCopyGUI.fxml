@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="720.0" style="-fx-background-color: #f8f9fa;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.AddBookCopyController">
+   <children>
+      <!-- Center Form Container -->
+      <VBox layoutX="215.0" layoutY="127.0" prefHeight="178.0" prefWidth="195.0" spacing="15.0" style="-fx-padding: 20px;">
+         <!-- Catalog Number Field -->
+         <TextField fx:id="catalogNumberTF" prefHeight="35.0" prefWidth="175.0" promptText="Insert catalog number" style="-fx-font-size: 14px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" />
+         <!-- Barcode Field -->
+         <TextField fx:id="barcodeTF" prefHeight="35.0" prefWidth="175.0" promptText="Insert barcode" style="-fx-font-size: 14px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" />
+         <!-- Purchase Date Picker -->
+         <DatePicker fx:id="purchaseDateDP" prefHeight="35.0" prefWidth="197.0" promptText="Choose date" style="-fx-font-size: 14px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" />
+         <!-- Status ComboBox -->
+         <HBox prefHeight="35.0" prefWidth="175.0">
+            <ComboBox fx:id="statusCB" prefHeight="35.0" prefWidth="208.0" promptText="Choose status" style="-fx-font-size: 14px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" />
+         </HBox>
+      </VBox>
+
+      <!-- Buttons: Add and Cancel -->
+      <Button fx:id="addCopyBtn" layoutX="451.0" layoutY="325.0" mnemonicParsing="false" onAction="#addCopyHandler" prefHeight="35.0" prefWidth="141.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10px 20px;" text="Add Book" />
+      <Button fx:id="cancelBtn" layoutX="605.0" layoutY="325.0" mnemonicParsing="false" onAction="#cancelHandler" prefHeight="40.0" prefWidth="94.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10px 20px;" text="Cancel" />
+
+      <!-- Field Labels -->
+      <Label layoutX="78.0" layoutY="146.0" prefHeight="30.0" prefWidth="175.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="Catalog number:" />
+      <Label layoutX="78.0" layoutY="195.0" prefHeight="30.0" prefWidth="175.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="Barcode:" />
+      <Label layoutX="78.0" layoutY="243.0" prefHeight="30.0" prefWidth="175.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="Purchase date:" />
+      <Label layoutX="78.0" layoutY="287.0" prefHeight="30.0" prefWidth="175.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="Status:" />
+
+      <!-- Header Logo/Brand -->
+      <AnchorPane layoutX="-5.0" prefHeight="91.0" prefWidth="726.0" style="-fx-background-color: #34495e;">
+         <children>
+            <Label layoutX="215.0" layoutY="2.0" prefHeight="88.0" prefWidth="350.0" style="-fx-font-family: 'Arial'; -fx-font-size: 41px; -fx-font-weight: bold;" text="Add Book Copy" textFill="WHITE">
+               <font>
+                  <Font name="Arial Black" size="15.0" />
+               </font></Label>
+         </children>
+      </AnchorPane>
+
+      <!-- Result Label -->
+      <Label fx:id="resultLabel" alignment="CENTER" layoutX="90.0" layoutY="330.0" prefHeight="30.0" prefWidth="361.0" style="-fx-font-family: 'Arial'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #e67e22;" wrapText="true" />
+   </children>
+</AnchorPane>

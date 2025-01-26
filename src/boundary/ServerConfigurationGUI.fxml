@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="469.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ServerConfigurationController">
+    <children>
+      <!-- Title Label -->
+      <Label alignment="CENTER" layoutX="97.0" layoutY="14.0" style="-fx-font-family: 'Arial'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Server Configuration" />
+
+      <!-- Labels for fields -->
+      <Label layoutX="97.0" layoutY="76.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="MySQL Host:" />
+      <Label layoutX="93.0" layoutY="128.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="MySQL Port:" />
+      <Label layoutX="93.0" layoutY="176.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="MySQL Database:" />
+      <Label layoutX="92.0" layoutY="231.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="MySQL Username:" />
+      <Label layoutX="92.0" layoutY="287.0" style="-fx-font-family: 'Arial'; -fx-font-size: 14px; -fx-text-fill: #34495e;" text="MySQL Password:" />
+
+      <!-- TextFields for input -->
+      <TextField fx:id="hostTF" layoutX="227.0" layoutY="63.0" style="-fx-font-size: 14px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" text="localhost" />
+      <TextField fx:id="portTF" layoutX="227.0" layoutY="115.0" style="-fx-font-size: 14px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" text="5555" />
+      <TextField fx:id="dbTF" layoutX="227.0" layoutY="163.0" style="-fx-font-size: 14px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" text="blibdb" />
+      <TextField fx:id="usernameTF" layoutX="227.0" layoutY="218.0" style="-fx-font-size: 14px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" text="root" />
+      
+      <!-- PasswordField for password input -->
+      <PasswordField fx:id="passwordTF" layoutX="227.0" layoutY="274.0" style="-fx-font-size: 14px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-radius: 8px; -fx-border-color: #bdc3c7;" text="Aa123456" />
+      
+      <!-- Connect Button -->
+      <Button fx:id="connectButton" layoutX="359.0" layoutY="341.0" mnemonicParsing="false" onAction="#connectToDBHandler" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10px 20px;" text="Connect" />
+
+      <!-- Success message -->
+      <Label fx:id="successMessage" alignment="CENTER" layoutX="133.0" layoutY="347.0" prefHeight="28.0" prefWidth="188.0" style="-fx-font-family: 'Arial'; -fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: #2ecc71;" />
+   </children>
+</AnchorPane>

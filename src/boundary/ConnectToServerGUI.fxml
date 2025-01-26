@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="174.0" prefWidth="456.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ConnectToServerController">
+  <children>
+      <!-- Title Label -->
+      <Label alignment="CENTER" layoutX="99.0" layoutY="22.0" style="-fx-font-family: 'Arial'; -fx-font-size: 27px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Connect to Server" />
+      
+      <!-- IP Address Label -->
+      <Label layoutX="19.0" layoutY="63.0" style="-fx-font-family: 'Arial'; -fx-font-size: 15px; -fx-font-weight: normal; -fx-text-fill: #34495e;" text="Enter the server IP address :" />
+      
+      <!-- IP Address TextField -->
+      <TextField fx:id="ipTF" layoutX="112.0" layoutY="91.0" promptText="Enter IP Address" style="-fx-font-size: 14px; -fx-border-radius: 8px; -fx-padding: 10px; -fx-background-color: #ffffff; -fx-border-color: #bdc3c7;" text="localhost" />
+      
+      <!-- Connect Button -->
+      <Button fx:id="connectButton" layoutX="316.0" layoutY="92.0" mnemonicParsing="false" onAction="#connectHandler" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 25px; -fx-font-size: 14px; -fx-font-weight: bold; -fx-padding: 10px 20px;" text="Connect" />
+      
+      <!-- Error Label -->
+      <Label fx:id="errorLabel" layoutX="87.0" layoutY="132.0" style="-fx-font-family: 'Arial'; -fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="Error: Please provide IP Address" textFill="RED" visible="false" />
+   </children>
+</Pane>

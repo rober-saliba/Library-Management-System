@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1200.0" style="-fx-background-color: #d8d8d5;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="boundary.ReaderCardController">
+   <children>
+      <!-- Header Section -->
+      <AnchorPane prefHeight="86.0" prefWidth="1200.0" style="-fx-background-color: #3b29d4;">
+         <children>
+            <Label layoutX="450.0" layoutY="18.0" prefHeight="50.0" prefWidth="248.0" text="Reader Card Info" textFill="WHITE" underline="true">
+               <font>
+                  <Font name="Arial Bold" size="28.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+      
+      <!-- User Details Section -->
+      <AnchorPane layoutX="14.0" layoutY="150.0" prefHeight="408.0" prefWidth="490.0" style="-fx-background-color: #ffffff; -fx-border-color: #dcdcdc; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.2, 2, 2);">
+         <children>
+            <!-- Labels and Text Fields -->
+            <Label layoutX="50.0" layoutY="30.0" text="User ID:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="userIDTF" editable="false" layoutX="200.0" layoutY="25.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="75.0" text="First Name:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="firstNameTF" editable="false" layoutX="200.0" layoutY="70.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="120.0" text="Last Name:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="lastNameTF" editable="false" layoutX="200.0" layoutY="115.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="165.0" text="Phone Number:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="phoneNumberTF" editable="false" layoutX="200.0" layoutY="160.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="210.0" text="Email:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="emailTF" editable="false" layoutX="200.0" layoutY="205.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="255.0" text="Password:" textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="passwordTF" editable="false" layoutX="200.0" layoutY="250.0" prefHeight="30.0" prefWidth="230.0" />
+
+            <Label layoutX="50.0" layoutY="300.0" text="Membership No." textFill="#555555">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <TextField fx:id="membershipNumberTF" editable="false" layoutX="200.0" layoutY="295.0" prefHeight="30.0" prefWidth="230.0" />
+         </children>
+      </AnchorPane>
+      
+      <!-- Operations Section -->
+      <AnchorPane layoutX="700.0" layoutY="150.0" prefHeight="325.0" prefWidth="426.0" style="-fx-background-color: #ffffff; -fx-border-color: #dcdcdc; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 10, 0.2, 2, 2);">
+         <children>
+            <Label alignment="CENTER" layoutX="40.0" layoutY="20.0" prefHeight="40.0" prefWidth="340.0" text="Reader Card Operations" textFill="#2b83c6" underline="true">
+               <font>
+                  <Font name="Arial Bold" size="22.0" />
+               </font>
+            </Label>
+
+            <Button fx:id="falutsBtn" layoutX="150.0" layoutY="80.0" onAction="#faultsHandler" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #43bd3f; -fx-text-fill: white; -fx-background-radius: 20px;" text="Faults" />
+            <Button fx:id="borrowsBtn" layoutX="115.0" layoutY="130.0" onAction="#activeBorrowsHandler" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #f32525; -fx-text-fill: white; -fx-background-radius: 20px;" text="Active Borrows" />
+            <Button fx:id="reservationsBtn" layoutX="90.0" layoutY="180.0" onAction="#activeReservationsHandler" prefHeight="40.0" prefWidth="240.0" style="-fx-background-color: #38d8db; -fx-text-fill: white; -fx-background-radius: 20px;" text="Active Reservations" />
+            <Button fx:id="historyBtn" layoutX="50.0" layoutY="230.0" onAction="#historyHandler" prefHeight="40.0" prefWidth="320.0" style="-fx-background-color: #83259b; -fx-text-fill: white; -fx-background-radius: 20px;" text="Borrows &amp; Reservations History" />
+         </children>
+      </AnchorPane>
+      
+      <!-- Cancel Button -->
+      <Button fx:id="CancelBtn" layoutX="1100.0" layoutY="580.0" onAction="#cancelHandler" prefHeight="40.0" prefWidth="90.0" style="-fx-background-color: #e57373; -fx-text-fill: white; -fx-background-radius: 20px;" text="Cancel" />
+   </children>
+</AnchorPane>
