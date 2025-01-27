@@ -72,6 +72,7 @@ public class ReaderController implements IClient {
 	public ArrayList<Book> searchForBook(String type, String keyWord) {
 		MsgParser<String> msg = new MsgParser<>();
 		msg.setTask(ConstantsAndGlobalVars.searchBookTask);
+		//commPipe[0] = type, commPipe[1] = keyword
 		msg.addToCommPipe(type);
 		msg.addToCommPipe(keyWord);
 		searchResult.clear();

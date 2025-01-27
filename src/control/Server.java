@@ -14,9 +14,9 @@ import ocsf.server.*;
 public class Server extends AbstractServer {
 	// Class variables *************************************************
 	/**
-	 * instance variable: sv - a static instance of Server to facilitate
-	 * disconnection dbController - a static instance of DBController to call
-	 * methods from {@link control.DBController} class.
+	 * instance variable:
+	 * sv - a static instance of Server to facilitate disconnection
+	 * dbController - a static instance of DBController to call methods from {@link control.DBController} class.
 	 */
 	public static Server sv;
 	public static DBController dbController;
@@ -25,24 +25,21 @@ public class Server extends AbstractServer {
 
 	/**
 	 * Constructs an instance of the server and the DBController.
-	 * 
 	 * @param port The port number to connect on.
 	 */
 	public Server(int port) {
 		super(port);
 		dbController = new DBController();
-
+		
 		// TODO Auto-generated constructor stub
 	}
 
 	// Instance methods ************************************************
 	/**
-	 * This method handles any messages received from the client. The message is of
-	 * type {@link entity.MsgParser} and the task can be found via
-	 * {@link entity.MsgParser#getTask()} method, and a respective method of
-	 * {@link control.DBController} is called.
-	 * 
-	 * @param msg    - The message received from the client.
+	 * This method handles any messages received from the client.
+	 * The message is of type {@link entity.MsgParser} and the task can be found via {@link entity.MsgParser#getTask()} method,
+	 * and a respective method of {@link control.DBController} is called.
+	 * @param msg - The message received from the client.
 	 * @param client The connection from which the message originated.
 	 */
 	@Override
@@ -67,6 +64,9 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+		
+		
+		
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getMessagesTask)) {
 			clientMsg = dbController.getMessages(clientMsg);
@@ -107,17 +107,6 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			} catch (ParseException e) {
 			}
-			try {
-				client.sendToClient(clientMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getBorrowsTask)) {
-			// System.out.println(clientMsg.getCommPipe().get(0));
-			clientMsg = dbController.userBorrow(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
@@ -339,6 +328,8 @@ public class Server extends AbstractServer {
 			}
 		}
 
+
+
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.UpdateBorrowTableAfterDelayingTask)) {
 			try {
 				clientMsg = dbController.UpdateBorrowTableAfterDelaying(clientMsg);
@@ -365,9 +356,10 @@ public class Server extends AbstractServer {
 			}
 		}
 
+		
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumberOfMessagesTask)) {
 			clientMsg = dbController.getNumberMsg(clientMsg);
-			try {
+      try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -377,15 +369,17 @@ public class Server extends AbstractServer {
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getAllCategoriesTask)) {
 			clientMsg = dbController.getAllCategories(clientMsg);
-			try {
+      try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+		
 
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.changeMemberStatusTask)) {
+		
+		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.changeMemberStatusTask)) {
 			clientMsg = dbController.changeMemberStatus(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
@@ -395,7 +389,7 @@ public class Server extends AbstractServer {
 			}
 		}
 
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumberOfAvailableCopies)) {
+		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumberOfAvailableCopies)) {
 			clientMsg = dbController.getNumberOfAvailableCopies(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
@@ -404,8 +398,8 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
-
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumberOfReservesTask)) {
+		
+		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.getNumberOfReservesTask)) {
 			clientMsg = dbController.getNumberOfReserves(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
@@ -414,7 +408,7 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.addReserveTask)) {
+		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.addReserveTask)) {
 			clientMsg = dbController.addReserve(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
@@ -423,6 +417,7 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+		
 
 		///////////////////////////////////////////////////////////////////////////
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.checkIfReserveExistTask)) {
@@ -435,7 +430,8 @@ public class Server extends AbstractServer {
 			}
 		}
 
-		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getAllMembersTask)) {
+		
+		if(clientMsg.getTask().equals(ConstantsAndGlobalVars.getAllMembersTask)) {
 			clientMsg = dbController.getAllMembers(clientMsg);
 			try {
 				client.sendToClient(clientMsg);
@@ -458,7 +454,7 @@ public class Server extends AbstractServer {
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.sendMessageForDelayTask)) {
 			clientMsg = dbController.sendMessageForDelay(clientMsg);
-			try {
+      			try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -466,9 +462,26 @@ public class Server extends AbstractServer {
 			}
 		}
 
+		
+		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getAllEmployeesTask)) {
+			clientMsg = dbController.getAllEmployees(clientMsg);
+			try {
+				client.sendToClient(clientMsg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+
+		
+
+
+
+
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.checkIfReservedTask)) {
 			clientMsg = dbController.checkIfReserved(clientMsg);
-			try {
+      try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -478,14 +491,14 @@ public class Server extends AbstractServer {
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.deleteMessageTask)) {
 			clientMsg = dbController.deleteMessageTuple(clientMsg);
-			try {
+      try {
 				client.sendToClient(clientMsg);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
+		
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.addFaultTask)) {
 			clientMsg = dbController.addFault(clientMsg);
 			try {
@@ -495,17 +508,12 @@ public class Server extends AbstractServer {
 				e.printStackTrace();
 			}
 		}
+		
 
+
+		
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getEarliestReturnDateTask)) {
-			//String catalogNumber = (String) clientMsg.getCommPipe().get(0); // Get catalog number
-			//System.out.println("Received catalog number: " + catalogNumber);
-
 		    clientMsg = dbController.getEarliestReturnDate(clientMsg); // Fetch from DBController
-
-			//clientMsg.clearCommPipe(); // Clear before adding data
-			//clientMsg.addToCommPipe(earliestReturnDate); // Add the fetched return date
-			//System.out.println("Updated clientMsg with earliest return date: " + clientMsg.getCommPipe().get(0));
-
 			try {
 				client.sendToClient(clientMsg); // Send response back to client
 			} catch (IOException e) {
@@ -514,13 +522,19 @@ public class Server extends AbstractServer {
 		}
 
 		if (clientMsg.getTask().equals(ConstantsAndGlobalVars.getUserStatusTask)) {
-			try {
-				clientMsg = dbController.getUserStatus(clientMsg); // Call to DBController
-				client.sendToClient(clientMsg); // Send the result back to the client
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		    try {
+		        clientMsg = dbController.getUserStatus(clientMsg); // Call to DBController
+		        client.sendToClient(clientMsg); // Send the result back to the client
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    }
 		}
+
+
+
+
+
+
 
 	}
 
@@ -539,15 +553,12 @@ public class Server extends AbstractServer {
 	protected void serverStopped() {
 		System.out.println("Server has stopped listening for connections.");
 	}
-
 	/**
-	 * starts the server (starts listening to clients) and connects to the SQL
-	 * server.
-	 * 
+	 * starts the server (starts listening to clients) and connects to the SQL server.
 	 * @param username - the SQL server username.
 	 * @param password - the SQL server password.
-	 * @param host     - the SQL server host.
-	 * @param dbName   - the schema name
+	 * @param host - the SQL server host.
+	 * @param dbName - the schema name
 	 * @return true if connection succeeded, false otherwise.
 	 */
 	public static boolean openServerConnection(String username, String password, String host, String dbName) {
@@ -558,10 +569,10 @@ public class Server extends AbstractServer {
 		if (!dbController.connectToDB(username, password, host, dbName))
 			return false;
 		else {
-			// --- run thread to check database
+			//--- run thread to check database
 			Timer timer = new Timer();
-			timer.schedule(new checkDB(dbController), 0, 60000 * 60 * 24);// 1 minutes.
-			dbController.generateMonthlyReports(null); // Pass `null` to use the current date
+			 timer.schedule(new checkDB(dbController), 0, 60000*60*24);//1 minutes.
+		        dbController.generateMonthlyReports(null); // Pass `null` to use the current date
 		}
 		try {
 			sv.listen(); // Start listening for connections

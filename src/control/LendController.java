@@ -16,6 +16,7 @@ import entity.MsgParser;
 import entity.Reservations;
 import entity.User;
 
+
 /**
  * This class controls the functionality of the lend operation.
  * {@code implements} {@link entity.IClient} as it needs to receive responses
@@ -51,7 +52,6 @@ public class LendController implements IClient {
 	/**
 	 * a private constructor that connects the client to the server and initializes
 	 * some instance variables including the semaphore which is initialized to 0.
-	 * 
 	 * @param host - the IP address of the server.
 	 * @param port - the port which the server dwells on.
 	 */
@@ -110,6 +110,9 @@ public class LendController implements IClient {
 
 		client.sendMessageToServer(msg);
 		sem1.acquire();
+		// System.out.println(this.copy.getBarcode());
+		// System.out.println(this.copy.getCatalogNumber());
+		// System.out.println(this.copy.getStatus());
 		return this.copy;
 
 	}
@@ -136,6 +139,9 @@ public class LendController implements IClient {
 
 		client.sendMessageToServer(msg);
 		sem1.acquire();
+		// System.out.println(this.copy.getBarcode());
+		// System.out.println(this.copy.getCatalogNumber());
+		// System.out.println(this.copy.getStatus());
 		return this.numOfBorrowCopy;
 
 	}
@@ -167,42 +173,72 @@ public class LendController implements IClient {
 
 		client.sendMessageToServer(msg);
 		sem1.acquire();
-
+		
 		return updatecopyresult;
+	
+		}
+public int checkreserve(String userID,String barcode) throws InterruptedException {
+	
+	MsgParser<Reservations> msg = new MsgParser<>();
+	Reservations reserve = new Reservations(userID,barcode);
+	
+	msg.addToCommPipe(reserve);
+	msg.setTask(ConstantsAndGlobalVars.checkIfReserveExistTask);
+	
+	client.sendMessageToServer(msg);
+	sem1.acquire();
+	
+	return reserveExist;
 
 	}
 
-	public int checkreserve(String userID, String barcode) throws InterruptedException {
 
-		MsgParser<Reservations> msg = new MsgParser<>();
-		Reservations reserve = new Reservations(userID, barcode);
+//public boolean checkAndUpdateBookType(String catalogNumber) {
+//    try {
+//        // Check if there are any pending reservations for this catalog number
+//        MsgParser msg = new MsgParser<>();
+//        msg.addToCommPipe(catalogNumber);
+//        msg.setTask(ConstantsAndGlobalVars.checkPendingReservationsTask);
+//
+//        client.sendMessageToServer(msg);
+//        sem1.acquire();
+//
+//        boolean hasPendingReservations = (boolean) Msg1.getCommPipe().get(0); // Now expecting a boolean
+//        if (!hasPendingReservations) {
+//            // No pending reservations, update the book type to Regular
+//            msg.clearCommPipe();
+//            msg.addToCommPipe(catalogNumber);
+//            msg.setTask(ConstantsAndGlobalVars.updateBookTypeToRegularTask);
+//
+//            client.sendMessageToServer(msg);
+//            sem1.acquire();
+//
+//            enums.Result updateResult = (enums.Result) Msg1.getCommPipe().get(0);
+//            return updateResult == enums.Result.Success;
+//        }
+//    } catch (InterruptedException e) {
+//        e.printStackTrace();
+//    }
+//    return false;
+//}
 
-		msg.addToCommPipe(reserve);
-		msg.setTask(ConstantsAndGlobalVars.checkIfReserveExistTask);
 
-		client.sendMessageToServer(msg);
-		sem1.acquire();
 
-		return reserveExist;
+public enums.Result updateReserve(String userID,String barcode) throws InterruptedException {
+	
+	MsgParser<Reservations> msg = new MsgParser<>();
+	Reservations reserve = new Reservations(userID,barcode);
+	
+	msg.addToCommPipe(reserve);
+	msg.setTask(ConstantsAndGlobalVars.updateReservestatusToDoneTask);
+	
+	client.sendMessageToServer(msg);
+	sem1.acquire();
+	
+	return updateReserveResult;
 
 	}
-
-
-	public enums.Result updateReserve(String userID, String barcode) throws InterruptedException {
-
-		MsgParser<Reservations> msg = new MsgParser<>();
-		Reservations reserve = new Reservations(userID, barcode);
-
-		msg.addToCommPipe(reserve);
-		msg.setTask(ConstantsAndGlobalVars.updateReservestatusToDoneTask);
-
-		client.sendMessageToServer(msg);
-		sem1.acquire();
-
-		return updateReserveResult;
-
-	}
-
+	
 	@Override
 	public void recieveMessageFromServer(MsgParser msg) {
 		if (msg.getTask().equals(ConstantsAndGlobalVars.checkUserTask)) {
@@ -244,16 +280,16 @@ public class LendController implements IClient {
 
 		}
 
-		if (msg.getTask().equals(ConstantsAndGlobalVars.checkIfReserveExistTask)) {
-			// if the task is log in, retrieve data from server.
-			reserveExist = (int) msg.getCommPipe().get(0);
-
+		if(msg.getTask().equals(ConstantsAndGlobalVars.checkIfReserveExistTask)) {
+			//if the task is log in, retrieve data from server.
+		 reserveExist=(int)msg.getCommPipe().get(0);
+			
 		}
-		if (msg.getTask().equals(ConstantsAndGlobalVars.updateReservestatusToDoneTask)) {
-			// if the task is log in, retrieve data from server.
-			updateReserveResult = msg.getUpdateReservationsResult();
-
+		if(msg.getTask().equals(ConstantsAndGlobalVars.updateReservestatusToDoneTask)) {
+			//if the task is log in, retrieve data from server.
+		 updateReserveResult=msg.getUpdateReservationsResult();
+			
 		}
-		sem1.release();
+		sem1.release();	
 	}
 }
