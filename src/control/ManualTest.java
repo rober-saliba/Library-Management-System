@@ -26,8 +26,8 @@ public class ManualTest {
         boolean isConnected = dbController.connectToDB(username, password, host, dbName);
 
         if (isConnected) {
-          dbController.checkLateReturn();
-          dbController.checkPenalty();
+         // dbController.checkLateReturn();
+         // dbController.checkPenalty();
             // Test the getUserStatusTask
             try {
                 
@@ -66,10 +66,10 @@ public class ManualTest {
             	
             	
                 // Simulate the first of February for testing
-               // LocalDate testDate = LocalDate.of(2025, 2, 1);
+                LocalDate testDate = LocalDate.of(2025, 2, 1);
 
                 // Call the generateMonthlyReports method with the test date
-                //dbController.generateMonthlyReports(testDate);
+                dbController.generateMonthlyReports(testDate);
             	
             	
             	

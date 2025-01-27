@@ -1,6 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <properties>
+    <javafx-web-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.web.jar</javafx-web-systemPath>
+    <javafx-swing-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.swing.jar</javafx-swing-systemPath>
+    <javafx-media-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.media.jar</javafx-media-systemPath>
+    <javafx-graphics-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.graphics.jar</javafx-graphics-systemPath>
+    <javafx-fxml-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.fxml.jar</javafx-fxml-systemPath>
+    <javafx-controls-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.controls.jar</javafx-controls-systemPath>
+    <javafx-base-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.base.jar</javafx-base-systemPath>
+  <ocsf-library-systemPath>C:\Users\User\Desktop\new eclipse workspace\Blib\src\images\ocsf.jar</ocsf-library-systemPath>
+ </properties>
+
   <modelVersion>4.0.0</modelVersion>
   <groupId>Blib</groupId>
   <artifactId>Blib</artifactId>
@@ -16,6 +27,21 @@
       </resource>
     </resources>
     <plugins>
+    
+    
+    <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.13.0</version>
+            <configuration>
+                <source>22</source>
+                <target>22</target>
+            </configuration>
+        </plugin>
+    
+    
+    
+    
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
@@ -31,7 +57,16 @@
 
     
     
-    
+<dependency>
+    <groupId>ocsf</groupId>
+    <artifactId>ocsf-library</artifactId>
+    <version>1.0.0</version>
+    <scope>system</scope>
+    <systemPath>${ocsf-library-systemPath}</systemPath>
+</dependency>
+
+
+
 
 
 
@@ -98,12 +133,84 @@
         <scope>test</scope>
     </dependency>
     
+    
+    
+    
+    
+      <!-- JavaFX Base -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-base</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-base-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX Controls -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-controls-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX FXML -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-fxml-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX Graphics -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-graphics</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-graphics-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX Media (Optional) -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-media</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-media-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX Swing (Optional) -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-swing</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-swing-systemPath}</systemPath>
+    </dependency>
+
+    <!-- JavaFX Web (Optional) -->
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-web</artifactId>
+        <version>23.0.1</version>
+        <scope>system</scope>
+        <systemPath>${javafx-web-systemPath}</systemPath>
+    </dependency>
+    
+    
+    
+    
+    
+    
   </dependencies>
   
   
   
   
-  <profiles>
+<profiles>
     <!-- Profile for Server-Side JAR -->
     <profile>
         <id>server</id>
@@ -114,12 +221,17 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.2.2</version>
                     <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>control.ServerMain</mainClass>
+                            </manifest>
+                        </archive>
                         <includes>
                             <include>control/**</include>
                             <include>entity/**</include>
                             <include>enums/**</include>
                         </includes>
-                        <finalName>server-logic</finalName>
+                        <finalName>server</finalName>
                     </configuration>
                 </plugin>
             </plugins>
@@ -136,12 +248,17 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.2.2</version>
                     <configuration>
+                        <archive>
+                            <manifest>
+                                <mainClass>boundary.ClientMain</mainClass>
+                            </manifest>
+                        </archive>
                         <includes>
                             <include>boundary/**</include>
                             <include>entity/**</include>
                             <include>enums/**</include>
                         </includes>
-                        <finalName>client-logic</finalName>
+                        <finalName>client</finalName>
                     </configuration>
                 </plugin>
             </plugins>
