@@ -25,6 +25,7 @@ import javafx.stage.Stage;
  */
 public class UserSearchResultsController extends ReaderSearchResultsController {
 	protected User currentUser;
+	
 
 	@Override
 	public void setResults(ArrayList<Book> results) {

@@ -68,6 +68,12 @@ public class UserFaultsHistoryController {
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
 	}
+	
+	/**
+	 * This method is responsible for view faulthistory
+	 * and initializing table elements
+	 * @param u - user
+	 */
 
 	public void loadUser(User u) {
 		this.currentUser = u;

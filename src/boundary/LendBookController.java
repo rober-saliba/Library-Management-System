@@ -1,6 +1,5 @@
 package boundary;
 
-/////////////////////////////////////////////////////////
 import java.util.Date;
 
 import control.BorrowsController;
