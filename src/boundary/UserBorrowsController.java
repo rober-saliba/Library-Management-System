@@ -86,10 +86,11 @@ public class UserBorrowsController {
 	void initialize() {
 		borrowsController = BorrowsController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
-
+		System.out.println("brrowsControllerConnected");
 		delayController = DelayController.getInstance(ConstantsAndGlobalVars.ipAddress,
 				ConstantsAndGlobalVars.DEFAULT_PORT);
-
+		System.out.println("delayControllerConnected");
+		//closeBtn.getScene().getWindow().setOnCloseRequest(e->closeBorrowWindow());
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class UserBorrowsController {
 		System.out.println(u.getFirstName());
 		try {
 			res = borrowsController.viewborrows(currentUser);
-
+			System.out.println("View Borrows");
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,7 +155,14 @@ public class UserBorrowsController {
 		Stage window = (Stage) closeBtn.getScene().getWindow();
 		window.close();
 	}
-
+	
+	/**
+	 * This method responsible for Delay Borrow
+	 * making sure the book isnt reserved and not wanted and user isnt freezed
+	 * and also return date
+	 * @param borrow
+	 * @throws IOException
+	 */
 	private void DelayBorrowHandler(BorrowsWithButton borrow) throws IOException {
 		BookCopies copy;
 		String catalognum;

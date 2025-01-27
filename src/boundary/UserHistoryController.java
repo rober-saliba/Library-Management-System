@@ -56,6 +56,12 @@ public class UserHistoryController {
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
 	}
+	
+	/**
+	 * this method responsible for view history 
+	 * and init table elements
+	 * @param u - user
+	 */
 
 	public void loadUser(User u) {
 		this.currentUser = u;
@@ -80,6 +86,9 @@ public class UserHistoryController {
 		closeHistoryWindow();
 	}
 
+	/**
+	 * close window event
+	 */
 	public void closeHistoryWindow() {
 		if (res != null)
 			res.clear();

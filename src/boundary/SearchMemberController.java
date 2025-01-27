@@ -109,10 +109,6 @@ public class SearchMemberController {
 
 	}
 
-	/*
-	 * ******************************************************* Private methods
-	 * 
-	 ********************************************************/
 	/**
 	 * checks input validation of the passed TextField.
 	 * 

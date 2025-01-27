@@ -47,6 +47,12 @@ public class UserReservationsController {
 
 	@FXML
 	private TableColumn reserveStatusTC;
+	
+	
+	/**
+	 * This method is called when loading scene
+	 * init reservationcontroller with server
+	 */
 
 	@FXML
 	void initialize() {
@@ -54,6 +60,10 @@ public class UserReservationsController {
 				ConstantsAndGlobalVars.DEFAULT_PORT);
 
 	}
+	/**
+	 * this method responsible for view reservations
+	 * @param u - user
+	 */
 
 	public void loadUser(User u) {
 		this.currentUser = u;

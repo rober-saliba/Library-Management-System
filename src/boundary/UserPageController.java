@@ -161,10 +161,10 @@ public class UserPageController {
 		scene.getStylesheets().add(getClass().getResource("/boundary/TableDesign.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Active Borrows");
-
+		
 		UserBorrowsController bc = loader.getController();
-		primaryStage.setOnCloseRequest(e -> bc.closeBorrowWindow());
-
+		primaryStage.setOnCloseRequest(e ->bc.closeBorrowWindow());
+		
 		bc.loadUser(userController.getCurrentUser());
 		primaryStage.show();
 	}
