@@ -9,7 +9,6 @@
     <javafx-fxml-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.fxml.jar</javafx-fxml-systemPath>
     <javafx-controls-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.controls.jar</javafx-controls-systemPath>
     <javafx-base-systemPath>C:/javafx-sdk-23.0.1/lib/javafx.base.jar</javafx-base-systemPath>
-  <ocsf-library-systemPath>C:\Users\User\Desktop\new eclipse workspace\Blib\src\images\ocsf.jar</ocsf-library-systemPath>
  </properties>
 
   <modelVersion>4.0.0</modelVersion>
@@ -57,13 +56,6 @@
 
     
     
-<dependency>
-    <groupId>ocsf</groupId>
-    <artifactId>ocsf-library</artifactId>
-    <version>1.0.0</version>
-    <scope>system</scope>
-    <systemPath>${ocsf-library-systemPath}</systemPath>
-</dependency>
 
 
 
