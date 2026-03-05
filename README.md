@@ -39,9 +39,7 @@ The **Library Management System** is a robust backend application designed to st
 
 ## 📐 System Architecture
 
-This project utilizes a structured approach to separate data logic from business logic.
-
-
+This project utilizes a structured approach to separate data logic from business logic, ensuring the database operations do not interfere with the core application logic.
 
 ## 💻 How to Run Locally
 
